@@ -1,5 +1,5 @@
 {
-  "runtimeCommit": "f7053f6af51baad6ed5505885101fa44dd104f06",
+  "runtimeCommit": "773ac16c4e2294aa263ea9a298f588f289562c4c",
   "suites": [
     {
       "test": "actor-placement.cjs",
@@ -158,7 +158,7 @@
     {
       "file": "bundle.js",
       "status": 200,
-      "bytes": 4203065,
+      "bytes": 4055192,
       "hashMatch": true
     }
   ],
@@ -166,7 +166,7 @@
   "prompt": {
     "file": "prompts/MAP_PROMPT.txt",
     "bytes": 11714,
-    "sha256": "602600035d698c1a7139ef8514211a8d6b73562aa4232106ac64b96b938bb709",
+    "sha256": "300f08065b9d38bc6697dd944a989e1e3137af612bad6e5167b1e76616b5cb16",
     "tokenCount": "not measured"
   },
   "cleanup": {
