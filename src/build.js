@@ -71,7 +71,7 @@ function sceneryAsset(id,x,y,w,h,prefix){
  }
  return `<g data-asset="${id}"><use href="#${symbolId}" x="${x}" y="${y}" width="${w}" height="${h}"/></g>`;
 }
-// Generated Outdoor shares Indoor's semantic zone/support placement, with ground
+// Generated Outdoor uses zone-based floor placement, with ground
 // and obstacles checked. This is display geometry, not a navigation/game solver.
 function outdoorKind(item,name=''){
  const id=key(item+' '+name);
@@ -117,7 +117,7 @@ function outdoorTerrain(doc,rid,art){
  }};
 }
 function outdoorMap(scene,d){
- const columns=Math.max(1,Math.ceil(Math.sqrt(scene.places.length))),footprints=[],plots=[],plans=scene.places.map(p=>{const rid=recipeId(p.type),art=LAYOUT_SIZES[rid]?.[layoutSize(p.size)]||(rid?.startsWith('OUT_')?P4_ART[rid]:null);return{p,rid,art,w:art?.width||1000,h:art?.height||760};}),colWidths=[],rowHeights=[];let markup='';
+ const columns=Math.max(1,Math.ceil(Math.sqrt(scene.places.length))),footprints=[],plots=[],plans=scene.places.map(p=>{const rid=recipeId(p.type),art=LAYOUT_SIZES[rid]?.[layoutSize(p.size)];return{p,rid,art,w:art?.width||1000,h:art?.height||760};}),colWidths=[],rowHeights=[];let markup='';
  for(const[i,z]of plans.entries()){const c=i%columns,r=Math.floor(i/columns);colWidths[c]=Math.max(colWidths[c]||0,z.w);rowHeights[r]=Math.max(rowHeights[r]||0,z.h);}
  for(const[i,z]of plans.entries()){
   const{p,rid,art,w:cellW,h:cellH}=z,x=colWidths.slice(0,i%columns).reduce((a,b)=>a+b,0),y=rowHeights.slice(0,Math.floor(i/columns)).reduce((a,b)=>a+b,0),prefix='out'+i+'-',objects=[],occupied=[];
@@ -128,7 +128,7 @@ function outdoorMap(scene,d){
   const safeBox=(box,props=true)=>inPlot(box)&&!terrain.blocked(box)&&!occupied.some(f=>(props||f.blocksActor)&&outdoorOverlap(box,f.groundBounds,2));
   const add=(item,box,svg,kind,base)=>{
    const groundBounds=outdoorGroundBox(box,kind),blocksActor=['tree','building','wall','landscape'].includes(kind)||largeFurniture(item.item||'',item.name,CATALOG[item.item]);
-   const f={id:item.id,sourceId:item.sourceId||item.id,name:item.name,item:item.item,placeId:p.id,bounds:[x+box[0],y+box[1],box[2],box[3]],groundBounds:[x+groundBounds[0],y+groundBounds[1],groundBounds[2],groundBounds[3]],kind,blocksActor,surface:CATALOG[item.item]?.surface,parentId:item.boundSupportId};
+   const f={id:item.id,sourceId:item.sourceId||item.id,name:item.name,item:item.item,placeId:p.id,bounds:[x+box[0],y+box[1],box[2],box[3]],groundBounds:[x+groundBounds[0],y+groundBounds[1],groundBounds[2],groundBounds[3]],kind,blocksActor,surface:CATALOG[item.item]?.surface};
    footprints.push(f);occupied.push({...f,bounds:box,groundBounds});supports.push(f);
    const forbidden=kind==='tree'?'tree':kind==='building'?'building':kind==='wall'?'wall':kind==='landscape'?'landscape':null;
    const attrs=`${base?'data-instance':'data-rp-instance'}="${escapeXML(item.id)}" data-source-id="${escapeXML(item.sourceId||item.id)}" data-count="1" data-kind="${kind}" data-footprint="${f.bounds.join(' ')}" ${forbidden?`data-forbidden="${forbidden}"`:''} ${kind==='building'?`data-occluder="building" data-layer="1" data-depth="${y+box[1]+box[3]}"`:''}`;
@@ -138,7 +138,7 @@ function outdoorMap(scene,d){
   const extras=[];
   for(const item of p.inventory.objects){
    const node=art?.objects.find(n=>n.id===item.id),count=Math.max(0,item.count??1);
-   if(node&&count){add(item,node.bounds,namespaceArt(editedArtwork(art.defs+node.svg,item,p.inventory.diagnostics),'base'+i+'-'+art.objects.indexOf(node)+'-'),outdoorKind(node.item,item.name),true);}
+   if(node&&count){add(item,node.bounds,namespaceArt(node.svg,'base'+i+'-'+art.objects.indexOf(node)+'-'),outdoorKind(node.item,item.name),true);}
    if(count>(node?1:0))extras.push({...item,count:count-(node?1:0)});
   }
   // Deterministic candidate field covers the same ground as the supplied scene.
@@ -153,23 +153,15 @@ function outdoorMap(scene,d){
    let width=kind==='building'?140:kind==='tree'?90:kind==='wall'?110:largeFurniture(assetId,item.name,asset)?64:28,height=width*Math.min(2,Math.max(.3,vb[3]/Math.max(1,vb[2])));
    const desired=zonePoint([0,0,cellW,cellH],item.zone),seed=[...String(item.id)].reduce((n,c)=>((n*31+c.charCodeAt(0))>>>0),0);
    const ordered=[...candidates].sort((a,b)=>Math.hypot(a.x+width/2-desired.x,a.y+height/2-desired.y)-Math.hypot(b.x+width/2-desired.x,b.y+height/2-desired.y)||((a.x*17+a.y*13+seed)%37)-((b.x*17+b.y*13+seed)%37));
-   let drawn=0;const mount=item.mount||(item.zone==='surface'?'surface':asset?.mount)||'floor';
-   const parentId=item.parentId||item.supportId,parent=parentId?supports.find(f=>f.id===parentId||f.sourceId===parentId):null;
+   let drawn=0;const mount=item.mount==='wall'||asset?.mount==='wall'?'wall':'floor';
    for(let n=0;n<Math.min(item.count,2000);n++){
     let box;
-    if(mount==='surface'||parentId||item.placement==='on_landscape'){
-     if(!parent||(item.placement!=='on_landscape'&&!parent.surface)){p.inventory.diagnostics.push('unresolved-surface:'+item.name);break;}
-     const local={...parent,bounds:[parent.bounds[0]-x,parent.bounds[1]-y,parent.bounds[2],parent.bounds[3]]};
-     if(mount==='surface'){const region=supportSurface(local).bounds,scale=Math.min(1,region[2]/(4*width),region[3]/(4*height));width*=scale;height*=scale;}
-     box=surfaceSlot(local,width,height,item.zone,occupied);if(!box||!inPlot(box))break;
-    }else if(mount==='wall'){
-     p.inventory.diagnostics.push('unresolved-surface:'+item.name);break;
-    }else{
+    {
      const point=ordered.find(q=>{const b=[q.x,q.y,width,height],ground=outdoorGroundBox(b,kind);return inPlot(b)&&safeBox(ground)&&!occupied.some(f=>outdoorOverlap(b,f.bounds));});
      if(!point)break;box=[point.x,point.y,width,height];
     }
     const id=item.id+':extra:'+n,content=asset&&!item.informationOnly?`<svg x="${box[0]}" y="${box[1]}" width="${width}" height="${height}" viewBox="${vb.join(' ')}"><title>${escapeXML(item.name)}</title>${namespaceArt(asset.svg.replace(/^<svg\b[^>]*>/,'').replace(/<\/svg>\s*$/,''),'extra'+index+'-'+n+'-')}</svg>`:`<g data-prop-fallback="true"><path d="M${box[0]} ${box[1]+12}l12 -12 12 12 -12 12Z" fill="#d8c6a6" stroke="#8d7658"/><title>${escapeXML(item.name)}</title></g>`;
-    add({...item,id,sourceId:item.id,item:assetId,boundSupportId:parent?.id},box,content,kind,false);drawn++;
+    add({...item,id,sourceId:item.id,item:assetId},box,content,kind,false);drawn++;
    }
    if(drawn<item.count){summary+=item.count-drawn;p.inventory.diagnostics.push('outdoor-count-summary:'+item.name+':'+(item.count-drawn));}
   }
@@ -184,17 +176,10 @@ function outdoorMap(scene,d){
 }
 function outdoorActorPoint(map,place,actor){
  const desired=zonePoint(place.bounds,actor.zone),supports=place.geometry.supports||[];
- if(['on_furniture','on_landscape','in_wall'].includes(actor.placement)){
-  const support=supports.find(f=>(f.id===actor.supportId||f.sourceId===actor.supportId)&&(actor.placement!=='in_wall'||f.kind==='wall'));
-  if(!support){place.inventory.diagnostics.push('unresolved-support:'+actor.supportId);return{...desired,anchorOnly:true,noFeet:true};}
-  const target=zonePoint(support.bounds,actor.zone),samples=support.samplePoints?.map(([x,y])=>({x:x+support.offset[0],y:y+support.offset[1]}));
-  const point=samples?.length?samples.reduce((best,p)=>Math.hypot(p.x-target.x,p.y-target.y)<Math.hypot(best.x-target.x,best.y-target.y)?p:best):target;
-  return{...point,noFeet:true};
- }
  // An explicit indoor RP location remains attached to its building on an
  // exterior scene. Do not move it out to the yard or invent an interior floor.
  if(actor.spot==='inside'){
-  const buildings=supports.filter(f=>f.kind==='building'),building=actor.supportId?buildings.find(f=>f.id===actor.supportId||f.sourceId===actor.supportId):buildings.length===1?buildings[0]:null;
+  const buildings=supports.filter(f=>f.kind==='building'),building=buildings.length===1?buildings[0]:null;
   if(building){place.inventory.diagnostics.push('outdoor-interior-anchor:'+place.id);return{...zonePoint(building.bounds,actor.zone),anchorOnly:true,noFeet:true};}
   place.inventory.diagnostics.push('unresolved-support:indoor-building');
  }
@@ -249,11 +234,6 @@ function indoorActorPoint(map,place,actor){
  const bounds=place.bounds,room=place.geometry?.room;
  const obstacles=(map.footprints||[]).filter(f=>f.placeId===place.id&&f.blocksActor);
  const desired=zonePoint(bounds,actor.zone);
- if(actor.placement==='in_wall')return{x:bounds[0]+bounds[2]/2,y:bounds[1],noFeet:true};
- if(actor.placement==='on_furniture'){
-  const support=obstacles.find(f=>f.id===actor.supportId);
-  return support?{...zonePoint(support.bounds),noFeet:true}:{...desired,anchorOnly:true,noFeet:true};
- }
  const inside=p=>room?.circular?Math.hypot(p.x-room.x-room.w/2,p.y-room.y-room.h/2)+7<room.w/2:p.x>=bounds[0]+26&&p.x<=bounds[0]+bounds[2]-9&&p.y>=bounds[1]+9&&p.y<=bounds[1]+bounds[3]-46;
  const points=[desired];for(const u of [.15,.3,.5,.7,.85])for(const v of [.15,.3,.5,.7,.85])points.push({x:bounds[0]+bounds[2]*u,y:bounds[1]+bounds[3]*v});
  points.sort((a,b)=>Math.hypot(a.x-desired.x,a.y-desired.y)-Math.hypot(b.x-desired.x,b.y-desired.y));
