@@ -52,30 +52,10 @@ function visualAsset(prop){
  }
  return {id:'rp-visual',svg:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">${body}</svg>`,viewBox:[0,0,100,100],mount:'floor'};
 }
-function editedArtwork(markup,item,diagnostics){
- if(!item.childChanges?.length)return markup;
- const doc=new DOMParser().parseFromString('<svg xmlns="http://www.w3.org/2000/svg">'+markup+'</svg>','image/svg+xml');
- for(const p of finalChildChanges(item.childChanges)){
-  const ref=markup.match(/<use\b[^>]*href="#([^"]+)"/);const target=ref?doc.getElementById(ref[1])||doc:doc;
-  const nodes=[...target.querySelectorAll('[data-prop],[data-piece]')].filter(n=>n.getAttribute('data-prop')===p.childId||n.getAttribute('data-piece')===p.childId);
-  const outer=nodes.filter(n=>!nodes.some(other=>other!==n&&other.contains(n)));
-  if(outer.length!==1){diagnostics.push('unresolved-child:'+item.id+':'+p.childId);continue;}
-  const node=outer[0];
-  if(p.count>1){
-   const shown=Math.min(p.count,32),columns=Math.ceil(Math.sqrt(shown));
-   const localId=node.getAttribute('id')||'child-'+item.id.replace(/[^a-zA-Z0-9_-]/g,'-')+'-'+p.childId.replace(/[^a-zA-Z0-9_-]/g,'-');node.setAttribute('id',localId);
-   for(let i=1;i<shown;i++){const use=doc.createElementNS('http://www.w3.org/2000/svg','use');use.setAttribute('href','#'+localId);use.setAttribute('data-prop',p.childId);use.setAttribute('data-child-copy',String(i));use.setAttribute('transform',`translate(${i%columns*12} ${Math.floor(i/columns)*12})`);node.parentNode.append(use);}
-   if(p.count>shown)diagnostics.push('child-count-summary:'+p.childId+':'+(p.count-shown)+' additional; total '+p.count);
-  }
-  if(p.count===0||['removed','missing','destroyed'].includes(p.state))node.remove();
-  else {node.setAttribute('data-state',p.state||'intact');if(p.state&&p.state!=='intact'){node.setAttribute('opacity','.55');const t=doc.createElementNS('http://www.w3.org/2000/svg','title');t.textContent=p.name+' · '+p.state;node.append(t);}}
- }
- return doc.documentElement.innerHTML;
-}
 // Furniture stays upright. Only uniform scale/translation is used; no wall shear.
 function layoutSize(value){return ({small:'S',medium:'M',large:'L',S:'S',M:'M',L:'L'})[value]||'M';}
 function furnitureLayout(place){
- const inventory=place.inventory||composeRoom(place),art=(typeof LAYOUT_SIZES!=='undefined'&&LAYOUT_SIZES[inventory.recipeId]?.[layoutSize(place.size)])||P4_ART[inventory.recipeId];
+ const inventory=place.inventory||composeRoom(place),art=(typeof LAYOUT_SIZES!=='undefined'&&LAYOUT_SIZES[inventory.recipeId]?.[layoutSize(place.size)]);
  const nodes=new Map((art?.objects||[]).map(x=>[x.id,x]));const objects=[],extra=[];
  const north=art?.source==='FINAL'?[]:art?.objects.filter(o=>o.bounds[1]+o.bounds[3]<5&&!/portrait|blackboard|banner|crest/.test(o.item))||[];
  const band=north.length?105:20;
@@ -115,7 +95,7 @@ function drawFurniture(place,prefix,room,layout,door){
   const [bx,by,bw,bh]=o.bounds;const box=[x+bx*scale,y+by*scale,bw*scale,bh*scale];
   const asset=CATALOG[o.node.item];
   footprints.push({id:o.item.id,name:o.item.name,item:o.node.item,bounds:box,blocksActor:largeFurniture(o.node.item,o.item.name,asset),surface:asset?.surface});
-  markup+=`<g data-instance="${escapeXML(o.item.id)}" data-state="${escapeXML(o.item.state||'intact')}" data-footprint="${box.join(' ')}" pointer-events="none" transform="translate(${x} ${y}) scale(${scale})"><g transform="translate(${o.dx} ${o.dy}) scale(${o.magnify})">${o.item.childChanges?.length?namespaceArt(editedArtwork(layout.art.defs+o.node.svg,o.item,place.inventory.diagnostics),prefix+o.item.id.replace(/[^a-z0-9]/gi,'-')+'-'):namespaceArt(o.node.svg,prefix)}</g></g>`;
+  markup+=`<g data-instance="${escapeXML(o.item.id)}" data-state="${escapeXML(o.item.state||'intact')}" data-footprint="${box.join(' ')}" pointer-events="none" transform="translate(${x} ${y}) scale(${scale})"><g transform="translate(${o.dx} ${o.dy}) scale(${o.magnify})">${namespaceArt(o.node.svg,prefix)}</g></g>`;
  }
  for(const o of layout.objects)if(o.item.state&&o.item.state!=='intact'){const b=footprints.find(f=>f.id===o.item.id)?.bounds;if(b)markup+=`<g pointer-events="none"><title>${escapeXML(o.item.name+' · '+o.item.state)}</title><path d="M${b[0]} ${b[1]}l8 8m-8 0l8 -8" stroke="#783d45" stroke-width="2"/></g>`;}
  const placed=placeExtraProps(place,prefix,room,layout.extra,door,footprints);
@@ -125,21 +105,6 @@ function drawFurniture(place,prefix,room,layout,door){
 
 function largeFurniture(item,name,asset){
  return asset?.mount!=='wall'&&/table|desk|cabinet|cupboard|bookcase|shelf|shelves|storage|bed|sofa|counter|bench|bàn|tủ|kệ|giường|ghế băng/.test(key(item+' '+name));
-}
-// Surface slots use the actual support surface metadata and previously used slots.
-function supportSurface(parent){
- const [x,y,w,h]=parent.bounds,a=CATALOG[parent.item],ref=a?.occupancy||{x:0,y:0,width:a?.viewBox?.[2]||w,height:a?.viewBox?.[3]||h},surface=parent.surface;
- if(!surface)return{bounds:[x,y,w,h],contains:b=>b[0]>=x&&b[1]>=y&&b[0]+b[2]<=x+w&&b[1]+b[3]<=y+h};
- const sx=w/ref.width,sy=h/ref.height;
- if(Number.isFinite(surface.r)){const cx=x+(surface.cx-ref.x)*sx,cy=y+(surface.cy-ref.y)*sy,rx=surface.r*sx,ry=surface.r*sy;return{bounds:[cx-rx,cy-ry,2*rx,2*ry],contains:b=>[[0,0],[1,0],[0,1],[1,1]].every(([u,v])=>((b[0]+b[2]*u-cx)/rx)**2+((b[1]+b[3]*v-cy)/ry)**2<=1)};}
- const b=[x+(surface.x-ref.x)*sx,y+(surface.y-ref.y)*sy,surface.width*sx,surface.height*sy];return{bounds:b,contains:q=>q[0]>=b[0]&&q[1]>=b[1]&&q[0]+q[2]<=b[0]+b[2]&&q[1]+q[3]<=b[1]+b[3]};
-}
-function surfaceSlot(parent,width,height,zone,placed){
- const region=supportSurface(parent),[x,y,w,h]=region.bounds,desired=zonePoint(region.bounds,zone),points=[{x:desired.x-width/2,y:desired.y-height/2}];
- for(let py=y+1;py+height<=y+h-1;py+=Math.max(3,height/3))for(let px=x+1;px+width<=x+w-1;px+=Math.max(3,width/3))points.push({x:px,y:py});
- points.sort((a,b)=>Math.hypot(a.x+width/2-desired.x,a.y+height/2-desired.y)-Math.hypot(b.x+width/2-desired.x,b.y+height/2-desired.y));
- const p=points.find(p=>{const b=[p.x,p.y,width,height];return region.contains(b)&&!placed.some(f=>f.parentId===parent.id&&b[0]<f.bounds[0]+f.bounds[2]+1&&b[0]+b[2]+1>f.bounds[0]&&b[1]<f.bounds[1]+f.bounds[3]+1&&b[1]+b[3]+1>f.bounds[1]);});
- return p?[p.x,p.y,width,height]:null;
 }
 function placeExtraProps(place,prefix,room,props,door,base){
  const footprints=[],occupied=base.map(f=>f.bounds),diagnostics=place.inventory.diagnostics;
@@ -152,23 +117,20 @@ function placeExtraProps(place,prefix,room,props,door,base){
   const asset=CATALOG[prop.item||propAliases[key(prop.name)]]||(matches.length===1?matches[0]:null)||visualAsset(prop);
   if(prop.visual&&!visualAsset(prop))diagnostics.push('invalid-visual:'+prop.name);
   const ref=asset?.occupancy,vb=ref?[ref.x,ref.y,ref.width,ref.height]:asset?.viewBox||[0,0,40,40];
-  const mount=prop.mount||(prop.zone==='surface'?'surface':asset?.mount)||'floor';const surfaces=base.filter(f=>f.surface&&/table|desk|counter|bàn/.test(key(f.item+' '+f.name)));const parent=prop.parentId?base.find(f=>f.id===prop.parentId):surfaces.length===1?surfaces[0]:null;
+  const mount=prop.mount==='wall'||asset?.mount==='wall'?'wall':'floor';
   const desired=zonePoint([room.x,room.y,room.w,room.h],prop.zone);
   const count=Number.isInteger(prop.count)&&prop.count>=0?prop.count:1;
   let drawn=0;
   for(let n=0;n<count;n++){
    let width=largeFurniture(prop.item||'',prop.name,asset)?48:22,height=width*Math.min(2,Math.max(.3,vb[3]/Math.max(vb[2],1)));
    let box;
-   if(mount==='surface'||prop.parentId){
-    if(!parent||!parent.surface){diagnostics.push('unresolved-surface:'+prop.name);break;}
-    const region=supportSurface(parent).bounds,scale=Math.min(1,region[2]/(4*width),region[3]/(4*height));width*=scale;height*=scale;box=surfaceSlot(parent,width,height,prop.zone,footprints);if(!box)break;
-   }else{
+   {
     const ordered=[...candidates].sort((a,b)=>Math.hypot(a.x-desired.x,a.y-desired.y)-Math.hypot(b.x-desired.x,b.y-desired.y));
     const point=ordered.find(p=>{const b=[p.x,p.y,width,height];return valid(b)&&!occupied.some(o=>overlap(b,o))&&(mount!=='wall'||Math.min(p.x-room.x,room.x+room.w-p.x,p.y-room.y,room.y+room.h-p.y)<45);});
     if(!point)break;box=[point.x,point.y,width,height];
    }
    occupied.push(box);const id=prop.id+':'+n;
-   footprints.push({id,name:prop.name,item:prop.item,bounds:box,parentId:mount==='surface'||prop.parentId?parent?.id:null,blocksActor:mount==='floor'&&largeFurniture(prop.item||'',prop.name,asset),surface:asset?.surface});
+   footprints.push({id,name:prop.name,item:prop.item,bounds:box,blocksActor:mount==='floor'&&largeFurniture(prop.item||'',prop.name,asset),surface:asset?.surface});
    if(asset&&!prop.informationOnly)svg+=`<svg data-rp-instance="${escapeXML(id)}" data-state="${escapeXML(prop.state||'intact')}" pointer-events="none" x="${box[0]}" y="${box[1]}" width="${box[2]}" height="${box[3]}" viewBox="${vb.join(' ')}" overflow="visible"><title>${escapeXML(prop.name)}</title>${namespaceArt(asset.svg.replace(/^<svg\b[^>]*>/,'').replace(/<\/svg>\s*$/,''),prefix+'extra'+i+'-'+n+'-')}</svg>`;
    else svg+=`<g data-prop-fallback="true" pointer-events="none"><path d="M${box[0]+11} ${box[1]}l11 11 -11 11 -11 -11Z" fill="#d8c6a6" stroke="#8d7658"/><title>${escapeXML(prop.name)}</title></g>`;
    drawn++;
