@@ -25,6 +25,7 @@ function resolve(d){
    const focus=worldSite.rooms.filter(room=>fold(room.name)===roomLabel&&(!explicitLevel||room.level===explicitLevel));
    const level=explicitLevel||(focus.length===1?focus[0].level:null);
    if(focus.length===1)worldMode=focus[0].type?.startsWith('OUT_')?'outdoor':'indoor';
+   else if(worldSite.rooms.length===1)worldMode=worldSite.rooms[0].type?.startsWith('OUT_')?'outdoor':'indoor';
    places=worldSite.rooms.filter(room=>(!room.conditional||focus.includes(room))&&(!level||room.level===level)).map(room=>({...room}));
    if(focus.length===1)bindings[d.pcPlace]=focus[0].id;
    if(!places.length)places=[{id:worldSite.id,name:worldSite.name,description:worldSite.description||'',type:'LOUNGE'}];

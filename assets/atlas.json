@@ -6032,7 +6032,7 @@
           "owner": "TOWER-NORTH-DIVINATION-N",
           "level": "Approach",
           "type": "PASSAGE_PROPS",
-          "description": "Spiral Stair — Module mép tường: tranh, ghế, tượng, đèn.",
+          "description": "Module mép tường: tranh, ghế, tượng, đèn.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -6059,7 +6059,7 @@
           "owner": "TOWER-NORTH-DIVINATION-N",
           "level": "Approach",
           "type": "ARCHIVE",
-          "description": "Star-Chart Archive — Tủ hồ sơ, kệ và bàn tra cứu.",
+          "description": "Tủ hồ sơ, kệ và bàn tra cứu.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -6085,7 +6085,7 @@
           "owner": "TOWER-NORTH-DIVINATION-N",
           "level": "Top",
           "type": "DIVINATION_CLASSROOM",
-          "description": "Divination Classroom — Bàn trà, đệm nhung, tách trà, quả cầu, rèm và kệ sách theo cung tháp.",
+          "description": "Bàn trà, đệm nhung, tách trà, quả cầu, rèm và kệ sách theo cung tháp.",
           "size": "L",
           "architecture": {
             "floor": "wood",
@@ -6113,7 +6113,7 @@
           "owner": "TOWER-NORTH-DIVINATION-N",
           "level": "Top",
           "type": "STORAGE",
-          "description": "Divination Store — Kệ, rương, thùng; lối đi giữa.",
+          "description": "Kệ, rương, thùng; lối đi giữa.",
           "size": "S",
           "architecture": {
             "floor": "wood",
@@ -6148,7 +6148,7 @@
           "owner": "TOWER-ASTRONOMY-NW",
           "level": "Base",
           "type": "PASSAGE_PROPS",
-          "description": "Foot Corridor — Module mép tường: tranh, ghế, tượng, đèn.",
+          "description": "Module mép tường: tranh, ghế, tượng, đèn.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -6175,7 +6175,7 @@
           "owner": "TOWER-ASTRONOMY-NW",
           "level": "Base",
           "type": "UTILITY_ROOM",
-          "description": "Telescope Maintenance — Lò, ống, van, dụng cụ bảo trì.",
+          "description": "Lò, ống, van, dụng cụ bảo trì.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -6201,7 +6201,7 @@
           "owner": "TOWER-ASTRONOMY-NW",
           "level": "Mid",
           "type": "RESEARCH_LAB",
-          "description": "Observation Prep — Bàn nghiên cứu, thiết bị, bản đồ và sách.",
+          "description": "Bàn nghiên cứu, thiết bị, bản đồ và sách.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -6230,7 +6230,7 @@
           "owner": "TOWER-ASTRONOMY-NW",
           "level": "Mid",
           "type": "STORAGE",
-          "description": "Star-Map Store — Kệ, rương, thùng; lối đi giữa.",
+          "description": "Kệ, rương, thùng; lối đi giữa.",
           "size": "S",
           "architecture": {
             "floor": "wood",
@@ -6257,7 +6257,7 @@
           "owner": "TOWER-ASTRONOMY-NW",
           "level": "Top",
           "type": "ASTRONOMY_OBSERVATORY",
-          "description": "Astronomy Classroom — Kính đồng, vòng chia độ, trạm quan sát, bản đồ sao và tủ dụng cụ.",
+          "description": "Kính đồng, vòng chia độ, trạm quan sát, bản đồ sao và tủ dụng cụ.",
           "size": "L",
           "architecture": {
             "floor": "tile",
@@ -6284,7 +6284,7 @@
           "owner": "TOWER-ASTRONOMY-NW",
           "level": "Top",
           "type": "ASTRONOMY_OBSERVATORY",
-          "description": "Observatory — Kính đồng, vòng chia độ, trạm quan sát, bản đồ sao và tủ dụng cụ.",
+          "description": "Kính đồng, vòng chia độ, trạm quan sát, bản đồ sao và tủ dụng cụ.",
           "size": "L",
           "architecture": {
             "floor": "tile",
@@ -6319,7 +6319,7 @@
           "owner": "TOWER-HEADMASTER-S-N-CENTER",
           "level": "Entry",
           "type": "PASSAGE_PROPS",
-          "description": "Gargoyle Spiral Stair — Module mép tường: tranh, ghế, tượng, đèn.",
+          "description": "Module mép tường: tranh, ghế, tượng, đèn.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -6346,7 +6346,7 @@
           "owner": "TOWER-HEADMASTER-S-N-CENTER",
           "level": "Entry",
           "type": "RECEPTION",
-          "description": "Waiting Room — Quầy tiếp nhận, ghế chờ và bảng tin.",
+          "description": "Quầy tiếp nhận, ghế chờ và bảng tin.",
           "size": "M",
           "architecture": {
             "floor": "tile",
@@ -6375,7 +6375,7 @@
           "owner": "TOWER-HEADMASTER-S-N-CENTER",
           "level": "Top",
           "type": "HEADMASTER_OFFICE",
-          "description": "Headmaster's Office — Ba gian tròn nối nhau; thư viện, bàn Hiệu trưởng, khu Pensieve và tủ ký ức.",
+          "description": "Ba gian tròn nối nhau; thư viện, bàn Hiệu trưởng, khu Pensieve và tủ ký ức.",
           "size": "L",
           "architecture": {
             "floor": "herringbone",
@@ -6404,7 +6404,7 @@
           "owner": "TOWER-HEADMASTER-S-N-CENTER",
           "level": "Top",
           "type": "RESEARCH_LAB",
-          "description": "Instrument Room — Bàn nghiên cứu, thiết bị, bản đồ và sách.",
+          "description": "Bàn nghiên cứu, thiết bị, bản đồ và sách.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -6433,7 +6433,7 @@
           "owner": "TOWER-HEADMASTER-S-N-CENTER",
           "level": "Top",
           "type": "ARCHIVE",
-          "description": "Archive — Tủ hồ sơ, kệ và bàn tra cứu.",
+          "description": "Tủ hồ sơ, kệ và bàn tra cứu.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -6467,7 +6467,7 @@
           "owner": "TOWER-CLOCK-TOWER-SW",
           "level": "Base",
           "type": "ENTRANCE_VESTIBULE",
-          "description": "Clock Tower Hall — Trục vào thoáng, bảng chỉ dẫn và hai cụm ghế mép tường.",
+          "description": "Trục vào thoáng, bảng chỉ dẫn và hai cụm ghế mép tường.",
           "size": "M",
           "architecture": {
             "floor": "octagon",
@@ -6494,7 +6494,7 @@
           "owner": "TOWER-CLOCK-TOWER-SW",
           "level": "Base",
           "type": "OFFICE",
-          "description": "Timekeeper Room — Bàn chính, ghế khách, tủ và lò sưởi.",
+          "description": "Bàn chính, ghế khách, tủ và lò sưởi.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -6523,7 +6523,7 @@
           "owner": "TOWER-CLOCK-TOWER-SW",
           "level": "Mid",
           "type": "TOWER_CLOCKWORK",
-          "description": "Gearwork Chamber — Bộ truyền, khung đỡ, bánh răng, quả lắc; biến thể chuông có gông treo.",
+          "description": "Bộ truyền, khung đỡ, bánh răng, quả lắc; biến thể chuông có gông treo.",
           "size": "L",
           "architecture": {
             "floor": "wood",
@@ -6549,7 +6549,7 @@
           "owner": "TOWER-CLOCK-TOWER-SW",
           "level": "Mid",
           "type": "TOWER_CLOCKWORK",
-          "description": "Clock Maintenance — Bộ truyền, khung đỡ, bánh răng, quả lắc; biến thể chuông có gông treo.",
+          "description": "Bộ truyền, khung đỡ, bánh răng, quả lắc; biến thể chuông có gông treo.",
           "size": "L",
           "architecture": {
             "floor": "wood",
@@ -6575,7 +6575,7 @@
           "owner": "TOWER-CLOCK-TOWER-SW",
           "level": "Top",
           "type": "TOWER_CLOCKWORK",
-          "description": "Great Pendulum — Bộ truyền, khung đỡ, bánh răng, quả lắc; biến thể chuông có gông treo.",
+          "description": "Bộ truyền, khung đỡ, bánh răng, quả lắc; biến thể chuông có gông treo.",
           "size": "L",
           "architecture": {
             "floor": "wood",
@@ -6601,7 +6601,7 @@
           "owner": "TOWER-CLOCK-TOWER-SW",
           "level": "Top",
           "type": "CEREMONY_HALL",
-          "description": "Bell Check Chamber — Bục, bàn nghi lễ, ghế băng và lối giữa.",
+          "description": "Bục, bàn nghi lễ, ghế băng và lối giữa.",
           "size": "L",
           "architecture": {
             "floor": "tile",
@@ -6636,7 +6636,7 @@
           "owner": "TOWER-BELL-TOWER-N",
           "level": "Base",
           "type": "TOWER_CLOCKWORK",
-          "description": "Bell Gear Room — Bộ truyền, khung đỡ, bánh răng, quả lắc; biến thể chuông có gông treo.",
+          "description": "Bộ truyền, khung đỡ, bánh răng, quả lắc; biến thể chuông có gông treo.",
           "size": "L",
           "architecture": {
             "floor": "wood",
@@ -6662,7 +6662,7 @@
           "owner": "TOWER-BELL-TOWER-N",
           "level": "Top",
           "type": "TOWER_CLOCKWORK",
-          "description": "Belfry — Bộ truyền, khung đỡ, bánh răng, quả lắc; biến thể chuông có gông treo.",
+          "description": "Bộ truyền, khung đỡ, bánh răng, quả lắc; biến thể chuông có gông treo.",
           "size": "L",
           "architecture": {
             "floor": "wood",
@@ -6688,7 +6688,7 @@
           "owner": "TOWER-BELL-TOWER-N",
           "level": "Top",
           "type": "TOWER_CLOCKWORK",
-          "description": "Bell Control Room — Bộ truyền, khung đỡ, bánh răng, quả lắc; biến thể chuông có gông treo.",
+          "description": "Bộ truyền, khung đỡ, bánh răng, quả lắc; biến thể chuông có gông treo.",
           "size": "L",
           "architecture": {
             "floor": "wood",
@@ -6722,7 +6722,7 @@
           "owner": "TOWER-FACULTY-TOWER-S",
           "level": "Entry",
           "type": "ENTRANCE_VESTIBULE",
-          "description": "Faculty Entrance — Trục vào thoáng, bảng chỉ dẫn và hai cụm ghế mép tường.",
+          "description": "Trục vào thoáng, bảng chỉ dẫn và hai cụm ghế mép tường.",
           "size": "M",
           "architecture": {
             "floor": "octagon",
@@ -6749,7 +6749,7 @@
           "owner": "TOWER-FACULTY-TOWER-S",
           "level": "Entry",
           "type": "STUDY_ROOM",
-          "description": "Staff Duty Room — Bàn đọc theo nhóm, đèn và giá sách.",
+          "description": "Bàn đọc theo nhóm, đèn và giá sách.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -6778,7 +6778,7 @@
           "owner": "TOWER-FACULTY-TOWER-S",
           "level": "Mid",
           "type": "PASSAGE_PROPS",
-          "description": "Staff Quarters Corridor — Module mép tường: tranh, ghế, tượng, đèn.",
+          "description": "Module mép tường: tranh, ghế, tượng, đèn.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -6805,7 +6805,7 @@
           "owner": "TOWER-FACULTY-TOWER-S",
           "level": "Mid",
           "type": "LOUNGE",
-          "description": "Staff Lounge — Nhóm ghế trà, lò sưởi và góc đọc.",
+          "description": "Nhóm ghế trà, lò sưởi và góc đọc.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -6834,7 +6834,7 @@
           "owner": "TOWER-FACULTY-TOWER-S",
           "level": "Top",
           "type": "PASSAGE_PROPS",
-          "description": "Infirmary Link Corridor — Module mép tường: tranh, ghế, tượng, đèn.",
+          "description": "Module mép tường: tranh, ghế, tượng, đèn.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -6861,7 +6861,7 @@
           "owner": "TOWER-FACULTY-TOWER-S",
           "level": "Top",
           "type": "MEETING_CLUB",
-          "description": "Closed Staff Meeting Room — Bàn dài, ghế hai bên, bảng và tủ hoạt động.",
+          "description": "Bàn dài, ghế hai bên, bảng và tủ hoạt động.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -6900,7 +6900,7 @@
           "owner": "TOWER-DADA-TOWER-E",
           "level": "Base",
           "type": "ENTRANCE_VESTIBULE",
-          "description": "DADA Tower Hall — Trục vào thoáng, bảng chỉ dẫn và hai cụm ghế mép tường.",
+          "description": "Trục vào thoáng, bảng chỉ dẫn và hai cụm ghế mép tường.",
           "size": "M",
           "architecture": {
             "floor": "octagon",
@@ -6927,7 +6927,7 @@
           "owner": "TOWER-DADA-TOWER-E",
           "level": "Mid",
           "type": "MAGIC_PRACTICE",
-          "description": "Tower Wand-Practice Room — Vùng tập rộng, bia và giá dụng cụ.",
+          "description": "Vùng tập rộng, bia và giá dụng cụ.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -6955,7 +6955,7 @@
           "owner": "TOWER-DADA-TOWER-E",
           "level": "Top",
           "type": "PASSAGE_PROPS",
-          "description": "Upper DADA Corridor — Module mép tường: tranh, ghế, tượng, đèn.",
+          "description": "Module mép tường: tranh, ghế, tượng, đèn.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -6982,7 +6982,7 @@
           "owner": "TOWER-DADA-TOWER-E",
           "level": "Top",
           "type": "OFFICE",
-          "description": "Auxiliary Office — Bàn chính, ghế khách, tủ và lò sưởi.",
+          "description": "Bàn chính, ghế khách, tủ và lò sưởi.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -7021,7 +7021,7 @@
           "owner": "TOWER-GRAND-STAIRCASE-TOWER-CENTER",
           "level": "Base",
           "type": "PASSAGE_PROPS",
-          "description": "Grand Staircase — Module mép tường: tranh, ghế, tượng, đèn.",
+          "description": "Module mép tường: tranh, ghế, tượng, đèn.",
           "size": "L",
           "architecture": {
             "floor": "wood",
@@ -7048,7 +7048,7 @@
           "owner": "TOWER-GRAND-STAIRCASE-TOWER-CENTER",
           "level": "Base",
           "type": "PASSAGE_PROPS",
-          "description": "Stair Check Room — Module mép tường: tranh, ghế, tượng, đèn.",
+          "description": "Module mép tường: tranh, ghế, tượng, đèn.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -7075,7 +7075,7 @@
           "owner": "TOWER-GRAND-STAIRCASE-TOWER-CENTER",
           "level": "Mid",
           "type": "PASSAGE_PROPS",
-          "description": "Portrait Link Corridor — Module mép tường: tranh, ghế, tượng, đèn.",
+          "description": "Module mép tường: tranh, ghế, tượng, đèn.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -7102,7 +7102,7 @@
           "owner": "TOWER-GRAND-STAIRCASE-TOWER-CENTER",
           "level": "Mid",
           "type": "GUARDROOM",
-          "description": "Mid-Floor Guardroom — Bàn trực, tủ khóa và giá dụng cụ.",
+          "description": "Bàn trực, tủ khóa và giá dụng cụ.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -7130,7 +7130,7 @@
           "owner": "TOWER-GRAND-STAIRCASE-TOWER-CENTER",
           "level": "Top",
           "type": "STORAGE",
-          "description": "Directory Sign Store — Kệ, rương, thùng; lối đi giữa.",
+          "description": "Kệ, rương, thùng; lối đi giữa.",
           "size": "S",
           "architecture": {
             "floor": "wood",
@@ -7166,7 +7166,7 @@
           "owner": "AU-PC-HOME",
           "level": "Basement",
           "type": "UTILITY_ROOM",
-          "description": "Utility — Lò, ống, van, dụng cụ bảo trì.",
+          "description": "Lò, ống, van, dụng cụ bảo trì.",
           "size": "S",
           "architecture": {
             "floor": "wood",
@@ -7192,7 +7192,7 @@
           "owner": "AU-PC-HOME",
           "level": "Basement",
           "type": "LAUNDRY",
-          "description": "Laundry — Chậu giặt, bàn gấp, tủ vải và giá phơi.",
+          "description": "Chậu giặt, bàn gấp, tủ vải và giá phơi.",
           "size": "M",
           "architecture": {
             "floor": "tile",
@@ -7219,7 +7219,7 @@
           "owner": "AU-PC-HOME",
           "level": "Basement",
           "type": "STORAGE",
-          "description": "Store — Kệ, rương, thùng; lối đi giữa.",
+          "description": "Kệ, rương, thùng; lối đi giữa.",
           "size": "S",
           "architecture": {
             "floor": "wood",
@@ -7246,7 +7246,7 @@
           "owner": "AU-PC-HOME",
           "level": "Basement",
           "type": "WORKSHOP",
-          "description": "Workshop — Bàn thao tác, bảng dụng cụ và vật liệu.",
+          "description": "Bàn thao tác, bảng dụng cụ và vật liệu.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -7274,7 +7274,7 @@
           "owner": "AU-PC-HOME",
           "level": "F1",
           "type": "ENTRANCE_VESTIBULE",
-          "description": "Hall — Trục vào thoáng, bảng chỉ dẫn và hai cụm ghế mép tường.",
+          "description": "Trục vào thoáng, bảng chỉ dẫn và hai cụm ghế mép tường.",
           "size": "M",
           "architecture": {
             "floor": "octagon",
@@ -7301,7 +7301,7 @@
           "owner": "AU-PC-HOME",
           "level": "F1",
           "type": "LOUNGE",
-          "description": "Living — Nhóm ghế trà, lò sưởi và góc đọc.",
+          "description": "Nhóm ghế trà, lò sưởi và góc đọc.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -7330,7 +7330,7 @@
           "owner": "AU-PC-HOME",
           "level": "F1",
           "type": "DINING_ROOM",
-          "description": "Dining — Bàn ăn, ghế, tủ bát và đèn.",
+          "description": "Bàn ăn, ghế, tủ bát và đèn.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -7359,7 +7359,7 @@
           "owner": "AU-PC-HOME",
           "level": "F1",
           "type": "KITCHEN",
-          "description": "Kitchen — Bếp, chậu rửa, đảo sơ chế và thực phẩm.",
+          "description": "Bếp, chậu rửa, đảo sơ chế và thực phẩm.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -7388,7 +7388,7 @@
           "owner": "AU-PC-HOME",
           "level": "F1",
           "type": "OUT_BUILDING_YARD",
-          "description": "Rear Porch/Garden — Nhà chính, sân làm việc, hàng rào và vườn sau.",
+          "description": "Nhà chính, sân làm việc, hàng rào và vườn sau.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -7416,7 +7416,7 @@
           "owner": "AU-PC-HOME",
           "level": "F2",
           "type": "BEDROOM",
-          "description": "Master Bedroom — Giường, tủ, bàn nhỏ, rương và bàn viết.",
+          "description": "Giường, tủ, bàn nhỏ, rương và bàn viết.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -7445,7 +7445,7 @@
           "owner": "AU-PC-HOME",
           "level": "F2",
           "type": "STUDY_ROOM",
-          "description": "Study — Bàn đọc theo nhóm, đèn và giá sách.",
+          "description": "Bàn đọc theo nhóm, đèn và giá sách.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -7474,7 +7474,7 @@
           "owner": "AU-PC-HOME",
           "level": "F2",
           "type": "BATHROOM",
-          "description": "Bath — Bồn, lavabo, vệ sinh và khu khăn.",
+          "description": "Bồn, lavabo, vệ sinh và khu khăn.",
           "size": "M",
           "architecture": {
             "floor": "tile",
@@ -7502,7 +7502,7 @@
           "owner": "AU-PC-HOME",
           "level": "F3",
           "type": "STUDY_ROOM",
-          "description": "PC's Room — Bàn đọc theo nhóm, đèn và giá sách.",
+          "description": "Bàn đọc theo nhóm, đèn và giá sách.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -7531,7 +7531,7 @@
           "owner": "AU-PC-HOME",
           "level": "F3",
           "type": "BEDROOM",
-          "description": "Guest Room — Giường, tủ, bàn nhỏ, rương và bàn viết.",
+          "description": "Giường, tủ, bàn nhỏ, rương và bàn viết.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -7560,7 +7560,7 @@
           "owner": "AU-PC-HOME",
           "level": "Attic",
           "type": "STUDY_ROOM",
-          "description": "Hobby Room — Bàn đọc theo nhóm, đèn và giá sách.",
+          "description": "Bàn đọc theo nhóm, đèn và giá sách.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -7589,7 +7589,7 @@
           "owner": "AU-PC-HOME",
           "level": "Attic",
           "type": "STORAGE",
-          "description": "Loft Store — Kệ, rương, thùng; lối đi giữa.",
+          "description": "Kệ, rương, thùng; lối đi giữa.",
           "size": "S",
           "architecture": {
             "floor": "wood",
@@ -7625,7 +7625,7 @@
           "owner": "AU-CCC-07-18",
           "level": "",
           "type": "RECEPTION",
-          "description": "Anteroom — Quầy tiếp nhận, ghế chờ và bảng tin.",
+          "description": "Quầy tiếp nhận, ghế chờ và bảng tin.",
           "size": "M",
           "architecture": {
             "floor": "tile",
@@ -7654,7 +7654,7 @@
           "owner": "AU-CCC-07-18",
           "level": "",
           "type": "STUDY_ROOM",
-          "description": "Inter-House Mail Room — Bàn đọc theo nhóm, đèn và giá sách.",
+          "description": "Bàn đọc theo nhóm, đèn và giá sách.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -7683,7 +7683,7 @@
           "owner": "AU-CCC-07-18",
           "level": "",
           "type": "STUDY_ROOM",
-          "description": "Writing Room — Bàn đọc theo nhóm, đèn và giá sách.",
+          "description": "Bàn đọc theo nhóm, đèn và giá sách.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -7712,7 +7712,7 @@
           "owner": "AU-CCC-07-18",
           "level": "",
           "type": "ARCHIVE",
-          "description": "Records Store — Tủ hồ sơ, kệ và bàn tra cứu.",
+          "description": "Tủ hồ sơ, kệ và bàn tra cứu.",
           "size": "S",
           "architecture": {
             "floor": "wood",
@@ -7738,7 +7738,7 @@
           "owner": "AU-CCC-07-18",
           "level": "",
           "type": "MEETING_CLUB",
-          "description": "Inter-House Meeting Room — Bàn dài, ghế hai bên, bảng và tủ hoạt động.",
+          "description": "Bàn dài, ghế hai bên, bảng và tủ hoạt động.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -7776,7 +7776,7 @@
           "owner": "AU-LIAD-S-ATTIC",
           "level": "",
           "type": "BEDROOM",
-          "description": "Liad's Attic Loft — Giường, tủ, bàn nhỏ, rương và bàn viết.",
+          "description": "Giường, tủ, bàn nhỏ, rương và bàn viết.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -7814,7 +7814,7 @@
           "owner": "AU-WHITECAP-ESTATE",
           "level": "Grounds",
           "type": "OUT_BUILDING_YARD",
-          "description": "Villa — Nhà chính, sân làm việc, hàng rào và vườn sau.",
+          "description": "Nhà chính, sân làm việc, hàng rào và vườn sau.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -7842,7 +7842,7 @@
           "owner": "AU-WHITECAP-ESTATE",
           "level": "Grounds",
           "type": "OUT_GARDEN",
-          "description": "Garden — Vườn hoa, đường dạo, giàn nghỉ và cây điểm nhấn.",
+          "description": "Vườn hoa, đường dạo, giàn nghỉ và cây điểm nhấn.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -7871,7 +7871,7 @@
           "owner": "AU-WHITECAP-ESTATE",
           "level": "Grounds",
           "type": "OUT_WATERSIDE",
-          "description": "Pool — Bờ nước, lối dạo, bến nhỏ và cụm nghỉ.",
+          "description": "Bờ nước, lối dạo, bến nhỏ và cụm nghỉ.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -7897,7 +7897,7 @@
           "owner": "AU-WHITECAP-ESTATE",
           "level": "Grounds",
           "type": "OUT_WATERSIDE",
-          "description": "Beach — Bờ nước, lối dạo, bến nhỏ và cụm nghỉ.",
+          "description": "Bờ nước, lối dạo, bến nhỏ và cụm nghỉ.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -7923,7 +7923,7 @@
           "owner": "AU-WHITECAP-ESTATE",
           "level": "Grounds",
           "type": "ENTRANCE_VESTIBULE",
-          "description": "Guesthouse — Trục vào thoáng, bảng chỉ dẫn và hai cụm ghế mép tường.",
+          "description": "Trục vào thoáng, bảng chỉ dẫn và hai cụm ghế mép tường.",
           "size": "M",
           "architecture": {
             "floor": "octagon",
@@ -7950,7 +7950,7 @@
           "owner": "AU-WHITECAP-ESTATE",
           "level": "Grounds",
           "type": "OUT_BUILDING_YARD",
-          "description": "Coop — Nhà chính, sân làm việc, hàng rào và vườn sau.",
+          "description": "Nhà chính, sân làm việc, hàng rào và vườn sau.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -7978,7 +7978,7 @@
           "owner": "AU-WHITECAP-ESTATE",
           "level": "Grounds",
           "type": "OUT_WATERSIDE",
-          "description": "Dock — Bờ nước, lối dạo, bến nhỏ và cụm nghỉ.",
+          "description": "Bờ nước, lối dạo, bến nhỏ và cụm nghỉ.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -8004,7 +8004,7 @@
           "owner": "AU-WHITECAP-ESTATE",
           "level": "F1",
           "type": "ENTRANCE_VESTIBULE",
-          "description": "Hall — Trục vào thoáng, bảng chỉ dẫn và hai cụm ghế mép tường.",
+          "description": "Trục vào thoáng, bảng chỉ dẫn và hai cụm ghế mép tường.",
           "size": "M",
           "architecture": {
             "floor": "octagon",
@@ -8031,7 +8031,7 @@
           "owner": "AU-WHITECAP-ESTATE",
           "level": "F1",
           "type": "LOUNGE",
-          "description": "Living — Nhóm ghế trà, lò sưởi và góc đọc.",
+          "description": "Nhóm ghế trà, lò sưởi và góc đọc.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -8060,7 +8060,7 @@
           "owner": "AU-WHITECAP-ESTATE",
           "level": "F1",
           "type": "DINING_ROOM",
-          "description": "Dining — Bàn ăn, ghế, tủ bát và đèn.",
+          "description": "Bàn ăn, ghế, tủ bát và đèn.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -8089,7 +8089,7 @@
           "owner": "AU-WHITECAP-ESTATE",
           "level": "F1",
           "type": "LIBRARY",
-          "description": "Library — Dãy kệ, bàn đọc, thang và quầy quản lý.",
+          "description": "Dãy kệ, bàn đọc, thang và quầy quản lý.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -8118,7 +8118,7 @@
           "owner": "AU-WHITECAP-ESTATE",
           "level": "F1",
           "type": "STUDY_ROOM",
-          "description": "D&D Room — Bàn đọc theo nhóm, đèn và giá sách.",
+          "description": "Bàn đọc theo nhóm, đèn và giá sách.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -8147,7 +8147,7 @@
           "owner": "AU-WHITECAP-ESTATE",
           "level": "F1",
           "type": "KITCHEN",
-          "description": "Kitchen — Bếp, chậu rửa, đảo sơ chế và thực phẩm.",
+          "description": "Bếp, chậu rửa, đảo sơ chế và thực phẩm.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -8176,7 +8176,7 @@
           "owner": "AU-WHITECAP-ESTATE",
           "level": "F1",
           "type": "OUT_GARDEN",
-          "description": "Veranda — Vườn hoa, đường dạo, giàn nghỉ và cây điểm nhấn.",
+          "description": "Vườn hoa, đường dạo, giàn nghỉ và cây điểm nhấn.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -8205,7 +8205,7 @@
           "owner": "AU-WHITECAP-ESTATE",
           "level": "F1",
           "type": "STUDY_ROOM",
-          "description": "Sunroom — Bàn đọc theo nhóm, đèn và giá sách.",
+          "description": "Bàn đọc theo nhóm, đèn và giá sách.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -8234,7 +8234,7 @@
           "owner": "AU-WHITECAP-ESTATE",
           "level": "F2",
           "type": "BEDROOM",
-          "description": "Family/Guest Bedrooms — Giường, tủ, bàn nhỏ, rương và bàn viết.",
+          "description": "Giường, tủ, bàn nhỏ, rương và bàn viết.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -8263,7 +8263,7 @@
           "owner": "AU-WHITECAP-ESTATE",
           "level": "F2",
           "type": "LOUNGE",
-          "description": "Lounge — Nhóm ghế trà, lò sưởi và góc đọc.",
+          "description": "Nhóm ghế trà, lò sưởi và góc đọc.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -8292,7 +8292,7 @@
           "owner": "AU-WHITECAP-ESTATE",
           "level": "F2",
           "type": "OUT_GARDEN",
-          "description": "Balcony — Vườn hoa, đường dạo, giàn nghỉ và cây điểm nhấn.",
+          "description": "Vườn hoa, đường dạo, giàn nghỉ và cây điểm nhấn.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -8321,7 +8321,7 @@
           "owner": "AU-WHITECAP-ESTATE",
           "level": "Attic",
           "type": "ENTRANCE_VESTIBULE",
-          "description": "Loft — Trục vào thoáng, bảng chỉ dẫn và hai cụm ghế mép tường.",
+          "description": "Trục vào thoáng, bảng chỉ dẫn và hai cụm ghế mép tường.",
           "size": "M",
           "architecture": {
             "floor": "octagon",
@@ -8348,7 +8348,7 @@
           "owner": "AU-WHITECAP-ESTATE",
           "level": "Attic",
           "type": "STORAGE",
-          "description": "Store — Kệ, rương, thùng; lối đi giữa.",
+          "description": "Kệ, rương, thùng; lối đi giữa.",
           "size": "S",
           "architecture": {
             "floor": "wood",
@@ -8375,7 +8375,7 @@
           "owner": "AU-WHITECAP-ESTATE",
           "level": "Attic",
           "type": "STUDY_ROOM",
-          "description": "Hobby — Bàn đọc theo nhóm, đèn và giá sách.",
+          "description": "Bàn đọc theo nhóm, đèn và giá sách.",
           "size": "M",
           "architecture": {
             "floor": "wood",
@@ -8423,7 +8423,7 @@
               "type": "OUT_BUILDING_YARD",
               "conditional": false,
               "illustrative": true,
-              "description": "Charing Cross Road — Nhà chính, sân làm việc, hàng rào và vườn sau.",
+              "description": "Mặt bằng khu vực với khối công trình, đường tiếp cận và khoảng sân.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -8474,7 +8474,7 @@
               "type": "OUT_BUILDING_YARD",
               "conditional": false,
               "illustrative": true,
-              "description": "Tottenham Court Road & Café — Nhà chính, sân làm việc, hàng rào và vườn sau.",
+              "description": "Mặt bằng khu vực với khối công trình, đường tiếp cận và khoảng sân.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -8525,7 +8525,7 @@
               "type": "RECEPTION",
               "conditional": false,
               "illustrative": true,
-              "description": "Paddington — Quầy tiếp nhận, ghế chờ và bảng tin.",
+              "description": "Sảnh có quầy tiếp đón và khoảng chờ.",
               "size": "M",
               "architecture": {
                 "floor": "tile",
@@ -8576,7 +8576,7 @@
               "type": "OUT_BUILDING_YARD",
               "conditional": false,
               "illustrative": true,
-              "description": "10 Downing Street — Nhà chính, sân làm việc, hàng rào và vườn sau.",
+              "description": "Mặt bằng khu vực với khối công trình, đường tiếp cận và khoảng sân.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -8627,7 +8627,7 @@
               "type": "LOUNGE",
               "conditional": false,
               "illustrative": true,
-              "description": "Purge & Dowse — Nhóm ghế trà, lò sưởi và góc đọc.",
+              "description": "Không gian sinh hoạt với ghế nhóm, bàn nhỏ và lối vào thoáng.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -8681,7 +8681,7 @@
               "level": "G",
               "type": "RECEPTION",
               "conditional": false,
-              "description": "Reception — Quầy tiếp nhận, ghế chờ và bảng tin.",
+              "description": "Quầy tiếp nhận, ghế chờ và bảng tin.",
               "size": "M",
               "architecture": {
                 "floor": "tile",
@@ -8711,7 +8711,7 @@
               "level": "G",
               "type": "HOSPITAL_WARD",
               "conditional": false,
-              "description": "Artefact Accidents — Giường bệnh, rèm, tủ thuốc và bàn y tế.",
+              "description": "Giường bệnh, rèm, tủ thuốc và bàn y tế.",
               "size": "M",
               "architecture": {
                 "floor": "tile",
@@ -8740,7 +8740,7 @@
               "level": "F1",
               "type": "HOSPITAL_WARD",
               "conditional": false,
-              "description": "Creature Injuries — Giường bệnh, rèm, tủ thuốc và bàn y tế.",
+              "description": "Giường bệnh, rèm, tủ thuốc và bàn y tế.",
               "size": "M",
               "architecture": {
                 "floor": "tile",
@@ -8769,7 +8769,7 @@
               "level": "F2",
               "type": "HOSPITAL_WARD",
               "conditional": false,
-              "description": "Magical Bugs/Diseases — Giường bệnh, rèm, tủ thuốc và bàn y tế.",
+              "description": "Giường bệnh, rèm, tủ thuốc và bàn y tế.",
               "size": "M",
               "architecture": {
                 "floor": "tile",
@@ -8798,7 +8798,7 @@
               "level": "F3",
               "type": "HOSPITAL_WARD",
               "conditional": false,
-              "description": "Potion/Plant Poisoning — Giường bệnh, rèm, tủ thuốc và bàn y tế.",
+              "description": "Giường bệnh, rèm, tủ thuốc và bàn y tế.",
               "size": "M",
               "architecture": {
                 "floor": "tile",
@@ -8827,7 +8827,7 @@
               "level": "F4",
               "type": "HOSPITAL_WARD",
               "conditional": false,
-              "description": "Spell Damage — Giường bệnh, rèm, tủ thuốc và bàn y tế.",
+              "description": "Giường bệnh, rèm, tủ thuốc và bàn y tế.",
               "size": "M",
               "architecture": {
                 "floor": "tile",
@@ -8856,7 +8856,7 @@
               "level": "F4",
               "type": "HOSPITAL_WARD",
               "conditional": false,
-              "description": "Janus Thickey Ward — Giường bệnh, rèm, tủ thuốc và bàn y tế.",
+              "description": "Giường bệnh, rèm, tủ thuốc và bàn y tế.",
               "size": "M",
               "architecture": {
                 "floor": "tile",
@@ -8885,7 +8885,7 @@
               "level": "F5",
               "type": "PUBLIC_COUNTER",
               "conditional": false,
-              "description": "Tearoom — Quầy, kệ hàng và bàn khách.",
+              "description": "Quầy, kệ hàng và bàn khách.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -8915,7 +8915,7 @@
               "level": "F5",
               "type": "PUBLIC_COUNTER",
               "conditional": false,
-              "description": "Hospital Shop — Quầy, kệ hàng và bàn khách.",
+              "description": "Quầy, kệ hàng và bàn khách.",
               "size": "L",
               "architecture": {
                 "floor": "wood",
@@ -9005,7 +9005,7 @@
               "level": "Không xác định",
               "type": "ENTRANCE_VESTIBULE",
               "conditional": false,
-              "description": "Hall — Trục vào thoáng, bảng chỉ dẫn và hai cụm ghế mép tường.",
+              "description": "Trục vào thoáng, bảng chỉ dẫn và hai cụm ghế mép tường.",
               "size": "M",
               "architecture": {
                 "floor": "octagon",
@@ -9033,7 +9033,7 @@
               "level": "Không xác định",
               "type": "KITCHEN",
               "conditional": false,
-              "description": "Kitchen — Bếp, chậu rửa, đảo sơ chế và thực phẩm.",
+              "description": "Bếp, chậu rửa, đảo sơ chế và thực phẩm.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -9063,7 +9063,7 @@
               "level": "Không xác định",
               "type": "LOUNGE",
               "conditional": false,
-              "description": "Drawing Room — Nhóm ghế trà, lò sưởi và góc đọc.",
+              "description": "Nhóm ghế trà, lò sưởi và góc đọc.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -9093,7 +9093,7 @@
               "level": "Không xác định",
               "type": "BEDROOM",
               "conditional": false,
-              "description": "Sirius’s Bedroom — Giường, tủ, bàn nhỏ, rương và bàn viết.",
+              "description": "Giường, tủ, bàn nhỏ, rương và bàn viết.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -9123,7 +9123,7 @@
               "level": "Không xác định",
               "type": "BEDROOM",
               "conditional": false,
-              "description": "Regulus’s Bedroom — Giường, tủ, bàn nhỏ, rương và bàn viết.",
+              "description": "Giường, tủ, bàn nhỏ, rương và bàn viết.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -9153,7 +9153,7 @@
               "level": "Không xác định",
               "type": "BEDROOM",
               "conditional": true,
-              "description": "Other Bedrooms — Giường, tủ, bàn nhỏ, rương và bàn viết.",
+              "description": "Giường, tủ, bàn nhỏ, rương và bàn viết.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -9226,7 +9226,7 @@
               "type": "LOUNGE",
               "conditional": false,
               "illustrative": true,
-              "description": "11 Grimmauld Place — Nhóm ghế trà, lò sưởi và góc đọc.",
+              "description": "Không gian sinh hoạt với ghế nhóm, bàn nhỏ và lối vào thoáng.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -9277,7 +9277,7 @@
               "type": "LOUNGE",
               "conditional": false,
               "illustrative": true,
-              "description": "13 Grimmauld Place — Nhóm ghế trà, lò sưởi và góc đọc.",
+              "description": "Không gian sinh hoạt với ghế nhóm, bàn nhỏ và lối vào thoáng.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -9330,7 +9330,7 @@
               "level": "Nhà",
               "type": "BEDROOM",
               "conditional": false,
-              "description": "Riddle’s Room — Giường, tủ, bàn nhỏ, rương và bàn viết.",
+              "description": "Giường, tủ, bàn nhỏ, rương và bàn viết.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -9360,7 +9360,7 @@
               "level": "Nhà",
               "type": "OFFICE",
               "conditional": false,
-              "description": "Matron’s Office — Bàn chính, ghế khách, tủ và lò sưởi.",
+              "description": "Bàn chính, ghế khách, tủ và lò sưởi.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -9429,7 +9429,7 @@
               "level": "Nhà",
               "type": "ENTRANCE_VESTIBULE",
               "conditional": false,
-              "description": "Entrance / Stairs — Trục vào thoáng, bảng chỉ dẫn và hai cụm ghế mép tường.",
+              "description": "Trục vào thoáng, bảng chỉ dẫn và hai cụm ghế mép tường.",
               "size": "M",
               "architecture": {
                 "floor": "octagon",
@@ -9457,7 +9457,7 @@
               "level": "Nhà",
               "type": "LOUNGE",
               "conditional": false,
-              "description": "Living Room — Nhóm ghế trà, lò sưởi và góc đọc.",
+              "description": "Nhóm ghế trà, lò sưởi và góc đọc.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -9487,7 +9487,7 @@
               "level": "Nhà",
               "type": "DINING_ROOM",
               "conditional": false,
-              "description": "Dining Room — Bàn ăn, ghế, tủ bát và đèn.",
+              "description": "Bàn ăn, ghế, tủ bát và đèn.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -9517,7 +9517,7 @@
               "level": "Nhà",
               "type": "KITCHEN",
               "conditional": false,
-              "description": "Kitchen — Bếp, chậu rửa, đảo sơ chế và thực phẩm.",
+              "description": "Bếp, chậu rửa, đảo sơ chế và thực phẩm.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -9547,7 +9547,7 @@
               "level": "Nhà",
               "type": "BEDROOM",
               "conditional": false,
-              "description": "Harry’s Bedroom — Giường, tủ, bàn nhỏ, rương và bàn viết.",
+              "description": "Giường, tủ, bàn nhỏ, rương và bàn viết.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -9577,7 +9577,7 @@
               "level": "Nhà",
               "type": "BEDROOM",
               "conditional": false,
-              "description": "Dudley’s Bedroom — Giường, tủ, bàn nhỏ, rương và bàn viết.",
+              "description": "Giường, tủ, bàn nhỏ, rương và bàn viết.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -9607,7 +9607,7 @@
               "level": "Nhà",
               "type": "BEDROOM",
               "conditional": false,
-              "description": "Master Bedroom — Giường, tủ, bàn nhỏ, rương và bàn viết.",
+              "description": "Giường, tủ, bàn nhỏ, rương và bàn viết.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -9637,7 +9637,7 @@
               "level": "Dưới thang",
               "type": "STORAGE",
               "conditional": false,
-              "description": "Cupboard Under Stairs — Kệ, rương, thùng; lối đi giữa.",
+              "description": "Kệ, rương, thùng; lối đi giữa.",
               "size": "S",
               "architecture": {
                 "floor": "wood",
@@ -9665,7 +9665,7 @@
               "level": "Ngoài nhà",
               "type": "OUT_GARDEN",
               "conditional": false,
-              "description": "Garden — Vườn hoa, đường dạo, giàn nghỉ và cây điểm nhấn.",
+              "description": "Vườn hoa, đường dạo, giàn nghỉ và cây điểm nhấn.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -9722,7 +9722,7 @@
               "type": "LOUNGE",
               "conditional": false,
               "illustrative": true,
-              "description": "No. 7 Privet Drive — Nhóm ghế trà, lò sưởi và góc đọc.",
+              "description": "Không gian sinh hoạt với ghế nhóm, bàn nhỏ và lối vào thoáng.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -9773,7 +9773,7 @@
               "type": "OUT_BUILDING_YARD",
               "conditional": false,
               "illustrative": true,
-              "description": "Magnolia Crescent / Magnolia Road — Nhà chính, sân làm việc, hàng rào và vườn sau.",
+              "description": "Mặt bằng khu vực với khối công trình, đường tiếp cận và khoảng sân.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -9824,7 +9824,7 @@
               "type": "OUT_GARDEN",
               "conditional": false,
               "illustrative": true,
-              "description": "Little Whinging Park — Vườn hoa, đường dạo, giàn nghỉ và cây điểm nhấn.",
+              "description": "Khoảng vườn có đường dạo, bồn cây và vùng nghỉ thoáng.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -9876,7 +9876,7 @@
               "type": "LOUNGE",
               "conditional": false,
               "illustrative": true,
-              "description": "Mrs Figg’s House — Nhóm ghế trà, lò sưởi và góc đọc.",
+              "description": "Không gian sinh hoạt với ghế nhóm, bàn nhỏ và lối vào thoáng.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -9928,7 +9928,7 @@
               "level": "Sinh hoạt",
               "type": "KITCHEN",
               "conditional": false,
-              "description": "Kitchen — Bếp, chậu rửa, đảo sơ chế và thực phẩm.",
+              "description": "Bếp, chậu rửa, đảo sơ chế và thực phẩm.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -9958,7 +9958,7 @@
               "level": "Sinh hoạt",
               "type": "LOUNGE",
               "conditional": false,
-              "description": "Living Room — Nhóm ghế trà, lò sưởi và góc đọc.",
+              "description": "Nhóm ghế trà, lò sưởi và góc đọc.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -9988,7 +9988,7 @@
               "level": "Các tầng",
               "type": "BEDROOM",
               "conditional": false,
-              "description": "Master Bedroom — Giường, tủ, bàn nhỏ, rương và bàn viết.",
+              "description": "Giường, tủ, bàn nhỏ, rương và bàn viết.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -10018,7 +10018,7 @@
               "level": "Các tầng",
               "type": "BEDROOM",
               "conditional": false,
-              "description": "Ron’s Bedroom — Giường, tủ, bàn nhỏ, rương và bàn viết.",
+              "description": "Giường, tủ, bàn nhỏ, rương và bàn viết.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -10048,7 +10048,7 @@
               "level": "Các tầng",
               "type": "BEDROOM",
               "conditional": false,
-              "description": "Ginny’s Bedroom — Giường, tủ, bàn nhỏ, rương và bàn viết.",
+              "description": "Giường, tủ, bàn nhỏ, rương và bàn viết.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -10078,7 +10078,7 @@
               "level": "Các tầng",
               "type": "BEDROOM",
               "conditional": false,
-              "description": "Twins’ Bedroom — Giường, tủ, bàn nhỏ, rương và bàn viết.",
+              "description": "Giường, tủ, bàn nhỏ, rương và bàn viết.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -10108,7 +10108,7 @@
               "level": "Các tầng",
               "type": "BEDROOM",
               "conditional": true,
-              "description": "Other Bedrooms — Giường, tủ, bàn nhỏ, rương và bàn viết.",
+              "description": "Giường, tủ, bàn nhỏ, rương và bàn viết.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -10138,7 +10138,7 @@
               "level": "Mái",
               "type": "STORAGE",
               "conditional": false,
-              "description": "Attic — Kệ, rương, thùng; lối đi giữa.",
+              "description": "Kệ, rương, thùng; lối đi giữa.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -10166,7 +10166,7 @@
               "level": "Ngoài nhà",
               "type": "OUT_GARDEN",
               "conditional": false,
-              "description": "Garden — Vườn hoa, đường dạo, giàn nghỉ và cây điểm nhấn.",
+              "description": "Vườn hoa, đường dạo, giàn nghỉ và cây điểm nhấn.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -10196,7 +10196,7 @@
               "level": "Ngoài nhà",
               "type": "OUT_LAWN",
               "conditional": false,
-              "description": "Rear Pitch — Khoảng cỏ rộng; đường đi, ghế và dụng cụ ở rìa.",
+              "description": "Khoảng cỏ rộng; đường đi, ghế và dụng cụ ở rìa.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -10255,7 +10255,7 @@
               "level": "Nhà",
               "type": "LOUNGE",
               "conditional": false,
-              "description": "Living Room — Nhóm ghế trà, lò sưởi và góc đọc.",
+              "description": "Nhóm ghế trà, lò sưởi và góc đọc.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -10285,7 +10285,7 @@
               "level": "Nhà",
               "type": "BEDROOM",
               "conditional": false,
-              "description": "Luna’s Room — Giường, tủ, bàn nhỏ, rương và bàn viết.",
+              "description": "Giường, tủ, bàn nhỏ, rương và bàn viết.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -10315,7 +10315,7 @@
               "level": "Nhà",
               "type": "STUDY_ROOM",
               "conditional": false,
-              "description": "Xenophilius’s Study — Bàn đọc theo nhóm, đèn và giá sách.",
+              "description": "Bàn đọc theo nhóm, đèn và giá sách.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -10345,7 +10345,7 @@
               "level": "Ngoài nhà",
               "type": "OUT_GARDEN",
               "conditional": false,
-              "description": "Garden — Vườn hoa, đường dạo, giàn nghỉ và cây điểm nhấn.",
+              "description": "Vườn hoa, đường dạo, giàn nghỉ và cây điểm nhấn.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -10399,7 +10399,7 @@
               "type": "LOUNGE",
               "conditional": false,
               "illustrative": true,
-              "description": "Diggory Home — Nhóm ghế trà, lò sưởi và góc đọc.",
+              "description": "Không gian sinh hoạt với ghế nhóm, bàn nhỏ và lối vào thoáng.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -10452,7 +10452,7 @@
               "type": "LOUNGE",
               "conditional": false,
               "illustrative": true,
-              "description": "Fawcett Home — Nhóm ghế trà, lò sưởi và góc đọc.",
+              "description": "Không gian sinh hoạt với ghế nhóm, bàn nhỏ và lối vào thoáng.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -10504,7 +10504,7 @@
               "type": "OUT_BUILDING_YARD",
               "conditional": false,
               "illustrative": true,
-              "description": "Godric’s Hollow — Nhà chính, sân làm việc, hàng rào và vườn sau.",
+              "description": "Mặt bằng khu vực với khối công trình, đường tiếp cận và khoảng sân.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -10555,7 +10555,7 @@
               "type": "LOUNGE",
               "conditional": false,
               "illustrative": true,
-              "description": "Potter Cottage — Nhóm ghế trà, lò sưởi và góc đọc.",
+              "description": "Không gian sinh hoạt với ghế nhóm, bàn nhỏ và lối vào thoáng.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -10608,7 +10608,7 @@
               "type": "LOUNGE",
               "conditional": false,
               "illustrative": true,
-              "description": "Bathilda Bagshot’s House — Nhóm ghế trà, lò sưởi và góc đọc.",
+              "description": "Không gian sinh hoạt với ghế nhóm, bàn nhỏ và lối vào thoáng.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -10660,7 +10660,7 @@
               "type": "LOUNGE",
               "conditional": false,
               "illustrative": true,
-              "description": "Dumbledore Family Home — Nhóm ghế trà, lò sưởi và góc đọc.",
+              "description": "Không gian sinh hoạt với ghế nhóm, bàn nhỏ và lối vào thoáng.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -10712,7 +10712,7 @@
               "type": "LOUNGE",
               "conditional": false,
               "illustrative": true,
-              "description": "Riddle House — Nhóm ghế trà, lò sưởi và góc đọc.",
+              "description": "Không gian sinh hoạt với ghế nhóm, bàn nhỏ và lối vào thoáng.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -10765,7 +10765,7 @@
               "type": "OUT_GARDEN",
               "conditional": false,
               "illustrative": true,
-              "description": "Hangleton Graveyard — Vườn hoa, đường dạo, giàn nghỉ và cây điểm nhấn.",
+              "description": "Khoảng vườn có đường dạo, bồn cây và vùng nghỉ thoáng.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -10816,7 +10816,7 @@
               "type": "LOUNGE",
               "conditional": false,
               "illustrative": true,
-              "description": "Gaunt Shack — Nhóm ghế trà, lò sưởi và góc đọc.",
+              "description": "Không gian sinh hoạt với ghế nhóm, bàn nhỏ và lối vào thoáng.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -10868,7 +10868,7 @@
               "type": "PUBLIC_COUNTER",
               "conditional": false,
               "illustrative": true,
-              "description": "Hanged Man Pub — Quầy, kệ hàng và bàn khách.",
+              "description": "Khu phục vụ với quầy, chỗ ngồi và khoảng tiếp cận.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -10920,7 +10920,7 @@
               "type": "PUBLIC_COUNTER",
               "conditional": false,
               "illustrative": true,
-              "description": "Spinner’s End / Snape’s House — Quầy, kệ hàng và bàn khách.",
+              "description": "Khu phục vụ với quầy, chỗ ngồi và khoảng tiếp cận.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -10973,7 +10973,7 @@
               "type": "RECEPTION",
               "conditional": false,
               "illustrative": true,
-              "description": "Railview Hotel — Quầy tiếp nhận, ghế chờ và bảng tin.",
+              "description": "Sảnh có quầy tiếp đón và khoảng chờ.",
               "size": "M",
               "architecture": {
                 "floor": "tile",
@@ -11024,7 +11024,7 @@
               "level": "Ngoài",
               "type": "OUT_BUILDING_YARD",
               "conditional": false,
-              "description": "Grounds / Main Approach — Nhà chính, sân làm việc, hàng rào và vườn sau.",
+              "description": "Nhà chính, sân làm việc, hàng rào và vườn sau.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -11053,7 +11053,7 @@
               "level": "Ngoài",
               "type": "OUT_GARDEN",
               "conditional": false,
-              "description": "Gardens — Vườn hoa, đường dạo, giàn nghỉ và cây điểm nhấn.",
+              "description": "Vườn hoa, đường dạo, giàn nghỉ và cây điểm nhấn.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -11083,7 +11083,7 @@
               "level": "Trong nhà",
               "type": "ENTRANCE_VESTIBULE",
               "conditional": false,
-              "description": "Hall — Trục vào thoáng, bảng chỉ dẫn và hai cụm ghế mép tường.",
+              "description": "Trục vào thoáng, bảng chỉ dẫn và hai cụm ghế mép tường.",
               "size": "M",
               "architecture": {
                 "floor": "octagon",
@@ -11111,7 +11111,7 @@
               "level": "Trong nhà",
               "type": "LOUNGE",
               "conditional": false,
-              "description": "Drawing Room — Nhóm ghế trà, lò sưởi và góc đọc.",
+              "description": "Nhóm ghế trà, lò sưởi và góc đọc.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -11141,7 +11141,7 @@
               "level": "Dưới nhà",
               "type": "STORAGE",
               "conditional": false,
-              "description": "Cellars — Kệ, rương, thùng; lối đi giữa.",
+              "description": "Kệ, rương, thùng; lối đi giữa.",
               "size": "S",
               "architecture": {
                 "floor": "wood",
@@ -11169,7 +11169,7 @@
               "level": "Dưới nhà",
               "type": "DETENTION_CELL",
               "conditional": true,
-              "description": "Cellar as detention (chỉ nếu RP) — Giường đơn, ghế, xô; đồ đạc tối giản.",
+              "description": "Giường đơn, ghế, xô; đồ đạc tối giản.",
               "size": "S",
               "architecture": {
                 "floor": "wood",
@@ -11241,7 +11241,7 @@
               "level": "Nhà",
               "type": "KITCHEN",
               "conditional": false,
-              "description": "Kitchen — Bếp, chậu rửa, đảo sơ chế và thực phẩm.",
+              "description": "Bếp, chậu rửa, đảo sơ chế và thực phẩm.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -11271,7 +11271,7 @@
               "level": "Nhà",
               "type": "LOUNGE",
               "conditional": false,
-              "description": "Living Room — Nhóm ghế trà, lò sưởi và góc đọc.",
+              "description": "Nhóm ghế trà, lò sưởi và góc đọc.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -11301,7 +11301,7 @@
               "level": "Nhà",
               "type": "BEDROOM",
               "conditional": true,
-              "description": "Bedrooms — Giường, tủ, bàn nhỏ, rương và bàn viết.",
+              "description": "Giường, tủ, bàn nhỏ, rương và bàn viết.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -11331,7 +11331,7 @@
               "level": "Ngoài",
               "type": "OUT_GARDEN",
               "conditional": false,
-              "description": "Garden — Vườn hoa, đường dạo, giàn nghỉ và cây điểm nhấn.",
+              "description": "Vườn hoa, đường dạo, giàn nghỉ và cây điểm nhấn.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -11361,7 +11361,7 @@
               "level": "Ngoài",
               "type": "OUT_WATERSIDE",
               "conditional": false,
-              "description": "Coast — Bờ nước, lối dạo, bến nhỏ và cụm nghỉ.",
+              "description": "Bờ nước, lối dạo, bến nhỏ và cụm nghỉ.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -11419,7 +11419,7 @@
               "type": "LOUNGE",
               "conditional": false,
               "illustrative": true,
-              "description": "Budleigh Babberton / Slughorn — Nhóm ghế trà, lò sưởi và góc đọc.",
+              "description": "Không gian sinh hoạt với ghế nhóm, bàn nhỏ và lối vào thoáng.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -11471,7 +11471,7 @@
               "type": "OUT_BUILDING_YARD",
               "conditional": false,
               "illustrative": true,
-              "description": "Upper Flagley — Nhà chính, sân làm việc, hàng rào và vườn sau.",
+              "description": "Mặt bằng khu vực với khối công trình, đường tiếp cận và khoảng sân.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -11521,7 +11521,7 @@
               "type": "OUT_WOODLAND",
               "conditional": false,
               "illustrative": true,
-              "description": "Forest of Dean Camp — Đường mòn, tầng cây, đá và khoảng nghỉ.",
+              "description": "Lối mòn qua rừng cây, bụi rậm và các khoảng đất mở.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -11571,7 +11571,7 @@
               "type": "LOUNGE",
               "conditional": false,
               "illustrative": true,
-              "description": "Hut-on-the-Rock — Nhóm ghế trà, lò sưởi và góc đọc.",
+              "description": "Không gian sinh hoạt với ghế nhóm, bàn nhỏ và lối vào thoáng.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -11623,7 +11623,7 @@
               "type": "LOUNGE",
               "conditional": false,
               "illustrative": true,
-              "description": "Muriel's Home — Nhóm ghế trà, lò sưởi và góc đọc.",
+              "description": "Không gian sinh hoạt với ghế nhóm, bàn nhỏ và lối vào thoáng.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -11676,7 +11676,7 @@
               "type": "LOUNGE",
               "conditional": false,
               "illustrative": true,
-              "description": "Hepzibah's Home — Nhóm ghế trà, lò sưởi và góc đọc.",
+              "description": "Không gian sinh hoạt với ghế nhóm, bàn nhỏ và lối vào thoáng.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -11729,7 +11729,7 @@
               "type": "LOUNGE",
               "conditional": false,
               "illustrative": true,
-              "description": "Moody's Home — Nhóm ghế trà, lò sưởi và góc đọc.",
+              "description": "Không gian sinh hoạt với ghế nhóm, bàn nhỏ và lối vào thoáng.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -11782,7 +11782,7 @@
               "type": "LOUNGE",
               "conditional": false,
               "illustrative": true,
-              "description": "Crouch's Home — Nhóm ghế trà, lò sưởi và góc đọc.",
+              "description": "Không gian sinh hoạt với ghế nhóm, bàn nhỏ và lối vào thoáng.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -11835,7 +11835,7 @@
               "type": "LOUNGE",
               "conditional": false,
               "illustrative": true,
-              "description": "Longbottom Home — Nhóm ghế trà, lò sưởi và góc đọc.",
+              "description": "Không gian sinh hoạt với ghế nhóm, bàn nhỏ và lối vào thoáng.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -11888,7 +11888,7 @@
               "type": "LOUNGE",
               "conditional": false,
               "illustrative": true,
-              "description": "Tonks Home — Nhóm ghế trà, lò sưởi và góc đọc.",
+              "description": "Không gian sinh hoạt với ghế nhóm, bàn nhỏ và lối vào thoáng.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -11941,7 +11941,7 @@
               "type": "LOUNGE",
               "conditional": false,
               "illustrative": true,
-              "description": "Shacklebolt Home — Nhóm ghế trà, lò sưởi và góc đọc.",
+              "description": "Không gian sinh hoạt với ghế nhóm, bàn nhỏ và lối vào thoáng.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -11994,7 +11994,7 @@
               "type": "LOUNGE",
               "conditional": false,
               "illustrative": true,
-              "description": "Granger Home — Nhóm ghế trà, lò sưởi và góc đọc.",
+              "description": "Không gian sinh hoạt với ghế nhóm, bàn nhỏ và lối vào thoáng.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -12047,7 +12047,7 @@
               "type": "LOUNGE",
               "conditional": false,
               "illustrative": true,
-              "description": "Diggle Home — Nhóm ghế trà, lò sưởi và góc đọc.",
+              "description": "Không gian sinh hoạt với ghế nhóm, bàn nhỏ và lối vào thoáng.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -12100,7 +12100,7 @@
               "type": "LOUNGE",
               "conditional": false,
               "illustrative": true,
-              "description": "Gregorovitch Home — Nhóm ghế trà, lò sưởi và góc đọc.",
+              "description": "Không gian sinh hoạt với ghế nhóm, bàn nhỏ và lối vào thoáng.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -12162,7 +12162,7 @@
               "level": "Xe",
               "type": "ENTRANCE_VESTIBULE",
               "conditional": false,
-              "description": "Boarding / Stairs — Trục vào thoáng, bảng chỉ dẫn và hai cụm ghế mép tường.",
+              "description": "Trục vào thoáng, bảng chỉ dẫn và hai cụm ghế mép tường.",
               "size": "M",
               "architecture": {
                 "floor": "octagon",
@@ -12190,7 +12190,7 @@
               "level": "Xe",
               "type": "BEDROOM",
               "conditional": false,
-              "description": "Passenger space — Giường, tủ, bàn nhỏ, rương và bàn viết.",
+              "description": "Giường, tủ, bàn nhỏ, rương và bàn viết.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -12220,7 +12220,7 @@
               "level": "Xe",
               "type": "OFFICE",
               "conditional": false,
-              "description": "Driver / front area — Bàn chính, ghế khách, tủ và lò sưởi.",
+              "description": "Bàn chính, ghế khách, tủ và lò sưởi.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -12271,7 +12271,7 @@
               "level": "Tòa",
               "type": "OUT_BUILDING_YARD",
               "conditional": false,
-              "description": "Exterior — Nhà chính, sân làm việc, hàng rào và vườn sau.",
+              "description": "Nhà chính, sân làm việc, hàng rào và vườn sau.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -12300,7 +12300,7 @@
               "level": "Trong nhà",
               "type": "PASSAGE_PROPS",
               "conditional": false,
-              "description": "Cell corridors — Module mép tường: tranh, ghế, tượng, đèn.",
+              "description": "Module mép tường: tranh, ghế, tượng, đèn.",
               "size": "S",
               "architecture": {
                 "floor": "wood",
@@ -12328,7 +12328,7 @@
               "level": "Trong nhà",
               "type": "DETENTION_CELL",
               "conditional": true,
-              "description": "Cells — Giường đơn, ghế, xô; đồ đạc tối giản.",
+              "description": "Giường đơn, ghế, xô; đồ đạc tối giản.",
               "size": "S",
               "architecture": {
                 "floor": "wood",
@@ -12378,7 +12378,7 @@
               "type": "OUT_BUILDING_YARD",
               "conditional": false,
               "illustrative": true,
-              "description": "Romanian Dragon Sanctuary — Nhà chính, sân làm việc, hàng rào và vườn sau.",
+              "description": "Mặt bằng khu vực với khối công trình, đường tiếp cận và khoảng sân.",
               "size": "L",
               "architecture": {
                 "floor": "wood",
@@ -12429,7 +12429,7 @@
               "type": "LOUNGE",
               "conditional": false,
               "illustrative": true,
-              "description": "Ilvermorny — Nhóm ghế trà, lò sưởi và góc đọc.",
+              "description": "Không gian sinh hoạt với ghế nhóm, bàn nhỏ và lối vào thoáng.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -12481,7 +12481,7 @@
               "type": "LOUNGE",
               "conditional": false,
               "illustrative": true,
-              "description": "MACUSA — Nhóm ghế trà, lò sưởi và góc đọc.",
+              "description": "Không gian sinh hoạt với ghế nhóm, bàn nhỏ và lối vào thoáng.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -12532,7 +12532,7 @@
               "level": "Ngoài",
               "type": "OUT_WATERSIDE",
               "conditional": false,
-              "description": "Cave entrance — Bờ nước, lối dạo, bến nhỏ và cụm nghỉ.",
+              "description": "Bờ nước, lối dạo, bến nhỏ và cụm nghỉ.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -12559,7 +12559,7 @@
               "level": "Trong hang",
               "type": "OUT_WATERSIDE",
               "conditional": false,
-              "description": "Underground Lake — Bờ nước, lối dạo, bến nhỏ và cụm nghỉ.",
+              "description": "Bờ nước, lối dạo, bến nhỏ và cụm nghỉ.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -12586,7 +12586,7 @@
               "level": "Trong hang",
               "type": "OUT_COURTYARD",
               "conditional": false,
-              "description": "Island — Đường dẫn, bồn cây, ghế nghỉ và đài phun trung tâm.",
+              "description": "Đường dẫn, bồn cây, ghế nghỉ và đài phun trung tâm.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -12611,7 +12611,7 @@
               "level": "Trong hang",
               "type": "CEREMONY_HALL",
               "conditional": true,
-              "description": "Ritual focus (nếu RP) — Bục, bàn nghi lễ, ghế băng và lối giữa.",
+              "description": "Bục, bàn nghi lễ, ghế băng và lối giữa.",
               "size": "M",
               "architecture": {
                 "floor": "tile",
@@ -12660,7 +12660,7 @@
               "level": "Ngoài",
               "type": "OUT_CAMP",
               "conditional": false,
-              "description": "Campsite — Lều, đồ trại đặt dưới đất, kho tiếp tế và lối đi.",
+              "description": "Lều, đồ trại đặt dưới đất, kho tiếp tế và lối đi.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -12690,7 +12690,7 @@
               "level": "Ngoài",
               "type": "OUT_LAWN",
               "conditional": false,
-              "description": "Main Stadium — Khoảng cỏ rộng; đường đi, ghế và dụng cụ ở rìa.",
+              "description": "Khoảng cỏ rộng; đường đi, ghế và dụng cụ ở rìa.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -12718,7 +12718,7 @@
               "level": "Ngoài",
               "type": "OUT_COURTYARD",
               "conditional": false,
-              "description": "Approach / Perimeter — Đường dẫn, bồn cây, ghế nghỉ và đài phun trung tâm.",
+              "description": "Đường dẫn, bồn cây, ghế nghỉ và đài phun trung tâm.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
@@ -12765,7 +12765,7 @@
               "type": "LOUNGE",
               "conditional": false,
               "illustrative": true,
-              "description": "Egyptian Tombs — Nhóm ghế trà, lò sưởi và góc đọc.",
+              "description": "Không gian sinh hoạt với ghế nhóm, bàn nhỏ và lối vào thoáng.",
               "size": "M",
               "architecture": {
                 "floor": "wood",
