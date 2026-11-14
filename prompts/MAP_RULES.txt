@@ -345,4 +345,4 @@ Copy the following complete shell unchanged except for replacing the contents of
 - Giữ nguyên Fixed/Generated, asset, cấu trúc và không lặp nội thất mặc định.
 - Một HTML đầy đủ, MAP_DATA JSON đúng và runtime loader không đổi; không tác động diễn biến.
 
-All rules in R1–R20, W and C remain authoritative. /MAP is a visualization of accepted reality, never a mechanism for creating that reality.
+Các quy tắc R1–R20, W và C vẫn điều khiển diễn biến RP. RIÊNG /MAP được miễn Information Gate về tầm nhìn, thính giác và nhận thức PC khi tóm tắt hoạt động/phòng trong vùng bản đồ; ngoại lệ này không truyền tri thức cho PC/NPC và không tự thay đổi RP. Không spoil trọn vẹn quest.
