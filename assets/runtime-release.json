@@ -3,16 +3,16 @@
   "runtimeCommit": "773ac16c4e2294aa263ea9a298f588f289562c4c",
   "files": {
     "shell.css": {
-      "bytes": 11040,
-      "sha256": "2973241f3426f0414cf48902b5d922b1f56d1510d1d0ba08212f62344db0be3d"
+      "bytes": 12761,
+      "sha256": "a6b111cd0418047e47f53649dc5640db65ac75a451ba45e1323a3816eeb66972"
     },
     "templates-pack.js": {
       "bytes": 963681,
       "sha256": "ba5bf68beaa869d2f2e582f924a8601b36b849fe8f668adc11c2aa2f76201204"
     },
     "bundle.js": {
-      "bytes": 4055192,
-      "sha256": "9f185bbcb3a4a4354cd25954ea5592e6c624c45153f38a7776dacf447e46078f"
+      "bytes": 4057693,
+      "sha256": "7d0370d1efc800f09f5d3b43dd418e489f6b2fd02ab2c2090003b5714d2aadad"
     }
   }
 }

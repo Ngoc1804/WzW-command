@@ -35,3 +35,20 @@ body.motion-off #mapmount *{animation-play-state:paused!important}#mapmount .tre
 .template-picker{position:fixed;right:12px;bottom:30px;z-index:50;font:13px Georgia,serif;color:#eadbc2;background:#3b2925;border:1px solid #ad9570;box-shadow:0 2px 8px #35272040;padding:8px 11px}
 .template-picker summary{cursor:pointer;list-style:none}.template-picker summary::after{content:' ▾';color:#d2a64d}
 .template-picker select{display:block;max-width:min(370px,82vw);margin-top:9px;padding:9px;background:#f1e5ca;color:#49362b;border:1px solid #baa585;font:14px Georgia,serif}
+
+/* Responsive MAP 2 header: never hide quote or date */
+.map-header{display:grid;grid-template-columns:minmax(88px,auto) minmax(0,1fr) minmax(73px,auto);align-items:center;gap:9px;min-height:42px;padding:6px 11px}
+.map-header .brand{min-width:0}
+.map-header h1{font-size:clamp(15px,1.8vw,21px);letter-spacing:2px;white-space:nowrap}
+.map-header .header-quote{display:block!important;margin:0;max-width:none;min-width:0;text-align:center;font-size:clamp(8px,.95vw,11px);line-height:1.2;overflow-wrap:anywhere}
+.map-header .header-right{max-width:none;text-align:right;white-space:nowrap}
+.map-header .date{display:block!important;font-size:10px;margin-top:2px}
+.map-header .clock{font-size:12px;margin-top:0}
+.context-location{font-size:10px;line-height:1.3;margin-top:6px;font-style:italic;color:#83684f}
+.context-location[hidden]{display:none}
+.event-row{display:block;width:100%;min-width:0;padding:7px 0;text-align:left}
+.event-row strong{display:block;font-weight:600;font-size:12px;line-height:1.25}
+.event-row em{display:block;font-size:10px;font-style:italic;font-weight:400;color:#947a57;line-height:1.3;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.npc-tag.chosen{filter:brightness(1.16) drop-shadow(0 0 3px #d2a64d88)}
+@media(max-height:560px){.map-header{min-height:38px;padding:4px 9px}.map-header h1{font-size:16px}.map-header .date{font-size:9px}.map-header .header-quote{font-size:9px}.map-header .clock{font-size:11px}}
+@media(max-width:720px){.map-header{grid-template-columns:minmax(77px,auto) minmax(0,1fr) minmax(68px,auto);gap:5px;padding:5px 8px}.map-header h1{font-size:15px;letter-spacing:1px}.map-header .header-quote{font-size:8px}.map-header .date{font-size:9px}}
