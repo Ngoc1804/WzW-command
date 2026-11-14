@@ -323,7 +323,7 @@ Tất cả text hiển thị phải là tiếng Việt tự nhiên, kể cả t�
 6. Kiểm tra trước xuất: không trùng phòng Atlas, không thiếu vị trí actor/event, không có tên Anh ở trường hiển thị, không có mô tả từ 20 từ trở lên.
 7. Điền MAP_DATA vào shell HTML nguyên bản phía dưới, trả về đúng MỘT khối `html` hoàn chỉnh; không kèm JSON riêng, STATUS, BODY, META hoặc giải thích.
 
-Giữ nguyên URL runtime pinned và loader code; không xuất placeholder. Encode ký tự `<` trong chuỗi JSON thành `\\u003c`. /MAP không sửa RP state.
+Giữ nguyên URL runtime pinned và loader code; không xuất placeholder. Encode ký tự `<` trong chuỗi JSON thành `\u003c`. /MAP không sửa RP state.
 
 **PREVIEW OUTPUT LOCK**
 
