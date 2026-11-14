@@ -20,7 +20,7 @@
 | Nội dung | Source chính |
 |---|---|
 | 13 Fixed + UI | `examples/WIZAMAP_FIXED_UI.html` |
-| 49 layout sạch S/M/L | `assets/layout-sizes.json`, `assets/recipes.json`, `assets/layout-finishes.json` |
+| 49 layout sạch S/M/L | `assets/layout-sizes.json`, `assets/recipes.json` |
 | Thư viện SVG/texture và ID | `assets/catalog.json`, `assets/icons/` |
 | Atlas, World, AU và quan hệ phòng | `assets/atlas.json`, `assets/vocabulary.json` |
 | Hình học hành lang | `assets/source/corridors.js` |
@@ -40,3 +40,7 @@ Chạy `node tests/canonical-sources.cjs` và các test phù hợp còn lại; k
 ## Kiểm định và bàn giao hiện hành
 
 `python tools/check-id-links.py` kiểm recipe/layout theo size, SVG refs, Atlas/alias, Fixed binding và payload runtime. `python tools/test_all.py` chạy toàn bộ suite với máy chủ tạm, ghi kết quả tại work/test-all.json. CI chạy cả hai, không chỉ smoke. Các ca support/component đã thay bằng whole-object/group và replace. Công cụ paint/import phụ thuộc p4-art đã bỏ; màu/layout nguồn giữ nguyên. Prompt chỉ dùng native ID và tools/loader.py; pin phải khớp dist đã xuất bản. AI Studio Preview chưa được chứng nhận từ test local/CDN.
+
+## Tối ưu transport
+
+Layout JSON nguồn giữ schema tương thích; build gộp các chuỗi defs trùng chính xác trong payload nén. Boot khôi phục đúng dữ liệu trước render; ID/màu/geometry không đổi. Runtime recipe chỉ giữ inventory theo size khi đủ S/M/L, không nhúng lại default M. Source recipe vẫn đủ dữ liệu cho editor/kiểm định. Không có scenery renderer phụ hoặc workflow nghỉ nhánh đã hoàn tất.

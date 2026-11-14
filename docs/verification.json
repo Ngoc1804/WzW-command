@@ -4,17 +4,17 @@
     {
       "test": "actor-placement.cjs",
       "exit": 0,
-      "seconds": 15.7
+      "seconds": 16.7
     },
     {
       "test": "alias-export.cjs",
       "exit": 0,
-      "seconds": 24.5
+      "seconds": 23.7
     },
     {
       "test": "approved-decor.cjs",
       "exit": 0,
-      "seconds": 18.7
+      "seconds": 18.4
     },
     {
       "test": "canonical-sources.cjs",
@@ -24,87 +24,87 @@
     {
       "test": "catalog-editor.cjs",
       "exit": 0,
-      "seconds": 6.3
+      "seconds": 6.0
     },
     {
       "test": "compact-p4.cjs",
       "exit": 0,
-      "seconds": 5.5
+      "seconds": 5.3
     },
     {
       "test": "corridor-source.cjs",
       "exit": 0,
-      "seconds": 0.6
+      "seconds": 0.4
     },
     {
       "test": "current-scope.cjs",
       "exit": 0,
-      "seconds": 8.3
+      "seconds": 8.8
     },
     {
       "test": "four-fixes.cjs",
       "exit": 0,
-      "seconds": 5.7
+      "seconds": 5.4
     },
     {
       "test": "ids-props.cjs",
       "exit": 0,
-      "seconds": 5.0
+      "seconds": 5.6
     },
     {
       "test": "indoor-placement.cjs",
       "exit": 0,
-      "seconds": 5.1
+      "seconds": 5.5
     },
     {
       "test": "interaction.cjs",
       "exit": 0,
-      "seconds": 34.0
+      "seconds": 34.6
     },
     {
       "test": "inventory-visual.cjs",
       "exit": 0,
-      "seconds": 3.1
+      "seconds": 2.6
     },
     {
       "test": "layout-sizes.cjs",
       "exit": 0,
-      "seconds": 12.7
+      "seconds": 15.2
     },
     {
       "test": "loader.cjs",
       "exit": 0,
-      "seconds": 4.9
+      "seconds": 5.3
     },
     {
       "test": "outdoor-overlap.cjs",
       "exit": 0,
-      "seconds": 8.3
+      "seconds": 7.5
     },
     {
       "test": "outdoor-placement.cjs",
       "exit": 0,
-      "seconds": 9.0
+      "seconds": 7.7
     },
     {
       "test": "p1.cjs",
       "exit": 0,
-      "seconds": 13.3
+      "seconds": 10.8
     },
     {
       "test": "p2-p3.cjs",
       "exit": 0,
-      "seconds": 26.8
+      "seconds": 24.6
     },
     {
       "test": "passage-resize.cjs",
       "exit": 0,
-      "seconds": 20.4
+      "seconds": 18.9
     },
     {
       "test": "presentation.cjs",
       "exit": 0,
-      "seconds": 41.8
+      "seconds": 38.7
     },
     {
       "test": "routing-current.cjs",
@@ -114,12 +114,12 @@
     {
       "test": "style-audit.cjs",
       "exit": 0,
-      "seconds": 9.9
+      "seconds": 7.7
     },
     {
       "test": "vocabulary.cjs",
       "exit": 0,
-      "seconds": 5.2
+      "seconds": 4.8
     },
     {
       "test": "xray-occlusion.cjs",
@@ -129,7 +129,7 @@
     {
       "test": "zoom-bounds.cjs",
       "exit": 0,
-      "seconds": 6.0
+      "seconds": 5.8
     }
   ],
   "suiteResult": "26/26 PASS; loader rechecked after hash guard",
@@ -169,11 +169,22 @@
     "sha256": "602600035d698c1a7139ef8514211a8d6b73562aa4232106ac64b96b938bb709",
     "tokenCount": "not measured"
   },
-  "cleanup": [
-    "retired 4 unreferenced paint/import tools requiring deleted p4-art",
-    "updated 4 stale suites for whole-instance mechanism",
-    "CI runs full suite and ID checker",
-    "loader asserts release hashes against dist"
-  ],
+  "cleanup": {
+    "baselineCommit": "08a924bf53e3c65642e38f892d4c94e409661c69",
+    "removed": [
+      "dead scenery renderer and SCENERY metadata",
+      "retire-old-branches workflow",
+      "unused paint-edits/finish-paint/layout-finishes metadata"
+    ],
+    "layoutDefs": "exact shared runtime transport; canonical source unchanged; unpack(pack(source)) equals source",
+    "runtimeInventory": "omit duplicate default M when S/M/L inventories exist",
+    "bundle": {
+      "before": 4203065,
+      "after": 4055192,
+      "gzipBefore": 845950,
+      "gzipAfter": 775728
+    },
+    "sourceIntegrity": "catalog, recipes, layout-sizes, Fixed source and template pack unchanged byte-for-byte"
+  },
   "AIStudioPreview": "NOT RUN; no target session supplied"
 }

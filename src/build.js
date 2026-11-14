@@ -61,16 +61,6 @@ function indoorMap(scene,d){
  const mainHall=plan.halls.find(h=>!h.passage);
  return {kind:'indoor',layout:type,geometry:plan,footprints,title:d.meta.areaName||d.pcPlace||'Bản đồ RP',bounds:plan.view,places:scene.places,svg,safeFloor:(x,y,pad)=>generatedFloor(plan,x,y,pad),generatedCorridor:mainHall?[mainHall.x,mainHall.y,mainHall.w,mainHall.h]:null};
 }
-let sceneryDefs=new Map();
-function sceneryAsset(id,x,y,w,h,prefix){
- const a=SCENERY[id];if(!a)return '';
- const b=a.bounds,symbolId='scenery-'+id.replace(/[^a-z0-9]/gi,'-');
- if(!sceneryDefs.has(id)){
-  const body=a.svg.replace(/^<svg\b[^>]*>/,'').replace(/<\/svg>\s*$/,'');
-  sceneryDefs.set(id,`<symbol id="${symbolId}" viewBox="${b.x} ${b.y} ${b.width} ${b.height}" overflow="visible">${namespaceArt(body,symbolId+'-')}</symbol>`);
- }
- return `<g data-asset="${id}"><use href="#${symbolId}" x="${x}" y="${y}" width="${w}" height="${h}"/></g>`;
-}
 // Generated Outdoor uses zone-based floor placement, with ground
 // and obstacles checked. This is display geometry, not a navigation/game solver.
 function outdoorKind(item,name=''){

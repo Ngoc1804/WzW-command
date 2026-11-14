@@ -1,6 +1,7 @@
 """Read-only integrity checks against current canonical JSON and packed runtime."""
 from pathlib import Path
 import json,re,gzip,base64,collections,xml.etree.ElementTree as ET
+from layout_pool import unpack
 root=Path(__file__).resolve().parents[1]
 read=lambda p:json.loads((root/p).read_text())
 c=read('assets/catalog.json');r=read('assets/recipes.json');a=read('assets/atlas.json');l=read('assets/layout-sizes.json');v=read('assets/vocabulary.json');issues=[]
@@ -39,7 +40,7 @@ for name,data in [('CATALOG',c),('RECIPES',r),('ATLAS',a)]:
  packed=decoder.raw_decode(bundle.split('const '+name+'=',1)[1])[0]
  if set(data)!=set(packed):issues.append(['runtime-keys',name])
 packed=decoder.raw_decode(bundle.split('const LAYOUT_SIZES_PACK=',1)[1])[0]
-if json.loads(gzip.decompress(base64.b64decode(packed)))!=l:issues.append(['runtime-layout-payload'])
+if unpack(json.loads(gzip.decompress(base64.b64decode(packed))))!=l:issues.append(['runtime-layout-payload'])
 fixed=read('assets/atlas.json')['fixed'];html=(root/'examples/WIZAMAP_FIXED_UI.html').read_text();pack=json.loads(gzip.decompress(base64.b64decode(re.search(r'id="wzw-embedded-atlas"[^>]*>(.*?)</script>',html,re.S)[1])))
 for fid,source in fixed.items():
  actual={p['id']for p in pack['maps'][fid]['places']}
