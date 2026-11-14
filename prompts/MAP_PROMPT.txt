@@ -1,81 +1,413 @@
-### /MAP — MAP_DATA 2.0.0
 
-## 1. STORY SETTINGS — AUTHOR ANSWERS ONCE
-- Sources for current state/history, NPC identity/House/knowledge, Atlas and quests/Monthly Pack/Pool?
-- How many activity/quest slots? MAIN/SIDE/POOL/HIDDEN allocation? Does HIDDEN count in the total? Priority/substitution/Pool-generation rules? Hidden eligibility?
-- Which types use binoculars? Which use a magnifier?
-- Minimum NPC ribbons? Grouping and unidentified-person naming? Story House/category→supported tag bindings? Maximum 10 NPC ribbons, excluding PC.
-- Explicit AU/event-area routing exceptions? Material requirements for new spaces?
-Answers stay in the prompt, not MAP_DATA. Runtime URL is supplied below, not story-time repo/branch/commit configuration.
+### R14.6 — /MAP · WIZAMAP 2.0.0
 
-## 2. EXECUTION / FIELD CONTRACT
-Gemini reads current RP and configured sources; GitHub renders. Do not advance time, move actors, accept quests, grant rewards or invent PC choices. Gemini selects PC-safe quest/activity content using story settings; engine never chooses quotas/eligibility. Minimum NPC settings never authorize invented arrivals.
-Resolve PC location from context/history/Atlas before output: never ask, leave empty, use unknown or report missing location. Owner follows PC, not remote NPC/quest. Use supported current space without invented travel/canonical address. Remove undiscovered secrets before JSON; icons do not conceal JSON contents.
-Vietnamese visible text: one short sentence under 30 words per quote/description/overhear/activity/observation/summary/detail. Quote may be playful/poetic/lightly suggestive, never secret disclosure or fabricated character speech.
-Return ONE complete fenced html document from Part 4; no explanation, STATUS/BODY/META or separate JSON. Fill required fields, omit unused optional fields. Escape literal < in embedded JSON strings as \u003c (one JSON escape, not a literal backslash sequence).
+**PURPOSE & AUTHORITY**
 
-FIXED CANON: existing artwork/UI unchanged. Inside a house/shop is its existing anchor, not an interior request. Only anchor PC/NPC/POI and supply current map text. No props/propsMode/visual/size/architecture, construction, extra room/interior/detail view or new UI. Places only bind existing-location text. Exceptions require explicit AU/event routing; indoors/a mentioned quest is not an exception.
-ROUTING: explicit separate view or new H1/H2 structure→sandbox; village/alley AU→vacant building in correct region; non-Fixed Atlas→source rooms in selected cluster plus RP additions; World→one building/floor; otherwise custom. Engine expands the chosen cluster, not a separately calculated nearest-room subset. Custom sends mapMode indoor/outdoor; OUT_* type alone does not select Outdoor. Never invent canon connections.
-GENERATED: select a suitable function/layout; default inventory is automatic. Use whole furniture/groups for real changes; do not duplicate defaults. Missing suitable source→build named places/props and minimal visual when useful. Invalid/missing artwork retains a named fallback. Preserve approved layout/colors; S/M/L defaults M. New-space material choices may be retained internally across refreshes; no seed field.
-INVENTORY: merge keeps defaults plus changes; replace uses supplied props as COMPLETE desired furniture inventory, [] clears furniture only. ensure sets total; add increments/adds. New explicit ID in merge requires add; replace accepts new IDs. State-only updates omit count. Count 0/removed/missing/destroyed removes whole instance; broken is a state marker, not detailed fracture art. Verified existing instance IDs only; never guess :final:N. New IDs may use stable rp:*. Edit whole groups, never components. No parentId/childId/supportId or surface/support-placement workflow. If exact targeting is unavailable, rebuild the desired Generated interior with replace.
-ACTORS: exactly one PC. Every NPC supplies valid place and explicit spot. Names/House/category/activity come from sources; unknown names use observable descriptors. Group supported co-located people; runtime may group >4 people in one place/spot, retaining PC separately and all member information. Footstep visibility follows map policy, not hidden input alone. Patrol requires current evidence and onPatrol:true.
-EVENTS: valid map place required. Binoculars→hidden:false; magnifier→hidden:true, as assigned by story settings. This flag is presentation only; eligibility stays in Gemini. Opportunity≠accepted/completed quest. No category/pack/stage/reward/quota/icon fields.
+/MAP is a read-only illustrated RP map rendered by WIZAMAP 2.0.0. Gemini owns story interpretation and MAP_DATA generation; GitHub owns the fixed UI, Atlas expansion, artwork, layouts, furniture defaults, marker placement and rendering.
 
-FIELD REFERENCE (? optional; not literal output syntax)
-ROOT schemaVersion:"2.0.0",meta:{date:"DD/MM/YYYY",time:"HH:mm",areaName,quote},atlasAnchor,pcPlace,pcSpot:inside|corridor|threshold|outdoor,places:PLACE[],actors:ACTOR[],events:EVENT[]
-ROOT? mapMode:indoor|outdoor,layoutType:GEOMETRY,forceSandbox:boolean,region:diagon|knockturn
-PLACE name,id?,type?:LAYOUT|new-function,size?:S|M|L,description?,overhear?,region?,isNewConstruction?:boolean,architecture?:{floor?,wall?},propsMode?:merge|replace,props?:(string|PROP)[]
-PROP name,item?:native-asset-ID,id?:whole-instance-ID,count?:integer>=0,op?:ensure|add,state?:intact|broken|removed|missing|destroyed,zone?:ZONE,visual?:{shapes:SHAPE[]}
-ACTOR name,isPC?:boolean,id?,placeId?,placeName?,spot?:inside|corridor|threshold|outdoor,zone?:ZONE,tagType?:TAG,activity?,observation?,members?:string[],summary?,footstep?:walk|idle|hidden,posture?:standing|sitting|lying|hidden,onPatrol?:boolean
-EVENT title,detail?,placeId?,placeName?,hidden?:boolean,id?
-SHAPE {kind:"rect",x,y,width,height,material?}|{kind:"ellipse",cx,cy,rx,ry,material?}|{kind:"path",d,material?}
-Name required for every place/prop/actor, including props with item/id; event title required. Actor/event location is placeId or placeName; root PC location wins. Description=observable setting; overhear=actually heard activity, not sound inferred from activity. Visual: 1–32 visible shapes in a 100×100 local viewport; valid finite dimensions/path; no raw SVG/HTML/scripts/URLs. Item selects artwork; prop ID selects one whole instance. New predefined lookup entries require matching runtime; new RP objects do not. No legacy templateState or viewport/zoom fields.
-ZONE center entrance left right end wall_north wall_south wall_west wall_east
-TAG gryffindor slytherin ravenclaw hufflepuff beauxbatons durmstrang teacher adult patrol animal monster ghost unknown crowd
-FLOOR tile wood brick octagon mosaic herringbone diamond cobble
-WALL stone dark timber wainscot plaster brick ashlar panel limestone rubble
-MATERIAL wood stone metal fabric paper glass plant ink
+Use accepted R3/R4/R7/R8 state, W geography/knowledge/access, C character profiles and the current W9 Monthly Pack/Pool. R2 agency, R3.2 information gates and R8 quest gates always prevail.
 
+Execution changes no time, position, actor, quest, relationship, inventory or story state. Map generation is not an IC event, information delivery or quest acceptance.
 
-## 3. LAYOUT / NATIVE ID LOOKUP
+**A. MAP SCOPE & INFORMATION GATE**
 
-# ATLAS GEMINI MIN — LOCATIONS ONLY
-Gemini determines PC location, RP-relevant nearby places, NPCs and POI. GitHub expands surrounding rooms, default furniture and graphics from the full Atlas. Do not dump default room inventories, floorplans, coordinates or raw SVG. A recipe/function key may select a Generated interior; minimal visual shapes are allowed for missing objects.
-FIXED: h1=Hogwarts grounds/lake/forest/Hagrid; h2=castle exterior/Owlery; hall=Great Hall/Entrance; gryffindor-common,ravenclaw-common,hufflepuff-common,slytherin-common; village-static=Hogsmeade; pitch-static=Quidditch; express=stations/train; diagon-knockturn=Diagon/Knockturn (specify region); ministry2=L1–7; ministry-8-10=L8–10.
-HOGWARTS: SUB-DUNGEONS-N/E/S/W,DUNGEONS-N/E/S/W,KITCHENS-N/E/S/W,F1-N/E/S/W through F8-N/E/S/W, known TOWER-* ids. F1=ground floor; use correct floor/direction, never guess a numbered room ID.
-WORLD: LONDON, ENGLAND_REGIONS, TRANSIT_AND_INTL. AU: AU-PC-HOME,AU-CCC-07-18,AU-LIAD-S-ATTIC,AU-WHITECAP-ESTATE. Unlisted space: custom.
-Fixed wins inside its coverage; new H1/H2 structures or explicit new view → custom. AU homes/shops inside village/alleys bind vacant Fixed buildings. Owner follows PC, not remote NPC/quest; do not invent travel or secret rooms.
+1. Resolve the PC's actual NOW location from accepted state, current scene, history and Atlas. The map always follows PC, never a distant NPC, quest or event.
+2. Select the appropriate native Atlas anchor. Include the relevant surrounding area, rooms, paths and places. GitHub automatically expands the complete selected Atlas cluster; Gemini must not enumerate every default room.
+3. Include only information legitimately available to PC through observation, actual receipt, supported familiarity or an already established accessible map. Current visibility does not grant knowledge through walls, floors, barriers or private rooms.
+4. Never expose secret identities, private dialogue, unseen NPC positions, hidden mechanisms, undiscovered routes, future events, quest solutions or narrator-only information.
+5. Distinguish a visible NPC, a known but absent NPC, an unrecognized person, and a received report. Do not display an absent or unlocated actor as physically present.
+6. An `overhear` field requires actually received audible content under R3.2/R4.2. An NPC's activity alone never proves that PC heard its words.
+7. If an exact native room is unavailable, use a verified containing area or supported RP place. Do not fabricate canon geography, connections or precision.
+8. No invented PC movement, NPC arrival, meeting, discovery, purchase, interaction or speech.
 
-Tower/AU scope aliases→atlasAnchor (native supported aliases):
-tower-divination tower-astronomy tower-headmaster tower-clock tower-bell tower-faculty tower-dada
-tower-stairs au-home au-ccc au-liad au-whitecap
+**B. NPC & ACTOR DISPLAY**
 
-GEOMETRY→layoutType
-horizontal vertical windows ell tee cross court cloister curved tower
+Render exactly ONE PC actor and at most TEN NPC ribbons, excluding PC.
 
-LAYOUT→places[].type (49; default furniture automatic)
-HEADMASTER_OFFICE DIVINATION_CLASSROOM ASTRONOMY_OBSERVATORY PREFECTS_BATHROOM ROOM_OF_REQUIREMENT
-CHAMBER_OF_SECRETS TOWER_CLOCKWORK BALLROOM TROPHY_ROOM CLASSROOM MAGIC_PRACTICE POTIONS_LAB
-RESEARCH_LAB OFFICE STUDY_ROOM MEETING_CLUB LIBRARY ARCHIVE STORAGE WORKSHOP GALLERY MUSIC_ROOM
-LOUNGE BEDROOM KITCHEN DINING_ROOM BATHROOM LAUNDRY HOSPITAL_WARD RECEPTION GUARDROOM PASSAGE_PROPS
-UTILITY_ROOM SECURE_VAULT DETENTION_CELL PUBLIC_COUNTER CEREMONY_HALL ENTRANCE_VESTIBULE
-CLOAKROOM_LOCKERS ART_CARTOGRAPHY_STUDIO GAMES_ROOM OUT_COURTYARD OUT_GARDEN OUT_LAWN OUT_WOODLAND
-OUT_WATERSIDE OUT_BUILDING_YARD OUT_CAMP OUT_SERVICE_GARDEN
+- Prioritize actually present, observable, recognizable and scene-relevant NPCs.
+- NPC eligibility follows position, task, access, R3 knowledge and C character state.
+- A minimum ribbon count is not enforced. Never create or teleport NPCs to fill the display.
+- Group supported co-located NPCs where useful. Use `members` and `summary`; preserve individual identities and information rather than merging their minds.
+- Unknown identities use PC-observable descriptors instead of protected names.
+- NPC names, House, category, posture, activity and observations must be grounded in accepted state.
+- Every NPC requires a valid map place and explicit `spot`.
+- Use `tagType` only from supported native tags.
+- Only use `onPatrol:true` for established current patrol activity.
+- Footsteps follow map visibility policy and actual supported movement. Never reveal hidden actors with footsteps.
+- NPC descriptions must reflect their own current work, individual conduct and observable residue, not generic idle behavior or OOC characterization.
 
-Optional whole interiors→props[].item. Prefix cluster.layout- + listed suffix gives native ID; no alias layer. Do not duplicate default inventory. Missing suitable layout→build required objects. No tabletop-component lookup.
-classroom classroom_teacher magic_practice potions_lab research_lab office study_room meeting_club
-library library_stack archive workshop lounge bedroom kitchen dining_room bathroom laundry
-hospital_ward reception guardroom utility_room detention_cell public_counter ceremony_hall
-art_cartography divination_classroom astronomy_observatory prefects_bathroom requirement_practice
-requirement_meeting requirement_refuge tower_clockwork tower_bells ballroom trophy_room
-headmaster_office out_garden out_woodland out_building_yard out_waterside out_camp
-out_service_garden
+**C. QUEST / ACTIVITY / POI DISPLAY**
 
+Show a MAXIMUM of FOUR eligible opportunities per map:
 
-## 4. HTML OUTPUT
-Fill map-data and required values from current RP. Keep the standard loader and release URLs unchanged; escape < inside JSON strings as \u003c. No unresolved placeholders in emitted HTML.
+- 1 MAIN
+- 2 SIDE / POOL / ordinary activities, shared allocation
+- 1 HIDDEN DISCOVERY
+
+These are maximum allocations, not mandatory quotas.
+
+Select candidates from the current W9 Monthly Pack, surviving R8 threads, accepted scene state, existing actor needs and grounded R8.3 Pool opportunities.
+
+Priority:
+
+1. Eligible active MAIN relevant to the mapped area.
+2. Eligible SIDE opportunities with supported contacts, time and access.
+3. Grounded Pool activities that emerge naturally from current actors, places, routines or unresolved matters.
+4. At most one eligible HIDDEN discovery with a genuinely perceptible surface clue.
+
+If an allocation is unavailable, omit it. SIDE and POOL may substitute for each other within their two shared slots. Never fabricate quests to reach four.
+
+Eligibility requires:
+
+- Surviving cause and valid prerequisites.
+- Current time/window and a reason the opportunity exists now.
+- An actual place, actor, object or observable environmental signal.
+- World Gate and Player Gate under R8.
+- PC-visible contact, evidence or plausible discovery access.
+- Independent progression/exit consistent with the existing quest lifecycle.
+
+Classification and icon binding:
+
+- MAIN / SIDE / POOL / ACTIVITY → `hidden:false` → binoculars (`!`).
+- HIDDEN DISCOVERY → `hidden:true` → magnifier (`?`).
+
+`hidden` controls marker presentation ONLY. It never grants the AI permission to expose a secret in JSON. A hidden marker may identify a visible anomaly or investigable location, not the protected explanation behind it.
+
+Do not treat an opportunity as accepted, started, completed, rewarded or learned merely because its marker appears.
+
+Do not display a distant quest on the PC's local map. No forced contact, repeated invitation after refusal, resurrected retired causes, automatic stage advancement or guaranteed outcome.
+
+Never include internal quest ID, lifecycle stage, Monthly Pack metadata, reward, quota, hidden trigger or solution in event descriptions.
+
+**D. ROUTING / ATLAS**
+
+FIXED MAPS — immutable artwork and UI:
+
+- `h1`: Hogwarts grounds, lake, forest, Hagrid's Hut.
+- `h2`: Castle exterior and Owlery.
+- `hall`: Great Hall and Entrance Hall.
+- `gryffindor-common`
+- `ravenclaw-common`
+- `hufflepuff-common`
+- `slytherin-common`
+- `village-static`: Hogsmeade.
+- `pitch-static`: Quidditch.
+- `express`: stations and train.
+- `diagon-knockturn`: Diagon Alley / Knockturn Alley; supply correct `region`.
+- `ministry2`: Ministry levels 1–7.
+- `ministry-8-10`: Ministry levels 8–10.
+
+Inside a Fixed house/shop remains anchored to its existing building. Do not create an unsupported interior view simply because PC is indoors.
+
+For Fixed maps, supply only supported PC/NPC/POI anchors and location text. Do not send structural edits, furniture, architecture, new rooms or alternate artwork.
+
+HOGWARTS GENERATED CLUSTERS:
+
+- `SUB-DUNGEONS-N/E/S/W`
+- `DUNGEONS-N/E/S/W`
+- `KITCHENS-N/E/S/W`
+- `F1-N/E/S/W` through `F8-N/E/S/W`
+- Verified `TOWER-*` anchors.
+
+F1 is ground floor. Never guess a numbered room ID, tower connection or floor.
+
+WORLD:
+
+- `LONDON`
+- `ENGLAND_REGIONS`
+- `TRANSIT_AND_INTL`
+
+AU:
+
+- `AU-PC-HOME`
+- `AU-CCC-07-18`
+- `AU-LIAD-S-ATTIC`
+- `AU-WHITECAP-ESTATE`
+
+NATIVE ANCHOR ALIASES:
+
+`tower-divination`
+`tower-astronomy`
+`tower-headmaster`
+`tower-clock`
+`tower-bell`
+`tower-faculty`
+`tower-dada`
+`tower-stairs`
+`au-home`
+`au-ccc`
+`au-liad`
+`au-whitecap`
+
+ROUTING RULES:
+
+- Existing Fixed coverage always takes priority.
+- Non-Fixed Hogwarts uses the appropriate complete Atlas cluster.
+- A World scope resolves one relevant building/floor, not every site in the region.
+- A newly constructed H1/H2 structure or explicitly authorized separate view uses Generated/sandbox routing.
+- AU village/alley buildings bind suitable vacant buildings in the correct Fixed region without overriding canon buildings.
+- Unsupported independent spaces use `custom` with `mapMode`.
+- `OUT_*` is a room-function type; it does not independently select Outdoor mode.
+- `forceSandbox` only for a genuinely authorized separate view.
+- Engine determines nearby room expansion, placement, geometry and existing default furniture.
+
+**E. GENERATED ROOMS & INTERIORS**
+
+Use verified native room functions from the 49-layout library. Select the function by actual purpose, not by the room's decorative name.
+
+Supported `places[].type` values:
+
+HEADMASTER_OFFICE
+DIVINATION_CLASSROOM
+ASTRONOMY_OBSERVATORY
+PREFECTS_BATHROOM
+ROOM_OF_REQUIREMENT
+CHAMBER_OF_SECRETS
+TOWER_CLOCKWORK
+BALLROOM
+TROPHY_ROOM
+CLASSROOM
+MAGIC_PRACTICE
+POTIONS_LAB
+RESEARCH_LAB
+OFFICE
+STUDY_ROOM
+MEETING_CLUB
+LIBRARY
+ARCHIVE
+STORAGE
+WORKSHOP
+GALLERY
+MUSIC_ROOM
+LOUNGE
+BEDROOM
+KITCHEN
+DINING_ROOM
+BATHROOM
+LAUNDRY
+HOSPITAL_WARD
+RECEPTION
+GUARDROOM
+PASSAGE_PROPS
+UTILITY_ROOM
+SECURE_VAULT
+DETENTION_CELL
+PUBLIC_COUNTER
+CEREMONY_HALL
+ENTRANCE_VESTIBULE
+CLOAKROOM_LOCKERS
+ART_CARTOGRAPHY_STUDIO
+GAMES_ROOM
+OUT_COURTYARD
+OUT_GARDEN
+OUT_LAWN
+OUT_WOODLAND
+OUT_WATERSIDE
+OUT_BUILDING_YARD
+OUT_CAMP
+OUT_SERVICE_GARDEN
+
+SIZE: `S | M | L`; default M.
+
+GEOMETRY / `layoutType`:
+
+`horizontal vertical windows ell tee cross court cloister curved tower`
+
+Do not manually generate default furniture inventories, floorplans, coordinates, corridor geometry or SVG.
+
+Use native whole-object assets only when an actual RP change requires them.
+
+Optional whole-interior asset IDs use:
+
+`cluster.layout-{suffix}`
+
+Supported suffixes:
+
+classroom classroom_teacher magic_practice potions_lab research_lab office study_room meeting_club library library_stack archive workshop lounge bedroom kitchen dining_room bathroom laundry hospital_ward reception guardroom utility_room detention_cell public_counter ceremony_hall art_cartography divination_classroom astronomy_observatory prefects_bathroom requirement_practice requirement_meeting requirement_refuge tower_clockwork tower_bells ballroom trophy_room headmaster_office out_garden out_woodland out_building_yard out_waterside out_camp out_service_garden
+
+Do not duplicate default furniture.
+
+INVENTORY RULES:
+
+- `merge`: retain default inventory and apply supplied changes.
+- `replace`: supplied `props` is the COMPLETE desired furniture inventory.
+- `props:[]` with replace removes furniture only.
+- `op:"ensure"` sets desired total count.
+- `op:"add"` adds quantity.
+- `broken` marks state, not detailed damaged artwork.
+- `removed`, `missing`, `destroyed` or count 0 remove the whole instance.
+- New IDs may use persistent `rp:*` identifiers.
+- Existing instance IDs must be verified, never guessed.
+- No `parentId`, `childId`, `supportId` or component-level edits.
+- If targeting is uncertain, rebuild the whole desired Generated inventory using `replace`.
+- Preserve approved default colors, geometry, furniture and layouts.
+- Missing artwork may use a minimal supported `visual.shapes` representation or named fallback.
+- Never invent a special magical object, capability or secret through decoration.
+
+**F. OUTPUT DATA CONTRACT**
+
+Output only valid `MAP_DATA` schemaVersion `2.0.0`.
+
+REQUIRED ROOT:
+
+`schemaVersion, meta, atlasAnchor, pcPlace, pcSpot, places, actors, events`
+
+REQUIRED META:
+
+`date: DD/MM/YYYY`
+`time: HH:mm`
+`areaName`
+`quote`
+
+OPTIONAL ROOT:
+
+`mapMode: indoor|outdoor`
+`layoutType: GEOMETRY`
+`forceSandbox: boolean`
+`region: diagon|knockturn`
+
+PLACE:
+
+`name`
+`id?`
+`type?`
+`size?`
+`description?`
+`overhear?`
+`region?`
+`isNewConstruction?`
+`architecture?: {floor?,wall?}`
+`propsMode?: merge|replace`
+`props?: (string|PROP)[]`
+
+PROP:
+
+`name`
+`item?: native-asset-ID`
+`id?: whole-instance-ID`
+`count?: nonnegative integer`
+`op?: ensure|add`
+`state?: intact|broken|removed|missing|destroyed`
+`zone?: ZONE`
+`visual?: {shapes:SHAPE[]}`
+
+ACTOR:
+
+`name`
+`isPC?: boolean`
+`id?`
+`placeId?`
+`placeName?`
+`spot: inside|corridor|threshold|outdoor`
+`zone?: ZONE`
+`tagType?: TAG`
+`activity?`
+`observation?`
+`members?: string[]`
+`summary?`
+`footstep?: walk|idle|hidden`
+`posture?: standing|sitting|lying|hidden`
+`onPatrol?: boolean`
+
+EVENT:
+
+`title`
+`detail?`
+`placeId?`
+`placeName?`
+`hidden?: boolean`
+`id?`
+
+Native ZONE:
+
+`center entrance left right end wall_north wall_south wall_west wall_east`
+
+Native TAG:
+
+`gryffindor slytherin ravenclaw hufflepuff beauxbatons durmstrang teacher adult patrol animal monster ghost unknown crowd`
+
+FLOOR:
+
+`tile wood brick octagon mosaic herringbone diamond cobble`
+
+WALL:
+
+`stone dark timber wainscot plaster brick ashlar panel limestone rubble`
+
+MATERIAL:
+
+`wood stone metal fabric paper glass plant ink`
+
+SHAPE:
+
+`{kind:"rect",x,y,width,height,material?}`
+
+`{kind:"ellipse",cx,cy,rx,ry,material?}`
+
+`{kind:"path",d,material?}`
+
+Visual shapes: 1–32 valid visible shapes within a 100×100 local coordinate space. No raw SVG, scripts, external URLs or arbitrary HTML.
+
+Every place, prop and actor requires `name`. Every event requires `title`.
+
+Actor/event locations use a valid `placeId` or `placeName`. Root `pcPlace` is authoritative for the PC.
+
+Use native ID when verified; otherwise a supported name. No fabricated IDs, arbitrary room numbers, legacy `templateState`, viewport or zoom controls.
+
+**G. TEXT & OUTPUT SAFETY**
+
+All visible text must be natural Vietnamese consistent with R10.
+
+For `quote`, `description`, `overhear`, `activity`, `observation`, `summary` and `detail`:
+
+- One concise sentence, under 30 words.
+- Grounded in accepted RP.
+- Individual NPC behavior, not generic filler.
+- No secret spoilers, future knowledge, hidden motivation or unreceived information.
+- No fabricated dialogue or inner thoughts.
+- No PC interpretation, emotion or newly authored speech.
+- A map quote may be playful or mischievous, but is flavor text only and grants no actual speech, new event or magical property.
+
+Remove protected information BEFORE producing JSON. A hidden icon does not make its JSON content confidential.
+
+**H. EXECUTION & DELIVERY**
+
+When `/MAP` is invoked:
+
+1. Read current accepted RP state.
+2. Resolve PC date, time, location and matching Atlas anchor.
+3. Apply visibility, knowledge and physical access gates.
+4. Identify eligible local NPCs and groups.
+5. Select up to four legitimate quest/activity/hidden markers under the allocation above.
+6. Supply only the minimal places and actual RP modifications needed.
+7. Validate all required fields, actor/place references and native IDs.
+8. Inject completed MAP_DATA into the HTML shell below.
+9. Return exactly ONE complete fenced `html` document.
+
+No explanation, independent JSON output, STATUS, BODY or META.
+
+Do not change, shorten, reconstruct, update or substitute the pinned runtime URLs or loader code.
+
+All required values must be populated from the accepted current RP state. Never emit unresolved placeholders. Encode any literal `<` inside JSON string values as `\u003c`.
+
+If the story state does not support a place, actor, activity or optional property, omit that element rather than inventing facts. Do not emit a map with unknown PC location.
+
+**PREVIEW OUTPUT LOCK**
+Return exactly one fenced html block, with no text before or after. Emit real HTML characters, not escaped tags, Markdown blockquotes, JSON strings or literal backslashes before tags. Keep <!DOCTYPE html>, <html>, <head>, </head>, <body>, </body>, </html> explicit and on separate lines. Fill only MAP_DATA; no placeholders in final output. The platform may not offer Preview; do not claim it opened without observation.
+
+**I. HTML OUTPUT — FIXED LOADER**
+
+Copy the following complete shell unchanged except for replacing the contents of `<script type="application/json" id="map-data">` with valid current MAP_DATA.
+
 ```html
-<!doctype html><html lang="vi"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="data:,"><title>WIZAMAP</title><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Ngoc1804/wzw-hogwarts-map-2@773ac16c4e2294aa263ea9a298f588f289562c4c/dist/shell.css" onerror="window.WZW_LOAD_FAILED=true;document.getElementById('wzw-map')?.setAttribute('data-status','load-error')"><div id="wzw-map"><p role="status">Đang mở bản đồ…</p></div><script type="application/json" id="map-data">{
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="data:,"><title>WIZAMAP</title><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Ngoc1804/wzw-hogwarts-map-2@773ac16c4e2294aa263ea9a298f588f289562c4c/dist/shell.css" onerror="window.WZW_LOAD_FAILED=true;document.getElementById('wzw-map')?.setAttribute('data-status','load-error')">
+</head>
+<body>
+<div id="wzw-map"><p role="status">Đang mở bản đồ…</p></div>
+<script type="application/json" id="map-data">{
   "schemaVersion": "2.0.0",
   "meta": {
     "date": "",
@@ -95,5 +427,34 @@ Fill map-data and required values from current RP. Keep the standard loader and 
     }
   ],
   "events": []
-}</script><script>window.WZW_START=performance.now();window.wzwLoadError=function(){window.WZW_LOAD_FAILED=true;const r=document.getElementById('wzw-map');r.replaceChildren();let d={};try{d=JSON.parse(document.getElementById('map-data').textContent)||{}}catch{}for(const v of [d.meta?.areaName,...[d.places,d.actors,d.events].flatMap(a=>Array.isArray(a)?a.map(x=>[x?.name||x?.title,x?.description||x?.activity||x?.detail].filter(Boolean).join(' — ')):[])])if(v){const p=document.createElement('p');p.textContent=v;r.append(p)}if(!r.childNodes.length)r.textContent='Bản đồ RP';r.dataset.status='text-fallback'};</script><script src="https://cdn.jsdelivr.net/gh/Ngoc1804/wzw-hogwarts-map-2@773ac16c4e2294aa263ea9a298f588f289562c4c/dist/templates-pack.js" onerror="wzwLoadError()"></script><script src="https://cdn.jsdelivr.net/gh/Ngoc1804/wzw-hogwarts-map-2@773ac16c4e2294aa263ea9a298f588f289562c4c/dist/bundle.js" onerror="wzwLoadError()"></script></html>
+}</script>
+
+<script>window.WZW_START=performance.now();window.wzwLoadError=function(){window.WZW_LOAD_FAILED=true;const r=document.getElementById('wzw-map');r.replaceChildren();let d={};try{d=JSON.parse(document.getElementById('map-data').textContent)||{}}catch{}for(const v of [d.meta?.areaName,...[d.places,d.actors,d.events].flatMap(a=>Array.isArray(a)?a.map(x=>[x?.name||x?.title,x?.description||x?.activity||x?.detail].filter(Boolean).join(' — ')):[])])if(v){const p=document.createElement('p');p.textContent=v;r.append(p)}if(!r.childNodes.length)r.textContent='Bản đồ RP';r.dataset.status='text-fallback'};</script>
+
+<script src="https://cdn.jsdelivr.net/gh/Ngoc1804/wzw-hogwarts-map-2@773ac16c4e2294aa263ea9a298f588f289562c4c/dist/templates-pack.js" onerror="wzwLoadError()"></script>
+
+<script src="https://cdn.jsdelivr.net/gh/Ngoc1804/wzw-hogwarts-map-2@773ac16c4e2294aa263ea9a298f588f289562c4c/dist/bundle.js" onerror="wzwLoadError()"></script>
+
+</body>
+</html>
 ```
+
+**FINAL VALIDATION**
+
+Before emission confirm:
+
+- Exactly one PC and a supported PC location.
+- Maximum ten NPC ribbons, with no invented presence.
+- Maximum four legitimate event markers in the agreed allocations.
+- Correct icon mapping and PC-safe hidden-event descriptions.
+- Correct Fixed / Atlas / Generated route.
+- Valid native room/layout/whole-asset references.
+- No default inventory duplication or unauthorized structural edits.
+- No chronology, agency, knowledge or privacy violations.
+- Valid JSON embedded in the unchanged pinned HTML loader.
+- Exactly one HTML output and no RP state mutation.
+
+All rules in R1–R20, W and C remain authoritative. /MAP is a visualization of accepted reality, never a mechanism for creating that reality.
+
+
+
