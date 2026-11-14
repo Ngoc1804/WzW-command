@@ -12,11 +12,11 @@ function normalize(input){
    if(typeof p==='string')return{name:p,count:1,op:'ensure'};
    const valid=Number.isInteger(p?.count)&&Number.isFinite(p?.count)&&p.count>=0;
    if(p?.count!==undefined&&!valid)diagnostics.push('invalid-prop-count:'+index+':'+i);
-   return {...p,item:VOCAB.itemAliases?.[p?.item]||p?.item,name:text(p?.name),childId:text(p?.childId),parentId:text(p?.parentId),count:valid?p.count:1,countProvided:valid,op:p?.op==='add'?'add':'ensure'};
+   return {...p,item:VOCAB.itemAliases?.[p?.item]||p?.item,name:text(p?.name),count:valid?p.count:1,countProvided:valid,op:p?.op==='add'?'add':'ensure'};
   }).filter(p=>p.name);
   return {...p,id,name:text(p.name),type:text(p.type),description:text(p.description),isNewConstruction:p.isNewConstruction===true,propsMode:p.propsMode==='replace'?'replace':'merge',props};
  });
- const actors=list(d.actors).filter(a=>a&&text(a.name)).map(a=>({...a,name:text(a.name),isPC:a.isPC===true,placeId:text(a.placeId),placeName:text(a.placeName),tagType:KEYS.includes(a.tagType)?a.tagType:'unknown',onPatrol:a.onPatrol===true,spot:spot(a.spot),zone:text(a.zone),posture:['standing','sitting','lying','hidden'].includes(a.posture)?a.posture:'standing',placement:['normal','on_furniture','on_landscape','in_wall'].includes(a.placement)?a.placement:'normal',supportId:text(a.supportId),members:list(a.members).filter(n=>typeof n==='string'&&n.trim()),summary:text(a.summary),activity:text(a.activity),observation:text(a.observation),footstep:['walk','idle','hidden'].includes(a.footstep)?a.footstep:'hidden'}));
+ const actors=list(d.actors).filter(a=>a&&text(a.name)).map(a=>({...a,name:text(a.name),isPC:a.isPC===true,placeId:text(a.placeId),placeName:text(a.placeName),tagType:KEYS.includes(a.tagType)?a.tagType:'unknown',onPatrol:a.onPatrol===true,spot:spot(a.spot),zone:text(a.zone),posture:['standing','sitting','lying','hidden'].includes(a.posture)?a.posture:'standing',members:list(a.members).filter(n=>typeof n==='string'&&n.trim()),summary:text(a.summary),activity:text(a.activity),observation:text(a.observation),footstep:['walk','idle','hidden'].includes(a.footstep)?a.footstep:'hidden'}));
  if(actors.filter(a=>a.isPC).length>1){diagnostics.push('ambiguous-pc');actors.forEach(a=>a.isPC=false);}
  if(actors.filter(a=>!a.isPC).length>10)diagnostics.push('npc-ribbon-limit-exceeded'); // Preserve RP; Gemini must group, never silently truncate.
  const pcPlace=text(d.pcPlace),pc=actors.find(a=>a.isPC);
