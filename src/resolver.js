@@ -27,7 +27,7 @@ function resolve(d){
    if(focus.length===1)worldMode=focus[0].type?.startsWith('OUT_')?'outdoor':'indoor';
    places=worldSite.rooms.filter(room=>(!room.conditional||focus.includes(room))&&(!level||room.level===level)).map(room=>({...room}));
    if(focus.length===1)bindings[d.pcPlace]=focus[0].id;
-   if(!places.length)places=[{id:worldSite.id,name:worldSite.name,desc:'',type:''}];
+   if(!places.length)places=[{id:worldSite.id,name:worldSite.name,description:worldSite.description||'',type:'LOUNGE'}];
   }
  }
  const exact=(ref,region=d.region)=>{
@@ -55,7 +55,7 @@ function resolve(d){
    const pool=places.filter(x=>/^Nhà dân(?:\b|\s|$)/i.test(x.name)&&!used.has(x.id)&&(fixedId==='village-static'||region==='diagon'&&x.id.startsWith('da-')||region==='knockturn'&&x.id.startsWith('ka-'))).sort((a,b)=>a.id.localeCompare(b.id));
    if(pool.length){match=pool[0];used.add(match.id);}else diagnostics.push('no-empty-house-binding:'+p.name);
   }
-  if(match){bindings[p.name]=match.id;if(p.id)bindings[p.id]=match.id;Object.assign(match,p,{id:match.id,desc:p.description||match.desc,...(source?{x:match.x,y:match.y}:{})});}
+  if(match){bindings[p.name]=match.id;if(p.id)bindings[p.id]=match.id;Object.assign(match,p,{id:match.id,description:p.description||match.description||match.desc,desc:p.description||match.description||match.desc,...(source?{x:match.x,y:match.y}:{})});}
   else if(source){unresolved.push(p);diagnostics.push('unresolved-fixed-place:'+p.name);}
   else{
    const duplicate=places.some(x=>key(x.name)===key(p.name));
@@ -74,7 +74,7 @@ function resolve(d){
   if(places.some(p=>key(p.name)===key(name))){diagnostics.push('ambiguous-location:'+ref);continue;}
   places.push({id:'rp:'+key(name),name,desc:''});
  }
- for(const place of places)place.inventory=source?{objects:[],diagnostics:[],illustrative:false}:composeRoom(place);
+ for(const place of places){place.description=place.description||place.desc||'Không gian yên tĩnh, không có gì đặc biệt.';place.overhear=place.overhear||'Không có hoạt động gì đáng chú ý.';place.inventory=source?{objects:[],diagnostics:[],illustrative:false}:composeRoom(place);}
  if(!places.length)places.push({id:'context',name:d.meta.areaName||'Không gian RP',desc:''});
  return {worldSite,mapMode:worldMode,source,fixedId:source?fixedId:null,cluster:sandbox?null:cluster,places,bindings,unresolved,diagnostics,detail:false,route:source?'fixed':cluster&&!sandbox?'atlas':'sandbox',exact};
 }

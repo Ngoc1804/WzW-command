@@ -40,7 +40,7 @@ jobs:
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add examples/WIZAMAP_FIXED_UI.html examples/WIZAMAP_ASSETS.html dist/ prompts/MAP_PROMPT.txt docs/build-metrics.json assets/runtime-release.json
+          git add examples/WIZAMAP_FIXED_UI.html examples/WIZAMAP_ASSETS.html dist/ docs/build-metrics.json assets/runtime-release.json
           if ! git diff --cached --quiet; then
             git commit -m 'build: regenerate canonical MAP 2 artifacts [skip ci]'
             git push origin HEAD:${{ github.ref_name }}

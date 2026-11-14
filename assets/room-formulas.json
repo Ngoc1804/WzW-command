@@ -1,0 +1,2492 @@
+{
+  "schemaVersion": "1.0",
+  "purpose": "Fallback formulas for rooms without an approved S/M/L layout; approved SVG layout takes precedence.",
+  "rules": {
+    "order": [
+      "approved-layout-S/M/L",
+      "function-formula",
+      "named-object fallback"
+    ],
+    "preserveAsset": "Never alter native SVG or component relationships.",
+    "clearance": "Keep entrance and movement axis unblocked.",
+    "placement": "Cluster by function and furniture mounting; avoid parallel rows of unrelated objects.",
+    "furniture": "Use verified recipe instances and asset IDs only. Do not add story objects."
+  },
+  "recipes": {
+    "HEADMASTER_OFFICE": {
+      "name": "Văn phòng Hiệu trưởng",
+      "pattern": "working-islands",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 860,
+          "height": 600,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 990,
+          "height": 690,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 1130,
+          "height": 790,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "herringbone",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "wall_north",
+        "center",
+        "wall_west",
+        "wall_east",
+        "left"
+      ],
+      "assetIds": [
+        "new.bookcase-glass",
+        "new.portrait-1",
+        "new.desk-carved",
+        "cluster.layout-headmaster_office",
+        "new.headmaster-chair",
+        "layout.chair-2",
+        "layout.chair-0",
+        "new.silver-device",
+        "layout.chair-1",
+        "architecture.stairs-spiral",
+        "new.memory-vials",
+        "decor.pensieve",
+        "unique.sorting-hat",
+        "wizard.orrery",
+        "fixture.fireplace-top",
+        "new.planter"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Ba gian tròn nối nhau; thư viện, bàn Hiệu trưởng, khu Pensieve và tủ ký ức.",
+      "source": "assets/recipes.json"
+    },
+    "DIVINATION_CLASSROOM": {
+      "name": "Phòng Tiên tri",
+      "pattern": "teaching-focus",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 590,
+          "height": 590,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 680,
+          "height": 680,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 780,
+          "height": 780,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "wood",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "wall_north",
+        "left",
+        "right",
+        "center",
+        "wall_east",
+        "wall_west"
+      ],
+      "assetIds": [
+        "table.round",
+        "cluster.layout-divination_classroom",
+        "new.cushion",
+        "cluster.layout-divination_cards",
+        "cluster.layout-divination_notes",
+        "new.bookcase"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Bàn trà, đệm nhung, tách trà, quả cầu, rèm và kệ sách theo cung tháp.",
+      "source": "assets/recipes.json"
+    },
+    "ASTRONOMY_OBSERVATORY": {
+      "name": "Đài thiên văn",
+      "pattern": "teaching-focus",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 680,
+          "height": 630,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 790,
+          "height": 730,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 900,
+          "height": 830,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "tile",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "wall_north",
+        "left",
+        "right",
+        "center",
+        "wall_east",
+        "wall_west"
+      ],
+      "assetIds": [
+        "new.telescope",
+        "wizard.orrery",
+        "table.study",
+        "cluster.layout-astronomy_observatory",
+        "layout.chair-0"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Kính đồng, vòng chia độ, trạm quan sát, bản đồ sao và tủ dụng cụ.",
+      "source": "assets/recipes.json"
+    },
+    "PREFECTS_BATHROOM": {
+      "name": "Phòng tắm Huynh trưởng",
+      "pattern": "work-service",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 780,
+          "height": 570,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 900,
+          "height": 660,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 1030,
+          "height": 750,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "octagon",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "wall_north",
+        "wall_west",
+        "center",
+        "right",
+        "wall_east"
+      ],
+      "assetIds": [
+        "new.brass-tap",
+        "new.changing-screen",
+        "fixture.sink",
+        "cluster.layout-bathroom",
+        "extra.towel",
+        "new.prefects-pool",
+        "layout.bench-0"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Bể xây có bậc, vòi brass, tranh kính nàng tiên cá và khu thay đồ.",
+      "source": "assets/recipes.json"
+    },
+    "ROOM_OF_REQUIREMENT": {
+      "name": "Phòng Yêu Cầu",
+      "pattern": "function-perimeter",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 810,
+          "height": 620,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 940,
+          "height": 720,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 1060,
+          "height": 810,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "wood",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "wall_north",
+        "left",
+        "wall_east",
+        "center",
+        "right"
+      ],
+      "assetIds": [
+        "new.practice-dummy",
+        "new.wand-rack",
+        "storage.cabinet",
+        "table.study",
+        "cluster.layout-requirement_practice"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Biến thể riêng cho tập luyện, họp, trú ẩn hoặc kho đồ; chọn theo RP.",
+      "source": "assets/recipes.json"
+    },
+    "CHAMBER_OF_SECRETS": {
+      "name": "Phòng chứa Bí mật",
+      "pattern": "function-perimeter",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 810,
+          "height": 1380,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 940,
+          "height": 1600,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 1060,
+          "height": 1810,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "tile",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "wall_north",
+        "left",
+        "wall_east",
+        "center",
+        "right"
+      ],
+      "assetIds": [
+        "new.slytherin-statue",
+        "new.serpent-column"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Trục dài, cột rắn, rãnh nước, tượng Slytherin và cửa chạm cuối gian.",
+      "source": "assets/recipes.json"
+    },
+    "TOWER_CLOCKWORK": {
+      "name": "Máy tháp / tháp chuông",
+      "pattern": "function-perimeter",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 670,
+          "height": 670,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 770,
+          "height": 770,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 880,
+          "height": 880,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "wood",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "wall_north",
+        "left",
+        "wall_east",
+        "center",
+        "right"
+      ],
+      "assetIds": [
+        "layout.clock-machine",
+        "table.prep",
+        "cluster.layout-tower_clockwork",
+        "architecture.stairs-spiral"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Bộ truyền, khung đỡ, bánh răng, quả lắc; biến thể chuông có gông treo.",
+      "source": "assets/recipes.json"
+    },
+    "BALLROOM": {
+      "name": "Phòng khiêu vũ",
+      "pattern": "perimeter-display",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 1140,
+          "height": 810,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 1320,
+          "height": 940,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 1500,
+          "height": 1060,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "herringbone",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "wall_north",
+        "wall_east",
+        "wall_west",
+        "left",
+        "right"
+      ],
+      "assetIds": [
+        "new.harp",
+        "new.planter",
+        "new.grand-piano",
+        "layout.chair-2",
+        "layout.chair-0",
+        "table.round",
+        "cluster.layout-ballroom",
+        "layout.chair-1",
+        "cluster.layout-ballroom_flowers"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Sàn nhảy, bục dàn nhạc, bàn tiệc và trang trí băng lấy cảm hứng Yule Ball.",
+      "source": "assets/recipes.json"
+    },
+    "TROPHY_ROOM": {
+      "name": "Phòng Cúp",
+      "pattern": "perimeter-display",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 620,
+          "height": 400,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 720,
+          "height": 460,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 810,
+          "height": 530,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "octagon",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "wall_north",
+        "wall_east",
+        "wall_west",
+        "left",
+        "right"
+      ],
+      "assetIds": [
+        "new.display-gothic",
+        "new.medals",
+        "new.display-island",
+        "cluster.layout-trophy_room",
+        "new.award-shield"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Tủ Gothic, cúp nhiều dáng, huy chương, khiên và đảo kính thấp.",
+      "source": "assets/recipes.json"
+    },
+    "CLASSROOM": {
+      "name": "Lớp học lý thuyết",
+      "pattern": "teaching-focus",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 640,
+          "height": 460,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 740,
+          "height": 520,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 830,
+          "height": 580,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "wood",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "wall_north",
+        "left",
+        "right",
+        "center",
+        "wall_east",
+        "wall_west"
+      ],
+      "assetIds": [
+        "new.blackboard-long",
+        "layout.chair-0",
+        "new.bookcase",
+        "table.layout-school",
+        "cluster.layout-classroom_teacher",
+        "cluster.layout-classroom",
+        "tabletop.classroom"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Bảng đen dài, bàn học, ghế, kệ và bàn giáo viên.",
+      "source": "assets/recipes.json"
+    },
+    "MAGIC_PRACTICE": {
+      "name": "Thực hành phép thuật",
+      "pattern": "teaching-focus",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 640,
+          "height": 480,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 740,
+          "height": 540,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 830,
+          "height": 600,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "wood",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "wall_north",
+        "left",
+        "right",
+        "center",
+        "wall_east",
+        "wall_west"
+      ],
+      "assetIds": [
+        "new.practice-dummy",
+        "new.wand-rack",
+        "cluster.layout-magic_practice",
+        "layout.bench-1",
+        "atelier.decor.candle",
+        "wizard.astronomy-cabinet"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Vùng tập rộng, bia và giá dụng cụ.",
+      "source": "assets/recipes.json"
+    },
+    "POTIONS_LAB": {
+      "name": "Phòng Độc dược",
+      "pattern": "teaching-focus",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 640,
+          "height": 480,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 740,
+          "height": 540,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 830,
+          "height": 600,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "tile",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "wall_north",
+        "left",
+        "right",
+        "center",
+        "wall_east",
+        "wall_west"
+      ],
+      "assetIds": [
+        "wizard.potions-cabinet",
+        "wizard.archive",
+        "table.prep",
+        "cluster.layout-potions_lab",
+        "wizard.cauldron",
+        "seat.stool",
+        "cluster.layout-potions_notes",
+        "fixture.sink",
+        "accessory.pot",
+        "accessory.book-open",
+        "object.clock",
+        "tabletop.chamber_of_secrets"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Bàn vạc, nguyên liệu, chai lọ và chậu rửa.",
+      "source": "assets/recipes.json"
+    },
+    "RESEARCH_LAB": {
+      "name": "Phòng nghiên cứu",
+      "pattern": "teaching-focus",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 520,
+          "height": 400,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 600,
+          "height": 450,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 680,
+          "height": 500,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "wood",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "wall_north",
+        "left",
+        "right",
+        "center",
+        "wall_east",
+        "wall_west"
+      ],
+      "assetIds": [
+        "wizard.potions-cabinet",
+        "wizard.archive",
+        "wizard.orrery",
+        "table.prep",
+        "cluster.layout-research_lab",
+        "layout.chair-0",
+        "new.planter",
+        "table.study",
+        "cluster.layout-research_notes"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Bàn nghiên cứu, thiết bị, bản đồ và sách.",
+      "source": "assets/recipes.json"
+    },
+    "OFFICE": {
+      "name": "Phòng làm việc",
+      "pattern": "working-islands",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 360,
+          "height": 320,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 410,
+          "height": 360,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 470,
+          "height": 400,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "wood",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "wall_north",
+        "center",
+        "wall_west",
+        "wall_east",
+        "left"
+      ],
+      "assetIds": [
+        "layout.chair-0",
+        "new.desk-carved",
+        "layout.chair-1",
+        "layout.chair-2",
+        "new.planter",
+        "fixture.fireplace",
+        "decor.noticeboard",
+        "wizard.archive",
+        "tabletop.office"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Bàn chính, ghế khách, tủ và lò sưởi.",
+      "source": "assets/recipes.json"
+    },
+    "STUDY_ROOM": {
+      "name": "Phòng tự học",
+      "pattern": "working-islands",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 440,
+          "height": 340,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 510,
+          "height": 380,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 570,
+          "height": 430,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "wood",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "wall_north",
+        "center",
+        "wall_west",
+        "wall_east",
+        "left"
+      ],
+      "assetIds": [
+        "new.bookcase",
+        "table.study",
+        "decor.lamp-green",
+        "layout.chair-1",
+        "layout.chair-2",
+        "layout.chair-0",
+        "tabletop.study_room",
+        "tabletop.guardroom",
+        "tabletop.headmaster_office"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Bàn đọc theo nhóm, đèn và giá sách.",
+      "source": "assets/recipes.json"
+    },
+    "MEETING_CLUB": {
+      "name": "Phòng họp / CLB",
+      "pattern": "social-clusters",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 520,
+          "height": 400,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 600,
+          "height": 450,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 680,
+          "height": 500,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "wood",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "left",
+        "right",
+        "center",
+        "wall_north",
+        "wall_east"
+      ],
+      "assetIds": [
+        "decor.noticeboard",
+        "new.bookcase",
+        "layout.chair-1",
+        "table.layout-meeting",
+        "cluster.layout-meeting_club",
+        "extra.lamp-floor",
+        "extra.books-stack",
+        "storage.wall",
+        "storage.drawers"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Bàn dài, ghế hai bên, bảng và tủ hoạt động.",
+      "source": "assets/recipes.json"
+    },
+    "LIBRARY": {
+      "name": "Thư viện",
+      "pattern": "working-islands",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 900,
+          "height": 640,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 1040,
+          "height": 720,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 1170,
+          "height": 810,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "wood",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "wall_north",
+        "center",
+        "wall_west",
+        "wall_east",
+        "left"
+      ],
+      "assetIds": [
+        "new.bookcase-glass",
+        "decor.ladder",
+        "storage.bookcase-top",
+        "table.study",
+        "decor.lamp-green",
+        "cluster.layout-library",
+        "cluster.layout-library_stack",
+        "layout.chair-1",
+        "layout.chair-2"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Dãy kệ, bàn đọc, thang và quầy quản lý.",
+      "source": "assets/recipes.json"
+    },
+    "ARCHIVE": {
+      "name": "Kho hồ sơ",
+      "pattern": "working-islands",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 640,
+          "height": 460,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 740,
+          "height": 520,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 830,
+          "height": 580,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "wood",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "wall_north",
+        "center",
+        "wall_west",
+        "wall_east",
+        "left"
+      ],
+      "assetIds": [
+        "wizard.archive",
+        "table.study",
+        "cluster.layout-archive",
+        "layout.chair-1"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Tủ hồ sơ, kệ và bàn tra cứu.",
+      "source": "assets/recipes.json"
+    },
+    "STORAGE": {
+      "name": "Kho đồ",
+      "pattern": "function-perimeter",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 360,
+          "height": 320,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 410,
+          "height": 360,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 470,
+          "height": 400,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "wood",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "wall_north",
+        "left",
+        "wall_east",
+        "center",
+        "right"
+      ],
+      "assetIds": [
+        "storage.open",
+        "object.barrel",
+        "object.crate",
+        "object.chest",
+        "decor.basket-linen"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Kệ, rương, thùng; lối đi giữa.",
+      "source": "assets/recipes.json"
+    },
+    "WORKSHOP": {
+      "name": "Xưởng chế tác",
+      "pattern": "function-perimeter",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 520,
+          "height": 400,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 600,
+          "height": 450,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 680,
+          "height": 500,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "wood",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "wall_north",
+        "left",
+        "wall_east",
+        "center",
+        "right"
+      ],
+      "assetIds": [
+        "new.tool-board",
+        "storage.cabinet",
+        "table.prep",
+        "cluster.layout-workshop",
+        "seat.stool",
+        "object.crate"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Bàn thao tác, bảng dụng cụ và vật liệu.",
+      "source": "assets/recipes.json"
+    },
+    "GALLERY": {
+      "name": "Phòng trưng bày",
+      "pattern": "perimeter-display",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 640,
+          "height": 400,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 740,
+          "height": 450,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 830,
+          "height": 500,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "wood",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "wall_north",
+        "wall_east",
+        "wall_west",
+        "left",
+        "right"
+      ],
+      "assetIds": [
+        "new.portrait-0",
+        "new.portrait-1",
+        "new.portrait-2",
+        "decor.bust",
+        "layout.bench-0"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Tranh, tượng, áo giáp và tủ kính.",
+      "source": "assets/recipes.json"
+    },
+    "MUSIC_ROOM": {
+      "name": "Phòng nhạc",
+      "pattern": "social-clusters",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 560,
+          "height": 420,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 640,
+          "height": 470,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 730,
+          "height": 530,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "wood",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "left",
+        "right",
+        "center",
+        "wall_north",
+        "wall_east"
+      ],
+      "assetIds": [
+        "new.harp",
+        "new.grand-piano",
+        "new.music-stand",
+        "layout.bench-0",
+        "layout.chair-2",
+        "layout.chair-0",
+        "storage.cabinet"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Piano, nhạc cụ, giá nhạc và ghế tập.",
+      "source": "assets/recipes.json"
+    },
+    "LOUNGE": {
+      "name": "Phòng khách / nghỉ",
+      "pattern": "social-clusters",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 520,
+          "height": 400,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 600,
+          "height": 450,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 680,
+          "height": 500,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "wood",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "left",
+        "right",
+        "center",
+        "wall_north",
+        "wall_east"
+      ],
+      "assetIds": [
+        "fixture.fireplace",
+        "new.bookcase",
+        "layout.sofa-0",
+        "layout.chair-1",
+        "layout.chair-2",
+        "table.layout-oval",
+        "cluster.layout-lounge",
+        "new.planter"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Nhóm ghế trà, lò sưởi và góc đọc.",
+      "source": "assets/recipes.json"
+    },
+    "BEDROOM": {
+      "name": "Phòng ngủ",
+      "pattern": "sleep-and-storage",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 360,
+          "height": 320,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 410,
+          "height": 360,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 470,
+          "height": 400,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "wood",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "left",
+        "right",
+        "wall_north",
+        "wall_west",
+        "wall_east"
+      ],
+      "assetIds": [
+        "detail.locker",
+        "bed.canopy",
+        "table.study",
+        "cluster.layout-bedroom",
+        "table.bedside",
+        "decor.lamp-green",
+        "layout.chair-1",
+        "object.chest"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Giường, tủ, bàn nhỏ, rương và bàn viết.",
+      "source": "assets/recipes.json"
+    },
+    "KITCHEN": {
+      "name": "Phòng bếp",
+      "pattern": "work-service",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 560,
+          "height": 440,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 640,
+          "height": 490,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 730,
+          "height": 550,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "wood",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "wall_north",
+        "wall_west",
+        "center",
+        "right",
+        "wall_east"
+      ],
+      "assetIds": [
+        "storage.open",
+        "decor.oven",
+        "fixture.sink",
+        "table.prep",
+        "cluster.layout-kitchen",
+        "object.basket",
+        "object.barrel"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Bếp, chậu rửa, đảo sơ chế và thực phẩm.",
+      "source": "assets/recipes.json"
+    },
+    "DINING_ROOM": {
+      "name": "Phòng ăn",
+      "pattern": "work-service",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 520,
+          "height": 360,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 600,
+          "height": 400,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 680,
+          "height": 450,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "wood",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "wall_north",
+        "wall_west",
+        "center",
+        "right",
+        "wall_east"
+      ],
+      "assetIds": [
+        "storage.cabinet",
+        "layout.chair-2",
+        "layout.chair-0",
+        "layout.chair-1",
+        "table.dining",
+        "accessory.plate",
+        "cluster.layout-dining_room",
+        "new.planter"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Bàn ăn, ghế, tủ bát và đèn.",
+      "source": "assets/recipes.json"
+    },
+    "BATHROOM": {
+      "name": "Phòng tắm thường",
+      "pattern": "work-service",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 360,
+          "height": 320,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 410,
+          "height": 360,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 470,
+          "height": 400,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "tile",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "wall_north",
+        "wall_west",
+        "center",
+        "right",
+        "wall_east"
+      ],
+      "assetIds": [
+        "fixture.sink",
+        "cluster.layout-bathroom",
+        "new.changing-screen",
+        "fixture.bathtub",
+        "fixture.toilet",
+        "decor.basket-linen"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Bồn, lavabo, vệ sinh và khu khăn.",
+      "source": "assets/recipes.json"
+    },
+    "LAUNDRY": {
+      "name": "Phòng giặt",
+      "pattern": "work-service",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 400,
+          "height": 300,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 460,
+          "height": 340,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 520,
+          "height": 380,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "tile",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "wall_north",
+        "wall_west",
+        "center",
+        "right",
+        "wall_east"
+      ],
+      "assetIds": [
+        "fixture.sink",
+        "table.prep",
+        "cluster.layout-laundry",
+        "storage.open",
+        "decor.basket-linen"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Chậu giặt, bàn gấp, tủ vải và giá phơi.",
+      "source": "assets/recipes.json"
+    },
+    "HOSPITAL_WARD": {
+      "name": "Bệnh xá",
+      "pattern": "work-service",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 800,
+          "height": 520,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 920,
+          "height": 580,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 1040,
+          "height": 660,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "tile",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "wall_north",
+        "wall_west",
+        "center",
+        "right",
+        "wall_east"
+      ],
+      "assetIds": [
+        "table.bedside",
+        "layout.privacy-screen",
+        "bed.single",
+        "detail.medicine-cart",
+        "table.study",
+        "cluster.layout-hospital_ward"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Giường bệnh, rèm, tủ thuốc và bàn y tế.",
+      "source": "assets/recipes.json"
+    },
+    "RECEPTION": {
+      "name": "Tiếp tân / chờ",
+      "pattern": "function-perimeter",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 480,
+          "height": 340,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 550,
+          "height": 380,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 620,
+          "height": 430,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "tile",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "wall_north",
+        "left",
+        "wall_east",
+        "center",
+        "right"
+      ],
+      "assetIds": [
+        "layout.chair-0",
+        "object.counter",
+        "cluster.layout-reception",
+        "new.planter",
+        "layout.sofa-1",
+        "layout.sofa-0",
+        "table.coffee",
+        "cluster.layout-lounge"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Quầy tiếp nhận, ghế chờ và bảng tin.",
+      "source": "assets/recipes.json"
+    },
+    "GUARDROOM": {
+      "name": "Phòng trực gác",
+      "pattern": "function-perimeter",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 360,
+          "height": 320,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 410,
+          "height": 360,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 470,
+          "height": 400,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "wood",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "wall_north",
+        "left",
+        "wall_east",
+        "center",
+        "right"
+      ],
+      "assetIds": [
+        "new.wand-rack",
+        "extra.safe",
+        "table.study",
+        "cluster.layout-guardroom",
+        "layout.chair-0",
+        "decor.armour"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Bàn trực, tủ khóa và giá dụng cụ.",
+      "source": "assets/recipes.json"
+    },
+    "PASSAGE_PROPS": {
+      "name": "Trang trí hành lang",
+      "pattern": "clear-axis",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 480,
+          "height": 160,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 550,
+          "height": 180,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 620,
+          "height": 200,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "wood",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "wall_north",
+        "wall_west",
+        "wall_east",
+        "right",
+        "left"
+      ],
+      "assetIds": [
+        "new.portrait-1",
+        "decor.bust",
+        "new.planter",
+        "layout.bench-0",
+        "layout.bench-1"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Module mép tường: tranh, ghế, tượng, đèn.",
+      "source": "assets/recipes.json"
+    },
+    "UTILITY_ROOM": {
+      "name": "Phòng kỹ thuật",
+      "pattern": "function-perimeter",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 440,
+          "height": 340,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 510,
+          "height": 380,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 570,
+          "height": 430,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "wood",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "wall_north",
+        "left",
+        "wall_east",
+        "center",
+        "right"
+      ],
+      "assetIds": [
+        "new.pipe-valve",
+        "new.boiler",
+        "table.prep",
+        "cluster.layout-utility_room"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Lò, ống, van, dụng cụ bảo trì.",
+      "source": "assets/recipes.json"
+    },
+    "SECURE_VAULT": {
+      "name": "Kho bảo mật",
+      "pattern": "function-perimeter",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 440,
+          "height": 360,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 510,
+          "height": 400,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 570,
+          "height": 450,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "wood",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "wall_north",
+        "left",
+        "wall_east",
+        "center",
+        "right"
+      ],
+      "assetIds": [
+        "decor.vault-door",
+        "extra.safe",
+        "object.chest"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Tủ khóa, rương, bệ và cửa gia cố.",
+      "source": "assets/recipes.json"
+    },
+    "DETENTION_CELL": {
+      "name": "Buồng giam",
+      "pattern": "function-perimeter",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 360,
+          "height": 320,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 410,
+          "height": 360,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 470,
+          "height": 400,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "wood",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "wall_north",
+        "left",
+        "wall_east",
+        "center",
+        "right"
+      ],
+      "assetIds": [
+        "seat.stool",
+        "bed.single",
+        "extra.bucket",
+        "cluster.layout-detention_cell"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Giường đơn, ghế, xô; đồ đạc tối giản.",
+      "source": "assets/recipes.json"
+    },
+    "PUBLIC_COUNTER": {
+      "name": "Quầy hàng / quán nhỏ",
+      "pattern": "function-perimeter",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 560,
+          "height": 400,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 640,
+          "height": 450,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 730,
+          "height": 500,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "wood",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "wall_north",
+        "left",
+        "wall_east",
+        "center",
+        "right"
+      ],
+      "assetIds": [
+        "storage.open",
+        "storage.cabinet",
+        "object.counter",
+        "cluster.layout-public_counter",
+        "table.round",
+        "cluster.layout-lounge",
+        "layout.chair-2",
+        "layout.chair-0",
+        "layout.chair-1"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Quầy, kệ hàng và bàn khách.",
+      "source": "assets/recipes.json"
+    },
+    "CEREMONY_HALL": {
+      "name": "Phòng nghi lễ",
+      "pattern": "perimeter-display",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 720,
+          "height": 480,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 830,
+          "height": 540,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 940,
+          "height": 600,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "tile",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "wall_north",
+        "wall_east",
+        "wall_west",
+        "left",
+        "right"
+      ],
+      "assetIds": [
+        "cluster.candelabrum",
+        "wizard.lectern",
+        "cluster.layout-ceremony_hall",
+        "layout.bench-0",
+        "layout.bench-1"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Bục, bàn nghi lễ, ghế băng và lối giữa.",
+      "source": "assets/recipes.json"
+    },
+    "ENTRANCE_VESTIBULE": {
+      "name": "Sảnh vào / tiền sảnh",
+      "pattern": "clear-axis",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 640,
+          "height": 460,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 740,
+          "height": 520,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 830,
+          "height": 580,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "octagon",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "wall_north",
+        "wall_west",
+        "wall_east",
+        "right",
+        "left"
+      ],
+      "assetIds": [
+        "detail.directory",
+        "decor.bust",
+        "layout.bench-0",
+        "layout.bench-1",
+        "new.planter"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Trục vào thoáng, bảng chỉ dẫn và hai cụm ghế mép tường.",
+      "source": "assets/recipes.json"
+    },
+    "CLOAKROOM_LOCKERS": {
+      "name": "Phòng áo khoác / tủ đồ",
+      "pattern": "function-perimeter",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 520,
+          "height": 380,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 600,
+          "height": 430,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 680,
+          "height": 480,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "wood",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "wall_north",
+        "left",
+        "wall_east",
+        "center",
+        "right"
+      ],
+      "assetIds": [
+        "detail.locker",
+        "detail.coat-stand",
+        "layout.bench-0",
+        "layout.bench-1",
+        "detail.boots"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Tủ áo, móc treo, gương và ghế thay đồ; biến thể kho trang phục.",
+      "source": "assets/recipes.json"
+    },
+    "ART_CARTOGRAPHY_STUDIO": {
+      "name": "Xưởng mỹ thuật / bản đồ",
+      "pattern": "function-perimeter",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 660,
+          "height": 480,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 760,
+          "height": 540,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 860,
+          "height": 600,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "wood",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "wall_north",
+        "left",
+        "wall_east",
+        "center",
+        "right"
+      ],
+      "assetIds": [
+        "detail.scroll-rack",
+        "detail.drafting",
+        "cluster.layout-art_cartography",
+        "seat.stool",
+        "detail.easel",
+        "table.study",
+        "cluster.layout-art_scroll"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Bàn vẽ, tủ bản đồ và vùng thao tác; biến thể mỹ thuật và bản đồ.",
+      "source": "assets/recipes.json"
+    },
+    "GAMES_ROOM": {
+      "name": "Phòng cờ / Gobstones",
+      "pattern": "social-clusters",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 620,
+          "height": 460,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 710,
+          "height": 520,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 810,
+          "height": 580,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "wood",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "left",
+        "right",
+        "center",
+        "wall_north",
+        "wall_east"
+      ],
+      "assetIds": [
+        "storage.cabinet",
+        "layout.chair-1",
+        "layout.chair-2",
+        "detail.games-table",
+        "layout.chair-0",
+        "layout.bench-0"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Bàn chơi, tủ quân cờ, ghế xem và khu Gobstones.",
+      "source": "assets/recipes.json"
+    },
+    "OUT_COURTYARD": {
+      "name": "Sân trong / sân lát đá",
+      "pattern": "outdoor-bands",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 1000,
+          "height": 760,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 1150,
+          "height": 850,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 1300,
+          "height": 960,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "wood",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "left",
+        "right",
+        "wall_north",
+        "center",
+        "wall_east"
+      ],
+      "assetIds": [
+        "layout.bench-0",
+        "layout.bench-1"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Đường dẫn, bồn cây, ghế nghỉ và đài phun trung tâm.",
+      "source": "assets/recipes.json"
+    },
+    "OUT_GARDEN": {
+      "name": "Vườn / khu nghỉ",
+      "pattern": "outdoor-bands",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 1000,
+          "height": 760,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 1150,
+          "height": 850,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 1300,
+          "height": 960,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "wood",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "left",
+        "right",
+        "wall_north",
+        "center",
+        "wall_east"
+      ],
+      "assetIds": [
+        "wm.tree-oak.4595a4d3",
+        "wm.tree-rowan.08832739",
+        "wm.tree-fruit.401cc5dc",
+        "layout.bench-0",
+        "layout.bench-1",
+        "layout.picnic-mat",
+        "cluster.layout-out_garden"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Vườn hoa, đường dạo, giàn nghỉ và cây điểm nhấn.",
+      "source": "assets/recipes.json"
+    },
+    "OUT_LAWN": {
+      "name": "Bãi cỏ / sân hoạt động",
+      "pattern": "outdoor-bands",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 1000,
+          "height": 760,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 1150,
+          "height": 850,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 1300,
+          "height": 960,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "wood",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "left",
+        "right",
+        "wall_north",
+        "center",
+        "wall_east"
+      ],
+      "assetIds": [
+        "wm.tree-oak.4595a4d3",
+        "layout.bench-0",
+        "layout.bench-1",
+        "layout.bench-2",
+        "object.chest"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Khoảng cỏ rộng; đường đi, ghế và dụng cụ ở rìa.",
+      "source": "assets/recipes.json"
+    },
+    "OUT_WOODLAND": {
+      "name": "Bìa rừng / đường mòn",
+      "pattern": "outdoor-bands",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 1000,
+          "height": 760,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 1150,
+          "height": 850,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 1300,
+          "height": 960,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "wood",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "left",
+        "right",
+        "wall_north",
+        "center",
+        "wall_east"
+      ],
+      "assetIds": [
+        "wm.tree-oak.4595a4d3",
+        "wm.tree-rowan.08832739",
+        "wm.tree-fruit.401cc5dc",
+        "layout.bench-0",
+        "cluster.layout-out_woodland"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Đường mòn, tầng cây, đá và khoảng nghỉ.",
+      "source": "assets/recipes.json"
+    },
+    "OUT_WATERSIDE": {
+      "name": "Ven hồ / ven sông",
+      "pattern": "outdoor-bands",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 1000,
+          "height": 760,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 1150,
+          "height": 850,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 1300,
+          "height": 960,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "wood",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "left",
+        "right",
+        "wall_north",
+        "center",
+        "wall_east"
+      ],
+      "assetIds": [
+        "layout.bench-0",
+        "cluster.layout-out_waterside",
+        "wm.tree-oak.4595a4d3",
+        "wm.tree-rowan.08832739"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Bờ nước, lối dạo, bến nhỏ và cụm nghỉ.",
+      "source": "assets/recipes.json"
+    },
+    "OUT_BUILDING_YARD": {
+      "name": "Nhà và sân phụ trợ",
+      "pattern": "outdoor-bands",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 1000,
+          "height": 760,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 1150,
+          "height": 850,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 1300,
+          "height": 960,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "wood",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "left",
+        "right",
+        "wall_north",
+        "center",
+        "wall_east"
+      ],
+      "assetIds": [
+        "wm.house-wood-gable.ab6b565f",
+        "cluster.layout-out_building_yard",
+        "layout.bench-0",
+        "object.barrel",
+        "wm.tree-fruit.401cc5dc",
+        "wm.tree-oak.4595a4d3"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Nhà chính, sân làm việc, hàng rào và vườn sau.",
+      "source": "assets/recipes.json"
+    },
+    "OUT_CAMP": {
+      "name": "Khu trại / nơi trú tạm",
+      "pattern": "outdoor-bands",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 1000,
+          "height": 760,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 1150,
+          "height": 850,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 1300,
+          "height": 960,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "wood",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "left",
+        "right",
+        "wall_north",
+        "center",
+        "wall_east"
+      ],
+      "assetIds": [
+        "cluster.layout-out_camp",
+        "layout.bench-0",
+        "object.chest",
+        "object.barrel",
+        "wm.tree-oak.4595a4d3",
+        "wm.tree-rowan.08832739",
+        "wm.tree-fruit.401cc5dc"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Lều, đồ trại đặt dưới đất, kho tiếp tế và lối đi.",
+      "source": "assets/recipes.json"
+    },
+    "OUT_SERVICE_GARDEN": {
+      "name": "Vườn trồng / sân làm việc",
+      "pattern": "outdoor-bands",
+      "preferredSize": "M",
+      "sizeProfiles": {
+        "S": {
+          "width": 1000,
+          "height": 760,
+          "wallHeight": 40
+        },
+        "M": {
+          "width": 1150,
+          "height": 850,
+          "wallHeight": 40
+        },
+        "L": {
+          "width": 1300,
+          "height": 960,
+          "wallHeight": 40
+        }
+      },
+      "architecture": {
+        "floor": "wood",
+        "wall": "limestone",
+        "doorSide": "south"
+      },
+      "zones": [
+        "left",
+        "right",
+        "wall_north",
+        "center",
+        "wall_east"
+      ],
+      "assetIds": [
+        "table.study",
+        "cluster.layout-out_service_garden",
+        "fixture.sink",
+        "object.barrel",
+        "object.crate",
+        "wm.tree-fruit.401cc5dc"
+      ],
+      "quality": {
+        "entryClearance": 52,
+        "wallMargin": 18,
+        "focalArea": "center",
+        "minWalkway": 28
+      },
+      "description": "Luống cây, bàn thao tác, kho dụng cụ và nơi rửa.",
+      "source": "assets/recipes.json"
+    }
+  }
+}

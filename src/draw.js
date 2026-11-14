@@ -79,9 +79,22 @@ function furnitureLayout(place){
   for(const o of objects){o.dx-=minX;o.dy-=minY;o.bounds[0]-=minX;o.bounds[1]-=minY;}
   return {inventory,art,objects,extra,width:maxX-minX,height:maxY-minY+20};
  }
- const width=art?.width||320;
- const height=(art?.height||190)+band+20;
+ const formula=(typeof ROOM_FORMULAS!=='undefined'&&ROOM_FORMULAS.recipes?.[inventory.recipeId])||null;
+ const profile=formula?.sizeProfiles?.[layoutSize(place.size)]||formula?.sizeProfiles?.M;
+ const width=art?.width||profile?.width||320;
+ const height=(art?.height||profile?.height||190)+band+20;
  return {inventory,art,objects,extra,width,height};
+}
+function formulaZone(prop,index,recipe){
+ const f=(typeof ROOM_FORMULAS!=='undefined'&&ROOM_FORMULAS.recipes?.[recipe])||null;
+ const zones=f?.zones||['wall_north','left','right','center','wall_east','wall_west'];
+ const label=(String(prop.item||'')+' '+String(prop.name||'')).toLowerCase();
+ if(/portrait|banner|tapestry|blackboard|crest|clock/.test(label))return 'wall_north';
+ if(/bookcase|shelf|cabinet|cupboard|wardrobe|storage|tủ|kệ/.test(label))return index%2?'wall_east':'wall_north';
+ if(/sink|wash|chậu|vòi|furnace/.test(label))return 'wall_west';
+ if(/bed|giường/.test(label))return index%2?'right':'left';
+ if(/desk|table|cauldron|vạc|bàn|counter/.test(label))return index%3?'left':'center';
+ return zones[index%zones.length];
 }
 function drawFurniture(place,prefix,room,layout,door){
  const pad={left:14,right:14,top:14,bottom:44};
@@ -98,7 +111,8 @@ function drawFurniture(place,prefix,room,layout,door){
   markup+=`<g data-instance="${escapeXML(o.item.id)}" data-state="${escapeXML(o.item.state||'intact')}" data-footprint="${box.join(' ')}" pointer-events="none" transform="translate(${x} ${y}) scale(${scale})"><g transform="translate(${o.dx} ${o.dy}) scale(${o.magnify})">${namespaceArt(o.node.svg,prefix)}</g></g>`;
  }
  for(const o of layout.objects)if(o.item.state&&o.item.state!=='intact'){const b=footprints.find(f=>f.id===o.item.id)?.bounds;if(b)markup+=`<g pointer-events="none"><title>${escapeXML(o.item.name+' · '+o.item.state)}</title><path d="M${b[0]} ${b[1]}l8 8m-8 0l8 -8" stroke="#783d45" stroke-width="2"/></g>`;}
- const placed=placeExtraProps(place,prefix,room,layout.extra,door,footprints);
+ const extras=layout.art?layout.extra:layout.extra.map((p,i)=>({...p,zone:p.zone||formulaZone(p,i,layout.inventory.recipeId)}));
+ const placed=placeExtraProps(place,prefix,room,extras,door,footprints);
  markup+=placed.svg;footprints.push(...placed.footprints);
  return {svg:markup,footprints,scale};
 }

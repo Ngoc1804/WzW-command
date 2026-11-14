@@ -1,7 +1,7 @@
 // Inventory composition uses real supplied recipe instance IDs; geometry follows at P4.
 const propAliases={'vạc thuốc':'wizard.cauldron','vạc':'wizard.cauldron','ghế ăn':'seat.dining','ghế':'seat.dining','gương':'decor.mirror','gương vỡ':'decor.mirror','chair':'seat.dining','cauldron':'wizard.cauldron'};
 function recipeId(value){return RECIPES[value]?value:VOCAB.recipes[key(value)]||VOCAB.legacyRecipes[key(value)]||null;}
-function composeRoom(place){const rid=recipeId(place.type),recipe=RECIPES[rid];const size=({small:'S',medium:'M',large:'L',S:'S',M:'M',L:'L'})[place.size]||'M';const base=place.propsMode==='replace'?[]:(recipe?.instancesBySize?.[size]||recipe?.instances||[]).map(i=>({...i,source:'recipe'}));let out=base;const diagnostics=[];
+function composeRoom(place){const rid=recipeId(place.type)||recipeId(place.interiorPlan?.recipe),recipe=RECIPES[rid];const size=({small:'S',medium:'M',large:'L',S:'S',M:'M',L:'L'})[place.size]||'M';const base=place.propsMode==='replace'?[]:(recipe?.instancesBySize?.[size]||recipe?.instances||[]).map(i=>({...i,source:'recipe'}));let out=base;const diagnostics=[];
  list(place.props).forEach((p,index)=>{
 
  let matches=[];if(p.id)matches=out.filter(x=>x.id===p.id);else{const item=p.item||propAliases[key(p.name)];matches=out.filter(x=>(item?x.item===item:key(x.name)===key(p.name))&&(!p.zone||x.zone===p.zone));}
