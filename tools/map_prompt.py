@@ -8,5 +8,5 @@ base='https://cdn.jsdelivr.net/gh/'+release['repository']+'@'+sha+'/dist/'
 data={'schemaVersion':'2.0.0','meta':{'date':'','time':'','areaName':'','quote':''},'atlasAnchor':'','pcPlace':'','pcSpot':'','places':[],'actors':[{'name':'','isPC':True,'spot':''}],'events':[]}
 s=(r/'prompts/MAP_RULES.txt').read_text();assert s.count('{{MAP_HTML}}')==1
 out=s.replace('{{MAP_HTML}}','```html\n'+loader(base,json.dumps(data,ensure_ascii=False,indent=2))+'\n```')
-(r/'prompts/MAP_PROMPT.txt').write_text(out)
+(r/'prompts/MAP_PROMPT.txt').write_text(out.rstrip()+'\n')
 print('Generated explicit head/body HTML prompt:',len(out.encode()),'bytes')

@@ -417,6 +417,3 @@ Before emission confirm:
 - Exactly one HTML output and no RP state mutation.
 
 All rules in R1–R20, W and C remain authoritative. /MAP is a visualization of accepted reality, never a mechanism for creating that reality.
-
-
-
