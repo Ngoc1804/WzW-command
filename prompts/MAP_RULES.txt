@@ -1,5 +1,37 @@
-# MAP RULES — GEMINI
-Use current RP state and short ATLAS GEMINI MIN. Output one full HTML document with MAP_DATA v2.0.0; never advance time, decide quest, invent NPCs or expose unknown secrets. Gemini sends PC place, narrative metadata, RP-related nearby places, actors and events; GitHub looks up the complete surroundings and builds all default layout, furnishings and SVG.
-Required fields: schemaVersion,meta:{date,time,areaName,quote},atlasAnchor,pcPlace,pcSpot,places:[],actors:[exactly one isPC:true],events:[]. Optional: mapMode:'indoor|outdoor',layoutType,forceSandbox,region. Actor/event places resolve through id/name, NPC spot must be explicit.
-Fixed: no props/architecture/size/construction. Generated: props only for real RP changes, not default inventory. propsMode:'merge|replace', props:[{name,item?,id?,count?,op?:'ensure|add',state?,zone?,visual?}]. Whole objects only; no parentId/childId/supportId. Missing SVG: Gemini may supply safe visual shapes, GitHub renders or reports technical fallback.
-EVENT hidden:false = ! binoculars; hidden:true = ? magnifier. No quest quotas, reward, item lists, zoom, random seed or atlas room arrays in MAP_DATA. Vietnamese visible descriptions; escape '<' in JSON strings as \\u003c. Fill all placeholders.
+### /MAP — MAP_DATA 2.0.0
+
+## 1. STORY SETTINGS — AUTHOR ANSWERS ONCE
+- Sources for current state/history, NPC identity/House/knowledge, Atlas and quests/Monthly Pack/Pool?
+- How many activity/quest slots? MAIN/SIDE/POOL/HIDDEN allocation? Does HIDDEN count in the total? Priority/substitution/Pool-generation rules? Hidden eligibility?
+- Which types use binoculars? Which use a magnifier?
+- Minimum NPC ribbons? Grouping and unidentified-person naming? Story House/category→supported tag bindings? Maximum 10 NPC ribbons, excluding PC.
+- Explicit AU/event-area routing exceptions? Material requirements for new spaces?
+Answers stay in the prompt, not MAP_DATA. Runtime URL is supplied below, not story-time repo/branch/commit configuration.
+
+## 2. EXECUTION / FIELD CONTRACT
+Gemini reads current RP and configured sources; GitHub renders. Do not advance time, move actors, accept quests, grant rewards or invent PC choices. Gemini selects PC-safe quest/activity content using story settings; engine never chooses quotas/eligibility. Minimum NPC settings never authorize invented arrivals.
+Resolve PC location from context/history/Atlas before output: never ask, leave empty, use unknown or report missing location. Owner follows PC, not remote NPC/quest. Use supported current space without invented travel/canonical address. Remove undiscovered secrets before JSON; icons do not conceal JSON contents.
+Vietnamese visible text: one short sentence under 30 words per quote/description/overhear/activity/observation/summary/detail. Quote may be playful/poetic/lightly suggestive, never secret disclosure or fabricated character speech.
+Return ONE complete fenced html document from Part 4; no explanation, STATUS/BODY/META or separate JSON. Fill required fields, omit unused optional fields. Escape literal < in embedded JSON strings as \u003c (one JSON escape, not a literal backslash sequence).
+
+FIXED CANON: existing artwork/UI unchanged. Inside a house/shop is its existing anchor, not an interior request. Only anchor PC/NPC/POI and supply current map text. No props/propsMode/visual/size/architecture, construction, extra room/interior/detail view or new UI. Places only bind existing-location text. Exceptions require explicit AU/event routing; indoors/a mentioned quest is not an exception.
+ROUTING: explicit separate view or new H1/H2 structure→sandbox; village/alley AU→vacant building in correct region; non-Fixed Atlas→source rooms in selected cluster plus RP additions; World→one building/floor; otherwise custom. Engine expands the chosen cluster, not a separately calculated nearest-room subset. Custom sends mapMode indoor/outdoor; OUT_* type alone does not select Outdoor. Never invent canon connections.
+GENERATED: select a suitable function/layout; default inventory is automatic. Use whole furniture/groups for real changes; do not duplicate defaults. Missing suitable source→build named places/props and minimal visual when useful. Invalid/missing artwork retains a named fallback. Preserve approved layout/colors; S/M/L defaults M. New-space material choices may be retained internally across refreshes; no seed field.
+INVENTORY: merge keeps defaults plus changes; replace uses supplied props as COMPLETE desired furniture inventory, [] clears furniture only. ensure sets total; add increments/adds. New explicit ID in merge requires add; replace accepts new IDs. State-only updates omit count. Count 0/removed/missing/destroyed removes whole instance; broken is a state marker, not detailed fracture art. Verified existing instance IDs only; never guess :final:N. New IDs may use stable rp:*. Edit whole groups, never components. No parentId/childId/supportId or surface/support-placement workflow. If exact targeting is unavailable, rebuild the desired Generated interior with replace.
+ACTORS: exactly one PC. Every NPC supplies valid place and explicit spot. Names/House/category/activity come from sources; unknown names use observable descriptors. Group supported co-located people; runtime may group >4 people in one place/spot, retaining PC separately and all member information. Footstep visibility follows map policy, not hidden input alone. Patrol requires current evidence and onPatrol:true.
+EVENTS: valid map place required. Binoculars→hidden:false; magnifier→hidden:true, as assigned by story settings. This flag is presentation only; eligibility stays in Gemini. Opportunity≠accepted/completed quest. No category/pack/stage/reward/quota/icon fields.
+
+FIELD REFERENCE (? optional; not literal output syntax)
+ROOT schemaVersion:"2.0.0",meta:{date:"DD/MM/YYYY",time:"HH:mm",areaName,quote},atlasAnchor,pcPlace,pcSpot:inside|corridor|threshold|outdoor,places:PLACE[],actors:ACTOR[],events:EVENT[]
+ROOT? mapMode:indoor|outdoor,layoutType:GEOMETRY,forceSandbox:boolean,region:diagon|knockturn
+PLACE name,id?,type?:LAYOUT|new-function,size?:S|M|L,description?,overhear?,region?,isNewConstruction?:boolean,architecture?:{floor?,wall?},propsMode?:merge|replace,props?:(string|PROP)[]
+PROP name,item?:native-asset-ID,id?:whole-instance-ID,count?:integer>=0,op?:ensure|add,state?:intact|broken|removed|missing|destroyed,zone?:ZONE,visual?:{shapes:SHAPE[]}
+ACTOR name,isPC?:boolean,id?,placeId?,placeName?,spot?:inside|corridor|threshold|outdoor,zone?:ZONE,tagType?:TAG,activity?,observation?,members?:string[],summary?,footstep?:walk|idle|hidden,posture?:standing|sitting|lying|hidden,onPatrol?:boolean
+EVENT title,detail?,placeId?,placeName?,hidden?:boolean,id?
+SHAPE {kind:"rect",x,y,width,height,material?}|{kind:"ellipse",cx,cy,rx,ry,material?}|{kind:"path",d,material?}
+Name required for every place/prop/actor, including props with item/id; event title required. Actor/event location is placeId or placeName; root PC location wins. Description=observable setting; overhear=actually heard activity, not sound inferred from activity. Visual: 1–32 visible shapes in a 100×100 local viewport; valid finite dimensions/path; no raw SVG/HTML/scripts/URLs. Item selects artwork; prop ID selects one whole instance. New predefined lookup entries require matching runtime; new RP objects do not. No legacy templateState or viewport/zoom fields.
+ZONE center entrance left right end wall_north wall_south wall_west wall_east
+TAG gryffindor slytherin ravenclaw hufflepuff beauxbatons durmstrang teacher adult patrol animal monster ghost unknown crowd
+FLOOR tile wood brick octagon mosaic herringbone diamond cobble
+WALL stone dark timber wainscot plaster brick ashlar panel limestone rubble
+MATERIAL wood stone metal fabric paper glass plant ink

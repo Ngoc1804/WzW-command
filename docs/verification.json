@@ -1,0 +1,179 @@
+{
+  "runtimeCommit": "f7053f6af51baad6ed5505885101fa44dd104f06",
+  "suites": [
+    {
+      "test": "actor-placement.cjs",
+      "exit": 0,
+      "seconds": 15.7
+    },
+    {
+      "test": "alias-export.cjs",
+      "exit": 0,
+      "seconds": 24.5
+    },
+    {
+      "test": "approved-decor.cjs",
+      "exit": 0,
+      "seconds": 18.7
+    },
+    {
+      "test": "canonical-sources.cjs",
+      "exit": 0,
+      "seconds": 0.1
+    },
+    {
+      "test": "catalog-editor.cjs",
+      "exit": 0,
+      "seconds": 6.3
+    },
+    {
+      "test": "compact-p4.cjs",
+      "exit": 0,
+      "seconds": 5.5
+    },
+    {
+      "test": "corridor-source.cjs",
+      "exit": 0,
+      "seconds": 0.6
+    },
+    {
+      "test": "current-scope.cjs",
+      "exit": 0,
+      "seconds": 8.3
+    },
+    {
+      "test": "four-fixes.cjs",
+      "exit": 0,
+      "seconds": 5.7
+    },
+    {
+      "test": "ids-props.cjs",
+      "exit": 0,
+      "seconds": 5.0
+    },
+    {
+      "test": "indoor-placement.cjs",
+      "exit": 0,
+      "seconds": 5.1
+    },
+    {
+      "test": "interaction.cjs",
+      "exit": 0,
+      "seconds": 34.0
+    },
+    {
+      "test": "inventory-visual.cjs",
+      "exit": 0,
+      "seconds": 3.1
+    },
+    {
+      "test": "layout-sizes.cjs",
+      "exit": 0,
+      "seconds": 12.7
+    },
+    {
+      "test": "loader.cjs",
+      "exit": 0,
+      "seconds": 4.9
+    },
+    {
+      "test": "outdoor-overlap.cjs",
+      "exit": 0,
+      "seconds": 8.3
+    },
+    {
+      "test": "outdoor-placement.cjs",
+      "exit": 0,
+      "seconds": 9.0
+    },
+    {
+      "test": "p1.cjs",
+      "exit": 0,
+      "seconds": 13.3
+    },
+    {
+      "test": "p2-p3.cjs",
+      "exit": 0,
+      "seconds": 26.8
+    },
+    {
+      "test": "passage-resize.cjs",
+      "exit": 0,
+      "seconds": 20.4
+    },
+    {
+      "test": "presentation.cjs",
+      "exit": 0,
+      "seconds": 41.8
+    },
+    {
+      "test": "routing-current.cjs",
+      "exit": 0,
+      "seconds": 0.2
+    },
+    {
+      "test": "style-audit.cjs",
+      "exit": 0,
+      "seconds": 9.9
+    },
+    {
+      "test": "vocabulary.cjs",
+      "exit": 0,
+      "seconds": 5.2
+    },
+    {
+      "test": "xray-occlusion.cjs",
+      "exit": 0,
+      "seconds": 0.0
+    },
+    {
+      "test": "zoom-bounds.cjs",
+      "exit": 0,
+      "seconds": 6.0
+    }
+  ],
+  "suiteResult": "26/26 PASS; loader rechecked after hash guard",
+  "idAudit": {
+    "catalog": 452,
+    "recipes": 49,
+    "views": 147,
+    "fixed": 13,
+    "scopes": 59,
+    "roomsIncludingWorld": 349,
+    "issues": []
+  },
+  "liveCDN": [
+    {
+      "file": "shell.css",
+      "status": 200,
+      "bytes": 11040,
+      "hashMatch": true
+    },
+    {
+      "file": "templates-pack.js",
+      "status": 200,
+      "bytes": 963681,
+      "hashMatch": true
+    },
+    {
+      "file": "bundle.js",
+      "status": 200,
+      "bytes": 4203065,
+      "hashMatch": true
+    }
+  ],
+  "cleanRebuild": "byte-identical tracked artifacts",
+  "prompt": {
+    "file": "prompts/MAP_PROMPT.txt",
+    "bytes": 11714,
+    "sha256": "602600035d698c1a7139ef8514211a8d6b73562aa4232106ac64b96b938bb709",
+    "tokenCount": "not measured"
+  },
+  "cleanup": [
+    "retired 4 unreferenced paint/import tools requiring deleted p4-art",
+    "updated 4 stale suites for whole-instance mechanism",
+    "CI runs full suite and ID checker",
+    "loader asserts release hashes against dist"
+  ],
+  "AIStudioPreview": "NOT RUN; no target session supplied"
+}

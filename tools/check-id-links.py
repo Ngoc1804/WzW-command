@@ -1,55 +1,49 @@
-import math,json,re,base64,gzip,collections,xml.etree.ElementTree as E,hashlib
+"""Read-only integrity checks against current canonical JSON and packed runtime."""
 from pathlib import Path
-load=lambda p:json.loads(Path(p).read_text())
-c=load('assets/catalog.json');r=load('assets/recipes.json');a=load('assets/atlas.json');art=load('assets/p4-art.json');v=load('assets/vocabulary.json');s=Path('examples/WIZAMAP_FIXED_UI.html').read_text();pack=json.loads(gzip.decompress(base64.b64decode(re.search(r'id="wzw-embedded-atlas"[^>]*>(.*?)</script>',s,re.S)[1])))
-issues=[];counts={};checks={};coordinateAnchors=[]
-def issue(kind,owner,ref):issues.append({'kind':kind,'owner':owner,'ref':ref})
+import json,re,gzip,base64,collections,xml.etree.ElementTree as ET
+root=Path(__file__).resolve().parents[1]
+read=lambda p:json.loads((root/p).read_text())
+c=read('assets/catalog.json');r=read('assets/recipes.json');a=read('assets/atlas.json');l=read('assets/layout-sizes.json');v=read('assets/vocabulary.json');issues=[]
 for rid,recipe in r.items():
- ids=[i['id'] for i in recipe['instances']]
- for id,n in collections.Counter(ids).items():
-  if n>1:issue('duplicate-instance',rid,id)
- for i in recipe['instances']:
-  if i['item'] not in c:issue('missing-item',rid,i['item'])
-  if i.get('parentId') and i['parentId'] not in ids:issue('missing-parent',rid,i['parentId'])
- if rid not in art:issue('missing-art',rid,rid)
-for rid,data in art.items():
- recipeids={i['id']:i['item'] for i in r.get(rid,{}).get('instances',[])}
- for o in data['objects']:
-  if o['id'] not in recipeids:issue('orphan-art-instance',rid,o['id'])
-  elif o['item']!=recipeids[o['id']]:issue('art-item-mismatch',rid,o['id'])
-for kind in ['recipes','legacyRecipes','scopes','itemAliases']:
- target=r if kind in ['recipes','legacyRecipes'] else c if kind=='itemAliases' else {**a['clusters'],**a['fixed'],'custom':{}}
- for word,id in v[kind].items():
-  if id not in target:issue('vocab-'+kind,word,id)
-allrooms=[]
-for scope,z in a['clusters'].items():
- for p in z['rooms']+ [p for site in z.get('sites',[]) for p in site['rooms']]:
-  allrooms.append(p['id'])
-  if p.get('type') and p['type'] not in r:issue('atlas-recipe',scope,p['type'])
- for ref in z.get('pointers',[]):
-  if ref not in a['fixed'] and ref not in a['clusters']:issue('atlas-pointer',scope,ref)
-for id,n in collections.Counter(allrooms).items():
- if n>1:issue('duplicate-room-id','atlas',id)
-for fid,z in a['fixed'].items():
- actual={p['id'] for p in pack['maps'][fid]['places']};svgids=set(re.findall(r'data-id=[\"\']([^\"\']+)',pack['maps'][fid]['svg']))
- for p in z['places']:
-  if p['id'] not in actual:issue('fixed-place-binding',fid,p['id'])
- for p in pack['maps'][fid]['places']:
-  if p['id'] not in svgids:
-   if all(isinstance(p.get(k),(int,float)) and math.isfinite(p[k]) for k in ['x','y']):coordinateAnchors.append({'map':fid,'id':p['id'],'x':p['x'],'y':p['y'],'binding':'presentation anchor from source coordinates'})
-   else:issue('fixed-svg-anchor',fid,p['id'])
-for id,data in c.items():
- try:root=E.fromstring(data['svg'])
- except Exception as e:issue('svg-parse',id,str(e));continue
- ids=[n.get('id') for n in root.iter() if n.get('id')];refs=re.findall(r'(?:url\([\"\']?#|(?:href|xlink:href)=[\"\']#)([^\"\')\s]+)',data['svg'])
- for ref in set(refs)-set(ids):issue('catalog-svg-ref',id,ref)
- for ref,n in collections.Counter(ids).items():
-  if n>1:issue('catalog-svg-duplicate-id',id,ref)
-bundle=Path('dist/bundle.js').read_text();decoder=json.JSONDecoder()
-for name,obj in [('CATALOG',c),('RECIPES',r),('P4_ART',art),('ATLAS',a)]:
- runtime=decoder.raw_decode(bundle.split('const '+name+'=',1)[1])[0]
- checks['runtime-'+name+'-keys']=set(runtime)==set(obj)
-counts.update(catalog=len(c),recipes=len(r),instances=sum(len(x['instances']) for x in r.values()),clusters=len(a['clusters']),fixed=len(a['fixed']),atlasRoomsIncludingWorld=len(allrooms))
-result={'counts':counts,'checks':checks,'issues':issues,'issueCounts':dict(collections.Counter(i['kind'] for i in issues)),'coordinatePresentationAnchors':coordinateAnchors}
-Path('work').mkdir(parents=True,exist_ok=True)
-Path('work/id-audit.json').write_text(json.dumps(result,ensure_ascii=False,indent=2));print(json.dumps({**counts,'checks':checks,'issueCounts':result['issueCounts'],'examples':issues[:12]},ensure_ascii=False,indent=2))
+ for size in ['S','M','L']:
+  art=l[rid][size];items=recipe.get('instancesBySize',{}).get(size,recipe['instances']);byid={i['id']:i for i in items}
+  if len(byid)!=len(items):issues.append(['duplicate-instance',rid,size])
+  if set(byid)!={i['id']for i in art['objects']}:issues.append(['inventory-art',rid,size])
+  for item in items:
+   if item['item']not in c:issues.append(['missing-item',rid,size,item['item']])
+  for obj in art['objects']:
+   if obj['id']in byid and obj['item']!=byid[obj['id']]['item']:issues.append(['art-item',rid,size,obj['id']])
+rooms=[]
+for scope,cluster in a['clusters'].items():
+ for p in cluster['rooms']+[p for site in cluster.get('sites',[])for p in site['rooms']]:
+  rooms.append(p['id'])
+  if p.get('type')and p['type']not in r:issues.append(['atlas-recipe',scope,p['id']])
+ for pointer in cluster.get('pointers',[]):
+  if pointer not in a['fixed']and pointer not in a['clusters']:issues.append(['pointer',scope,pointer])
+if len(rooms)!=len(set(rooms)):issues.append(['duplicate-room-id'])
+for group,target in [('recipes',r),('legacyRecipes',r),('scopes',{**a['fixed'],**a['clusters'],'custom':{}}),('itemAliases',c)]:
+ for alias,key in v.get(group,{}).items():
+  if key not in target:issues.append(['alias',group,alias,key])
+for key,obj in c.items():
+ try:svg=ET.fromstring(obj['svg'])
+ except ET.ParseError:issues.append(['svg-parse',key]);continue
+ ids=[n.get('id')for n in svg.iter()if n.get('id')];refs=set()
+ for node in svg.iter():
+  for attr,value in node.attrib.items():
+   refs.update(re.findall(r'url\([\"\']?#([^\)\"\']+)',value))
+   if attr.endswith('href')and value.startswith('#'):refs.add(value[1:])
+ if len(ids)!=len(set(ids)):issues.append(['duplicate-svg-id',key])
+ for ref in refs-set(ids):issues.append(['svg-ref',key,ref])
+bundle=(root/'dist/bundle.js').read_text();decoder=json.JSONDecoder()
+for name,data in [('CATALOG',c),('RECIPES',r),('ATLAS',a)]:
+ packed=decoder.raw_decode(bundle.split('const '+name+'=',1)[1])[0]
+ if set(data)!=set(packed):issues.append(['runtime-keys',name])
+packed=decoder.raw_decode(bundle.split('const LAYOUT_SIZES_PACK=',1)[1])[0]
+if json.loads(gzip.decompress(base64.b64decode(packed)))!=l:issues.append(['runtime-layout-payload'])
+fixed=read('assets/atlas.json')['fixed'];html=(root/'examples/WIZAMAP_FIXED_UI.html').read_text();pack=json.loads(gzip.decompress(base64.b64decode(re.search(r'id="wzw-embedded-atlas"[^>]*>(.*?)</script>',html,re.S)[1])))
+for fid,source in fixed.items():
+ actual={p['id']for p in pack['maps'][fid]['places']}
+ for p in source['places']:
+  if p['id']not in actual:issues.append(['fixed-binding',fid,p['id']])
+report={'catalog':len(c),'recipes':len(r),'views':sum(len(x)for x in l.values()),'fixed':len(fixed),'scopes':len(a['clusters']),'roomsIncludingWorld':len(rooms),'issues':issues}
+(root/'work').mkdir(exist_ok=True);(root/'work/id-audit.json').write_text(json.dumps(report,indent=2));print(json.dumps(report,indent=2));raise SystemExit(bool(issues))

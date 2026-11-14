@@ -6,7 +6,7 @@
 
 `Gemini RP → MAP_DATA 2.0.0 → Atlas GitHub → chọn phòng lân cận → 49 layout/SVG/Fixed → Preview`.
 
-- **Gemini** đọc RP, chỉ gửi vị trí PC, các phòng lân cận có liên quan, NPC/nhóm, POI và thay đổi thực tế trong RP. Gemini nắm Information Gate, thời gian, nhiệm vụ, người biết bí mật, không chuyển những quyết định ấy thành logic GitHub. Prompt chỉ cần `prompts/ATLAS_GEMINI_MIN.txt`, không danh sách đồ/tường/sàn.
+- **Gemini** đọc RP, chỉ gửi vị trí PC, các phòng lân cận có liên quan, NPC/nhóm, POI và thay đổi thực tế trong RP. Gemini nắm Information Gate, thời gian, nhiệm vụ, người biết bí mật, không chuyển những quyết định ấy thành logic GitHub. Prompt hoàn chỉnh là `prompts/MAP_PROMPT.txt`: câu hỏi story, contract ngắn, Atlas nén và lookup 49 layout/cụm nội thất; không catalog đồ rời hay cơ chế parent/child/support.
 - **GitHub** đọc `assets/atlas.json`: giải quyết owner/room ID, các phòng quanh PC, công năng, topology, 10 kiểu hành lang, 49 layout S/M/L, màu, sàn/tường, asset SVG và vị trí marker. Không tự bịa diễn biến, NPC hay Quest.
 - **MAP_DATA** bắt buộc `schemaVersion:"2.0.0",meta,atlasAnchor,pcPlace,pcSpot,places,actors,events`; tùy chọn `mapMode,layoutType,forceSandbox,region`. `places` không chứa toàn bộ phòng mặc định, chỉ thông tin/điều chỉnh do RP cung cấp. PC duy nhất; vị trí NPC/POI phải hợp lệ.
 - **13 Fixed** bất biến artwork và UI; chỉ thêm marker và text. Nhà AU mới trên H1/H2 → Generated. Shop AU trong Hogsmeade/Diagon/Knockturn → gán nhà trống đúng vùng, không ghi đè canon.
@@ -36,3 +36,7 @@
 `python tools/rebuild.py`: xác minh Atlas JSON → kiểm SVG 49 × 3 → build Fixed/CSS/templates/runtime JS → sinh Asset viewer → sinh prompt Gemini. **Không đọc editor HTML cũ, không biên dịch từ Atlas Master Markdown.** `assets/p4-art.json` là bản copy artwork cỡ M, bỏ khỏi build để giảm trùng.
 
 Chạy `node tests/canonical-sources.cjs` và các test phù hợp còn lại; kiểm 13 Fixed, 147 layout, zoom, routing, actor, POI, SVG và AI Studio Preview. `dist` và `prompts/MAP_PROMPT.txt` là file sinh tự động. Không ghim CDN sang SHA mới trước khi rebuild/publish đã xong. Lịch sử phiên bản nằm trong Git history; `main` không thay đổi.
+
+## Kiểm định và bàn giao hiện hành
+
+`python tools/check-id-links.py` kiểm recipe/layout theo size, SVG refs, Atlas/alias, Fixed binding và payload runtime. `python tools/test_all.py` chạy toàn bộ suite với máy chủ tạm, ghi kết quả tại work/test-all.json. CI chạy cả hai, không chỉ smoke. Các ca support/component đã thay bằng whole-object/group và replace. Công cụ paint/import phụ thuộc p4-art đã bỏ; màu/layout nguồn giữ nguyên. Prompt chỉ dùng native ID và tools/loader.py; pin phải khớp dist đã xuất bản. AI Studio Preview chưa được chứng nhận từ test local/CDN.

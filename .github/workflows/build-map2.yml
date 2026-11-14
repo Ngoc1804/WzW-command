@@ -34,15 +34,8 @@ jobs:
       - name: Runtime and 147-layout regression tests
         run: |
           set -e
-          node tests/p1.cjs
-          node tests/zoom-bounds.cjs
-          node tests/presentation.cjs
-          node tests/loader.cjs
-          node tests/approved-decor.cjs
-          node tests/layout-sizes.cjs
-          node tests/vocabulary.cjs
-          node tests/ids-props.cjs
-          node tests/routing-current.cjs
+          python tools/check-id-links.py
+          python tools/test_all.py
       - name: Publish generated artifacts to this branch
         run: |
           git config user.name 'github-actions[bot]'
