@@ -3228,6 +3228,46 @@ function generatedFloor(plan,x,y,pad=0){
  return [[x-pad,y-pad],[x+pad,y-pad],[x-pad,y+pad],[x+pad,y+pad],[x,y]].every(([px,py])=>inFloor(px,py));
 }
 function placeDoor(plan,room){return room.approvedDoor||plan.openings.doors.find(d=>d.room===room.id);}
+// Paint each generated room as one depth-sorted unit; do not alter SVG wall or decor geometry.
+function stackIndoorRooms(markup,plan){
+ const doc=new DOMParser().parseFromString(markup,'image/svg+xml'),root=doc.documentElement,ns='http://www.w3.org/2000/svg';
+ if(root.querySelector('parsererror'))throw Error('Invalid indoor SVG');
+ const floors=root.querySelector('[data-layer="floors"]'),architecture=root.querySelector('[data-layer="architecture"]'),furniture=root.querySelector('[data-layer="furniture"]');
+ if(!floors||!architecture||!furniture)throw Error('Missing indoor drawing layers');
+ const group=(layer)=>{const g=doc.createElementNS(ns,'g');g.setAttribute('data-layer',layer);return g;};
+ const groups=new Map(plan.rooms.map(room=>{
+  const node=group('room-depth');node.setAttribute('data-room-index',String(room.index));node.setAttribute('data-depth',String(room.y+room.h));
+  const floor=group('room-floor'),back=group('room-back-wall'),front=group('room-front-wall');
+  const contents=[...furniture.children].find(n=>n.getAttribute('data-furniture-room')===String(room.index));
+  if(!contents)throw Error('Missing room furniture: '+room.index);
+  node.append(floor,back,contents,front);
+  return[room.index,{node,floor,back,front}];
+ }));
+ // The corridor source emits halls, optional curve/tower floor, then room floor cells.
+ const start=plan.halls.length+(['curve','tower'].includes(plan.special?.type)?1:0);
+ const floorNodes=[...floors.children],floorCells=plan.rooms.filter(r=>!r.circular).flatMap(room=>(room.cells||[room]).map(()=>room.index));
+ if(floorNodes.length<start+floorCells.length)throw Error('Room floor count mismatch');
+ floorCells.forEach((index,i)=>groups.get(index).floor.append(floorNodes[start+i]));
+ // Preserve every wall path, height, material and opening. Assign shared north/south
+ // edges to the rear room's front wall; the nearer room paints over it by depth.
+ const orderedWalls=[...plan.walls].sort((a,b)=>(a.axis==='H'?a.at:a.b)-(b.axis==='H'?b.at:b.b)||a.at-b.at);
+ const wallArt=[...architecture.children].filter(n=>n.hasAttribute('data-wall'));
+ if(wallArt.length!==orderedWalls.length)throw Error('Wall render count mismatch');
+ for(let i=0;i<orderedWalls.length;i++){
+  const wall=orderedWalls[i];
+  const owner=wall.axis==='H'?(wall.A?.kind==='room'?wall.A:wall.B?.kind==='room'?wall.B:null):(wall.B?.kind==='room'?wall.B:wall.A?.kind==='room'?wall.A:null);
+  if(!owner)continue; // corridor-only perimeter stays in its original architecture layer
+  const room=groups.get(owner.index);
+  if(!room)throw Error('Wall refers to missing room: '+owner.index);
+  const rear=wall.axis==='H'&&wall.B?.kind==='room'&&wall.A?.kind!=='room';
+  (rear?room.back:room.front).append(wallArt[i]);
+ }
+ const stacks=group('room-stacks');
+ for(const room of [...plan.rooms].sort((a,b)=>(a.y+a.h)-(b.y+b.h)||a.x-b.x||a.index-b.index))stacks.append(groups.get(room.index).node);
+ architecture.after(stacks);
+ furniture.remove();
+ return new XMLSerializer().serializeToString(root);
+}
 function indoorMap(scene,d){
  const standalone=scene.places.length===1;
  const places=scene.places.filter(p=>standalone||recipeId(p.type)!=='PASSAGE_PROPS'),passages=scene.places.filter(p=>!standalone&&recipeId(p.type)==='PASSAGE_PROPS');
@@ -3261,7 +3301,7 @@ function indoorMap(scene,d){
   const p=places[room.index],layout=layouts[room.index],f=drawFurniture(p,'p'+room.index+'-',room,layout,placeDoor(plan,room));
   p.bounds=[room.x,room.y,room.w,room.h];p.geometry={room,door:placeDoor(plan,room)};
   footprints.push(...f.footprints.map(o=>({...o,placeId:p.id})));
-  furnishings+=f.svg;
+  furnishings+=single?f.svg:'<g data-layer="room-furniture" data-furniture-room="'+room.index+'">'+f.svg+'</g>';
   const shape=room.circular?`<circle cx="${room.x+room.w/2}" cy="${room.y+room.h/2}" r="${room.w/2}"`:`<rect x="${room.x}" y="${room.y}" width="${room.w}" height="${room.h}"`;
   selection+=`<g data-id="${escapeXML(p.id)}" tabindex="0" role="button" aria-label="${escapeXML(p.name)}">${shape} data-floor="room" fill="transparent"/></g>`;
  }
@@ -3273,24 +3313,8 @@ function indoorMap(scene,d){
  // Keep the source floor, wall projection, material graph and door/window drawing intact.
  svg=svg.replace(floorEnd,'</g><g data-layer="corridor-furniture">'+corridorFurniture+'</g>'+furnishings+'</g><g data-layer="architecture">');
  svg=svg.replace(/<g data-layer="selection">[\s\S]*?<\/g><\/svg>$/,selection+'</g></svg>');
- // Only the room's north/back wall moves behind room furniture. Front/side walls and their artwork stay untouched.
- // The source-only corridor harness has no DOMParser; browser runtime always supplies it.
- if(!single&&typeof DOMParser!=='undefined'){
-  const doc=new DOMParser().parseFromString(svg,'image/svg+xml');
-  const architecture=doc.querySelector('[data-layer="architecture"]');
-  const roomFurniture=doc.querySelector('[data-layer="furniture"]');
-  const rearWall=doc.createElementNS('http://www.w3.org/2000/svg','g');
-  rearWall.setAttribute('data-layer','rear-wall');
-  const orderedWalls=[...plan.walls].sort((a,b)=>(a.axis==='H'?a.at:a.b)-(b.axis==='H'?b.at:b.b)||a.at-b.at);
-  const wallArt=[...architecture.children].filter(n=>n.hasAttribute('data-wall'));
-  if(wallArt.length!==orderedWalls.length)throw Error('Wall render count mismatch');
-  for(let i=0;i<orderedWalls.length;i++){
-   const wall=orderedWalls[i];
-   if(wall.axis==='H'&&wall.B?.kind==='room'&&wall.A?.kind!=='room')rearWall.append(wallArt[i]);
-  }
-  roomFurniture.before(rearWall);
-  svg=new XMLSerializer().serializeToString(doc);
- }
+ // A multi-room map must paint room floor, rear wall, decor and front wall together.
+ if(!single&&typeof DOMParser!=='undefined')svg=stackIndoorRooms(svg,plan);
  if(single&&layouts[0].art?.source==='APPROVED_DECOR'){
   const room=plan.rooms[0],art=layouts[0].art,prefix='p0-',doc=new DOMParser().parseFromString('<svg xmlns="http://www.w3.org/2000/svg">'+art.architectureSvg+'</svg>','image/svg+xml'),front=doc.querySelector('[data-layer="front-wall-foreground"]'),frontSvg=front?.outerHTML||'';front?.remove();
   const floor=`<g data-approved-shell="${escapeXML(recipeId(places[0].type))}" data-layout-size="${layoutSize(places[0].size)}" transform="translate(${room.x} ${room.y})">${namespaceArt(art.floorSvg+doc.documentElement.innerHTML,prefix)}</g>`;
