@@ -47,9 +47,22 @@ function renderContents(scene){const list=$('#quests');list.replaceChildren();co
  row.onclick=()=>{inspect(entry.place);if(entry.type==='actor'){showActorDetails(entry.value,entry.place);presentation?.focusActor(entry.value);}else{putContextLocation(entry.place.name+' · '+entry.value.title);put('#observation',shortRP(entry.value.detail||entry.place.description,fallbackObserve));presentation?.focusEvent(entry.value);}const layout=$('.layout');if(matchMedia('(max-width:720px)').matches&&layout){layout.classList.add('drawer-open');$('#drawer-toggle')?.setAttribute('aria-expanded','true');}};list.append(row);}
 }
 async function renderInput(input){const renderStart=performance.now();root.parentElement.querySelectorAll('[data-rp-detail]').forEach(e=>e.remove());sceneData=normalize(input);const d=sceneData;
- if(d.fatal){window.WZW_SCENE=null;presentation?.dispose();stopScene();$("#mapmount").replaceChildren();put("#observation",d.diagnostics.join("\n"));root.dataset.status="invalid-data";return null;}
+ if(d.fatal){
+  window.WZW_SCENE=null;presentation?.dispose();stopScene();$("#mapmount").replaceChildren();
+  inspect(null);$("#quests")?.replaceChildren();put("#hintcount",'0');
+  inspectorText("#observation",'Không thể dựng bản đồ vì dữ liệu chưa hợp lệ.');
+  root.dataset.status="invalid-data";return null;
+ }
  if(!window.WZW_ORIGINAL_MAPS)window.WZW_ORIGINAL_MAPS=structuredClone(DATA.maps);DATA.maps=structuredClone(window.WZW_ORIGINAL_MAPS);
- const scene=resolve(d);d.unresolvedPlaces=scene.unresolved;let mapId=scene.source?scene.fixedId:'rp-scene';if(scene.source){DATA.maps[mapId].places=scene.places.filter(p=>scene.source.places.some(x=>x.id===p.id));}else DATA.maps[mapId]=buildMap(scene,d);
+ const scene=resolve(d);d.unresolvedPlaces=scene.unresolved;
+ if(!scene.source&&!scene.places.length){
+  presentation?.dispose();stopScene();$("#mapmount").replaceChildren();
+  const note=document.createElement('p');note.setAttribute('role','status');
+  note.textContent='Chưa có địa điểm nào để hiển thị.';$("#mapmount")?.append(note);
+  inspect(null);$("#quests")?.replaceChildren();put("#hintcount",'0');
+  root.dataset.status='empty-map';window.WZW_SCENE={...scene,rendered:null};return scene;
+ }
+ let mapId=scene.source?scene.fixedId:'rp-scene';if(scene.source){DATA.maps[mapId].places=scene.places.filter(p=>scene.source.places.some(x=>x.id===p.id));}else DATA.maps[mapId]=buildMap(scene,d);
  await setTemplate(mapId);
  async function mount(){DATA.maps[activeId].actorPoints=[];for(const a of d.actors){a.relation=inferFixedRelation(a,d.places);const place=scene.exact(a.placeId||a.placeName);a.placeId=place?.id;if(a.isPC){a.placeName=d.pcPlace;a.placeId=scene.exact(d.pcPlace)?.id;a.spot=d.pcSpot||a.spot;}a.inside=a.spot==='inside';a.scenePoint=undefined;a.unresolvedAnchor=false;const resolved=scene.exact(a.placeId||a.placeName);a.hearingText=resolved?.overhear||'';if(!resolved)a.unresolvedAnchor=true;const map=DATA.maps[activeId];if(!scene.source&&resolved){a.scenePoint=generatedActorPoint(map,resolved,a.spot,a);if(!a.scenePoint)a.unresolvedAnchor=true;else if(a.scenePoint.anchorOnly||a.scenePoint.noFeet)a.footstep='hidden';}/* Footstep visibility follows the active map's presentation policy. */}for(const e of d.events){e.relation=inferFixedRelation(e,d.places);e.placeId=scene.exact(e.placeId||e.placeName)?.id;}await presentation.mountActors(d.actors.filter(a=>a.placeId&&!a.unresolvedAnchor));presentation.mountEvents(d.events.filter(e=>e.placeId));svg.addEventListener('wzw-place-selected',e=>inspect(scene.places.find(p=>p.id===e.detail.id)));inspect(null);renderContents(scene);}
  await mount();root.querySelector('.sidebar-foot')?.remove();put('#map-caption',String(d.meta.areaName||'').toUpperCase());for(const [selector,value]of [['.quote',d.meta.quote],['.date',d.meta.date],['.clock',d.meta.time]]){const el=$(selector);if(el)el.textContent=value||'';}
@@ -75,7 +88,7 @@ async function boot(){let input=window.MAP_DATA;
  try{const t=document.getElementById('map-data');if(t)input=JSON.parse(t.textContent)}
  catch{transportError('MAP_DATA sai JSON hoặc bị cắt. Chưa dựng cảnh RP.');return;}
  try{if(window.WZW_LOAD_FAILED)throw Error('Không tải được CSS hoặc template pack');await initialize();window.MAP_DATA=input;await enqueue(input)}
- catch(error){transportError('Không thể mở bản đồ: '+error.message,'text-fallback');}
+ catch(error){console.error('WIZAMAP render error',error);transportError('Không thể mở bản đồ. Vui lòng kiểm tra dữ liệu bản đồ.','text-fallback');}
 }
 window.WZWMap={normalize,composeRoom,render:async input=>{await window.WZWMap.ready;
  if(!initialized)await initialize();

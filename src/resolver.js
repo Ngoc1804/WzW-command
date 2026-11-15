@@ -100,8 +100,9 @@ function resolve(d){
    const canonical=places.find(x=>x.id===match.id);
    const target=canonical||{...match};
    const originalCoords=source?{x:target.x,y:target.y}:{};
-   // MAP_DATA wins all explicit RP fields; missing recipe/layout metadata survives from Atlas.
-   Object.assign(target,p,{id:match.id,description:p.description||target.description||target.desc,desc:p.description||target.description||target.desc,...originalCoords});
+   // RP overrides Atlas only for values explicitly supplied; an empty type cannot erase its recipe.
+   const overrides={...p};if(!overrides.type)delete overrides.type;
+   Object.assign(target,overrides,{id:match.id,description:p.description||target.description||target.desc,desc:p.description||target.description||target.desc,...originalCoords});
    if(!canonical)places.push(target);
    emitted.add(match.id);bindings[p.name]=match.id;if(p.placeName)bindings[p.placeName]=match.id;if(p.id)bindings[p.id]=match.id;
   }
@@ -126,6 +127,6 @@ function resolve(d){
   diagnostics.push('unresolved-location-not-in-map-data:'+ref);
  }
  for(const place of places){place.description=place.description||place.desc||'Không gian yên tĩnh, không có gì đặc biệt.';place.overhear=place.overhear||'Không có hoạt động gì đáng chú ý.';place.inventory=source?{objects:[],diagnostics:[],illustrative:false}:composeRoom(place);}
- if(!places.length)places.push({id:'context',name:d.meta.areaName||'Không gian RP',desc:'',type:'LOUNGE',props:[],inventory:composeRoom({type:'LOUNGE',props:[]})});
+ // An empty Generated MAP_DATA is an empty scene, not a new room.
  return {worldSite,mapMode:worldMode,source,fixedId:source?fixedId:null,cluster:sandbox?null:cluster,places,bindings,unresolved,diagnostics,detail:false,route:source?'fixed':cluster&&!sandbox?'atlas':'sandbox',exact};
 }
