@@ -68,7 +68,7 @@ function resolve(d){
  const catalogPlace=p=>{
   if(source||sandbox)return null;
   if(p.id){const idHits=registry.filter(x=>x.id===p.id);if(idHits.length===1)return idHits[0];}
-  const names=[p.name,...(p.aliases||[])].filter(Boolean).map(fold);
+  const names=[p.name,p.placeName,...(p.aliases||[])].filter(Boolean).map(fold);
   const matches=registry.filter(x=>[x.name,...(x.aliases||[])].filter(Boolean).some(n=>names.includes(fold(n))));
   if(matches.length===1)return matches[0];
   if(matches.length>1)diagnostics.push('ambiguous-atlas-room:'+p.name);
@@ -103,7 +103,7 @@ function resolve(d){
    // MAP_DATA wins all explicit RP fields; missing recipe/layout metadata survives from Atlas.
    Object.assign(target,p,{id:match.id,description:p.description||target.description||target.desc,desc:p.description||target.description||target.desc,...originalCoords});
    if(!canonical)places.push(target);
-   emitted.add(match.id);bindings[p.name]=match.id;if(p.id)bindings[p.id]=match.id;
+   emitted.add(match.id);bindings[p.name]=match.id;if(p.placeName)bindings[p.placeName]=match.id;if(p.id)bindings[p.id]=match.id;
   }
   else if(source){unresolved.push(p);diagnostics.push('unresolved-fixed-place:'+p.name);}
   else{
