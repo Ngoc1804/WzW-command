@@ -7,7 +7,7 @@ function normalize(input){
  const ids=new Set();
  const places=list(d.places).filter(p=>p&&text(p.name).trim()).map((p,index)=>{
   let id=text(p.id)||undefined;
-  if(id&&ids.has(id)){diagnostics.push('duplicate-place-id:'+id);id=undefined;}if(id)ids.add(id);
+  if(id&&ids.has(id))diagnostics.push('duplicate-place-id:'+id);if(id)ids.add(id);
   const props=list(p.props).map((p,i)=>{
    if(typeof p==='string')return{name:p,count:1,op:'ensure'};
    const valid=Number.isInteger(p?.count)&&Number.isFinite(p?.count)&&p.count>=0;
