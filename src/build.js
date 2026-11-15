@@ -34,7 +34,7 @@ function indoorMap(scene,d){
  }
  if(single&&layouts[0].art?.doorAnchor){const room=plan.rooms[0],art=layouts[0].art,side=art.door?.side||'south',horizontal=['north','south'].includes(side),point={x:room.x+art.doorAnchor.x,y:room.y+art.doorAnchor.y},existing=plan.openings.doors[0],ln=plan.walls.find(w=>w.axis===(horizontal?'H':'V')&&Math.abs(w.at-(horizontal?point.y:point.x))<.1)||{...(existing?.ln||{}),axis:horizontal?'H':'V',at:horizontal?point.y:point.x};room.approvedDoor={...(existing||{}),kind:'door',room:room.id,ln,at:horizontal?point.x:point.y,width:art.door?.width||52};plan.openings.doors=[room.approvedDoor];}
  for(const room of plan.rooms){const art=layouts[room.index].art;if(art?.source==='APPROVED_DECOR'&&art.floorShapes?.length){const path=new Path2D(),ctx=document.createElement('canvas').getContext('2d');for(const shape of art.floorShapes){const doc=new DOMParser().parseFromString('<svg xmlns="http://www.w3.org/2000/svg">'+shape.svg+'</svg>','image/svg+xml');path.addPath(outdoorShape(doc.documentElement.firstElementChild),new DOMMatrix(shape.matrix));}room.sourceFloor=(x,y)=>ctx.isPointInPath(path,x-room.x,y-room.y);}}
- let svg=styleIndoor(CORRIDORS.draw(plan,cfg),plan,places);const floorEnd='</g><g data-layer="architecture">';let furnishings='<g data-layer="furniture">',selection='<g data-layer="selection">';
+ let svg=styleIndoor(CORRIDORS.draw(plan,cfg),plan,places);const floorEnd='</g><g data-layer="architecture">';let furnishings='<g data-layer="furniture">',corridorFurniture='',selection='<g data-layer="selection">';
  const footprints=[];
  for(const room of plan.rooms){
   const p=places[room.index],layout=layouts[room.index],f=drawFurniture(p,'p'+room.index+'-',room,layout,placeDoor(plan,room));
@@ -46,12 +46,29 @@ function indoorMap(scene,d){
  }
  for(const [i,p]of passages.entries()){
   const hall=plan.halls.find(h=>!h.passage);if(!hall)continue;p.bounds=[hall.x,hall.y,hall.w,hall.h];p.geometry={hall};
-  const props=placeExtraProps(p,'hall'+i+'-',{...hall},(p.inventory?.objects||[]).filter(o=>o.source==='rp'),null,[]);furnishings+=props.svg;footprints.push(...props.footprints.map(f=>({...f,placeId:p.id})));
+  const props=placeExtraProps(p,'hall'+i+'-',{...hall},(p.inventory?.objects||[]).filter(o=>o.source==='rp'),null,[]);corridorFurniture+=props.svg;footprints.push(...props.footprints.map(f=>({...f,placeId:p.id})));
   selection+=`<g data-id="${escapeXML(p.id)}" role="button" tabindex="0" aria-label="${escapeXML(p.name)}"><rect x="${hall.x}" y="${hall.y}" width="${hall.w}" height="${hall.h}" fill="transparent" data-floor="corridor"/></g>`;
  }
  // Keep the source floor, wall projection, material graph and door/window drawing intact.
- svg=svg.replace(floorEnd,'</g>'+furnishings+'</g><g data-layer="architecture">');
+ svg=svg.replace(floorEnd,'</g><g data-layer="corridor-furniture">'+corridorFurniture+'</g>'+furnishings+'</g><g data-layer="architecture">');
  svg=svg.replace(/<g data-layer="selection">[\s\S]*?<\/g><\/svg>$/,selection+'</g></svg>');
+ // Only the room's north/back wall moves behind room furniture. Front/side walls and their artwork stay untouched.
+ if(!single){
+  const doc=new DOMParser().parseFromString(svg,'image/svg+xml');
+  const architecture=doc.querySelector('[data-layer="architecture"]');
+  const roomFurniture=doc.querySelector('[data-layer="furniture"]');
+  const rearWall=doc.createElementNS('http://www.w3.org/2000/svg','g');
+  rearWall.setAttribute('data-layer','rear-wall');
+  const orderedWalls=[...plan.walls].sort((a,b)=>(a.axis==='H'?a.at:a.b)-(b.axis==='H'?b.at:b.b)||a.at-b.at);
+  const wallArt=[...architecture.children].filter(n=>n.hasAttribute('data-wall'));
+  if(wallArt.length!==orderedWalls.length)throw Error('Wall render count mismatch');
+  for(let i=0;i<orderedWalls.length;i++){
+   const wall=orderedWalls[i];
+   if(wall.axis==='H'&&wall.B?.kind==='room'&&wall.A?.kind!=='room')rearWall.append(wallArt[i]);
+  }
+  roomFurniture.before(rearWall);
+  svg=new XMLSerializer().serializeToString(doc);
+ }
  if(single&&layouts[0].art?.source==='APPROVED_DECOR'){
   const room=plan.rooms[0],art=layouts[0].art,prefix='p0-',doc=new DOMParser().parseFromString('<svg xmlns="http://www.w3.org/2000/svg">'+art.architectureSvg+'</svg>','image/svg+xml'),front=doc.querySelector('[data-layer="front-wall-foreground"]'),frontSvg=front?.outerHTML||'';front?.remove();
   const floor=`<g data-approved-shell="${escapeXML(recipeId(places[0].type))}" data-layout-size="${layoutSize(places[0].size)}" transform="translate(${room.x} ${room.y})">${namespaceArt(art.floorSvg+doc.documentElement.innerHTML,prefix)}</g>`;
