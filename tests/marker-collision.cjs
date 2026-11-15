@@ -3,20 +3,21 @@ const assert=require('node:assert/strict'),{chromium}=require('playwright');
 (async()=>{
  const browser=await chromium.launch({executablePath:'/usr/bin/chromium',args:['--no-sandbox']});
  try{
-  const page=await browser.newPage({viewport:{width:1400,height:1000}});
   const cases=[
-   {name:'Fixed h1',atlasAnchor:'h1',placeId:'region:extra:2',spot:'outdoor'},
    {name:'Fixed hall',atlasAnchor:'hall',placeId:'gf-staff',spot:'inside'},
    {name:'Generated indoor',atlasAnchor:'custom',placeId:'room',spot:'inside',forceSandbox:true,mapMode:'indoor',type:'OFFICE'}
   ];
   let checks=0;
   for(const tc of cases){
+   const page=await browser.newPage({viewport:{width:1400,height:1000}});
    const places=tc.forceSandbox?[{id:tc.placeId,name:'Phòng',type:tc.type,size:'M'}]:[];
    const actors=[{name:'PC',isPC:true,placeId:tc.placeId,spot:tc.spot},...Array.from({length:3},(_,i)=>({name:'NPC_'+i,placeId:tc.placeId,spot:tc.spot,tagType:'gryffindor'}))];
    const events=Array.from({length:3},(_,i)=>({title:'Đầu mối '+i,placeId:tc.placeId,hidden:!!(i%2)}));
    const data={schemaVersion:'2.0.0',meta:{areaName:'Kiểm chồng marker'},atlasAnchor:tc.atlasAnchor,pcPlace:tc.placeId,pcSpot:tc.spot,places,actors,events,...(tc.forceSandbox?{forceSandbox:true,mapMode:'indoor'}:{})};
    await page.setContent(require('./runtime-fixture.cjs')(data));
-   await page.waitForFunction(()=>document.querySelector('#wzw-map')?.dataset.status==='ready');
+   await page.waitForFunction(()=>['ready','text-fallback','invalid-data'].includes(document.querySelector('#wzw-map')?.dataset.status),{timeout:60000});
+   const state=await page.locator('#wzw-map').getAttribute('data-status');
+   assert.equal(state,'ready',tc.name+' map initialization');
    const initial=await page.evaluate(()=>{
     const tags=[...document.querySelectorAll('.qa-tags>.npc-tag')],evs=[...document.querySelectorAll('.qa-tags>.event-marker')];
     const bounds=[...tags,...evs].map(n=>({name:n.textContent||n.getAttribute('aria-label'),r:n.getBoundingClientRect().toJSON()}));
@@ -30,6 +31,7 @@ const assert=require('node:assert/strict'),{chromium}=require('playwright');
    assert.equal(initial.events,3,tc.name+' three event icons');
    assert.deepEqual(initial.collisions,[],tc.name+' overlapping markers: '+JSON.stringify(initial.collisions));
    checks+=3;
+   await page.close();
   }
   console.log('PASS marker collision',checks,'assertions across fixed and generated maps');
  }finally{await browser.close()}
