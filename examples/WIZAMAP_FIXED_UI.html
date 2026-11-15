@@ -622,9 +622,49 @@ async function prepareTemplateUI(){
  const maskFor=async r=>{if(!r.promise)r.promise=paintedMask(r.node).then(m=>{r.mask=m;if(r.depth===null&&m){let bottom=-1;for(let y=m.h-1;y>=0&&bottom<0;y--)for(let x=0;x<m.w;x++)if(m.pixels[(y*m.w+x)*4+3]>24){bottom=y;break;}if(bottom>=0)r.depth=m.box.y+(bottom+.5)/m.h*m.box.h;}return m}).catch(()=>null);await r.promise;return r.mask};
  function pointSafe(x,y,pad=0){if(!inMap(x,y,pad)||DATA.maps[activeId].safeFloor&&!DATA.maps[activeId].safeFloor(x,y,pad))return false;if(DATA.maps[activeId].kind==='outdoor')return true;for(const r of records){if(x+pad<r.box.x||x-pad>r.box.x+r.box.w||y+pad<r.box.y||y-pad>r.box.y+r.box.h)continue;if(!r.mask)return false;if(maskOverlaps(r.mask,{x:x-pad,y:y-pad,w:Math.max(.1,pad*2),h:Math.max(.1,pad*2)}))return false;}return true}
  async function readyMasks(){await Promise.all(records.map(maskFor))}
- function localPoint(place,inside,actor){if(actor?.scenePoint&&Number.isFinite(actor.scenePoint.x)&&Number.isFinite(actor.scenePoint.y))return actor.scenePoint;const node=[...svg.querySelectorAll('[data-id]')].find(e=>e.dataset.id===place.id&&!e.closest('defs'));if(!node)return null;const b=worldBox(node),center={x:b.x+b.w/2,y:b.y+b.h/2};if(inside)return center;const min=Math.min(originalVB[2],originalVB[3]),step=min/110;
-  // Search only the named place's bounds and immediate threshold; never reroute to a different place.
-  for(let ring=0;ring<18;ring++)for(let a=0;a<(ring?16:1);a++){const x=center.x+Math.cos(a*Math.PI/8)*ring*step,y=center.y+Math.sin(a*Math.PI/8)*ring*step;if(x<b.x-12||x>b.x+b.w+12||y<b.y-12||y>b.y+b.h+24)continue;if(pointSafe(x,y,5))return{x,y}}
+ // A loose W4 location is a regional hint, not an instruction to use the art's centre.
+ // Search valid ground near the named landmark; SVG shapes and ID are unchanged.
+ function freeGroundPoint(place,relation,occupied=[]){
+  const node=[...svg.querySelectorAll('[data-id]')].find(e=>e.dataset.id===place.id&&!e.closest('defs'));if(!node)return null;
+  const b=worldBox(node),center={x:b.x+b.w/2,y:b.y+b.h/2},extent=Math.min(originalVB[2],originalVB[3]);
+  const halo=Math.max(16,Math.min(extent*.14,Math.max(b.w,b.h)*.35));
+  const along=[];
+  for(let ring=0;ring<5;ring++){const r=12+halo*(ring+1)/3;
+   for(let k=0;k<32;k++){const a=2*Math.PI*k/32;
+    const edgeX=center.x+Math.sign(Math.cos(a))*b.w*.5,edgeY=center.y+Math.sign(Math.sin(a))*b.h*.5;
+    along.push({x:edgeX+Math.cos(a)*r,y:edgeY+Math.sin(a)*r});
+   }
+  }
+  // Broad generic grounds: search an expanded ring, still anchored to the castle/region.
+  if(relation==='around')for(let k=0;k<64;k++){
+   const a=2*Math.PI*k/64,scale=.6+(k%4)*.2;
+   along.push({x:center.x+Math.cos(a)*(b.w*.5+halo*scale),y:center.y+Math.sin(a)*(b.h*.5+halo*scale)});
+  }
+  const safe=along.filter(p=>pointSafe(p.x,p.y,4));
+  if(!safe.length)return null;
+  safe.sort((a,b)=>{
+   const cost=p=>occupied.reduce((v,q)=>v+Math.max(0,85-Math.hypot(p.x-q.x,p.y-q.y))*100,0)
+     +Math.hypot(p.x-center.x,p.y-center.y)*.025;
+   return cost(a)-cost(b);
+  });
+  return safe[0];
+ }
+ function localPoint(place,inside,actor){
+  if(actor?.scenePoint&&Number.isFinite(actor.scenePoint.x)&&Number.isFinite(actor.scenePoint.y))return actor.scenePoint;
+  const node=[...svg.querySelectorAll('[data-id]')].find(e=>e.dataset.id===place.id&&!e.closest('defs'));if(!node)return null;
+  const b=worldBox(node),center={x:b.x+b.w/2,y:b.y+b.h/2};
+  if(inside||actor?.relation==='inside'||actor?.relation==='on')return center;
+  const overview=['h1','h2','village-static','diagon-knockturn'].includes(activeId)||DATA.maps[activeId].kind==='outdoor';
+  if(overview&&['near','around'].includes(actor?.relation)){
+   const free=freeGroundPoint(place,actor.relation,actorItems.map(item=>item.point));
+   if(free)return free;
+  }
+  const step=Math.min(originalVB[2],originalVB[3])/110;
+  for(let ring=0;ring<18;ring++)for(let a=0;a<(ring?16:1);a++){
+   const x=center.x+Math.cos(a*Math.PI/8)*ring*step,y=center.y+Math.sin(a*Math.PI/8)*ring*step;
+   if(x<b.x-12||x>b.x+b.w+12||y<b.y-12||y>b.y+b.h+24)continue;
+   if(pointSafe(x,y,5))return{x,y};
+  }
   return null;
  }
  function actorPlacement(place,inside,actor,element,count){
@@ -633,6 +673,8 @@ async function prepareTemplateUI(){
   const node=[...svg.querySelectorAll('[data-id]')].find(n=>n.dataset.id===place.id&&!n.closest('defs'));
   const hit=node?.querySelector('.spot-hit'),shape=hit&&typeof hit.isPointInFill==='function'?hit:null;
   let box=hit?worldBox(hit):place.bounds?{x:place.bounds[0],y:place.bounds[1],w:place.bounds[2],h:place.bounds[3]}:node?worldBox(node):null;
+  const freeRegion=['near','around'].includes(actor.relation)&&overview;
+  if(freeRegion){const e=Math.min(originalVB[2],originalVB[3])*.13;box={x:Math.min(box.x,desired.x)-e,y:Math.min(box.y,desired.y)-e,w:Math.max(box.x+box.w,desired.x)+e-(Math.min(box.x,desired.x)-e),h:Math.max(box.y+box.h,desired.y)+e-(Math.min(box.y,desired.y)-e)};}
   const door=place.geometry?.door,spot=actor.spot||actor.pcSpot;
   const hall=place.geometry?.hall||[door?.ln.A,door?.ln.B].find(x=>x?.kind==='hall')||map.geometry?.halls?.find(h=>desired.x>=h.x&&desired.x<=h.x+h.w&&desired.y>=h.y&&desired.y<=h.y+h.h);
   const passage=!inside&&!overview&&(spot==='corridor'&&hall||spot==='threshold'&&door);
@@ -657,6 +699,7 @@ async function prepareTemplateUI(){
   const safe=point=>{
    if(actor.placement==='in_wall')return true;
    if(point.x<box.x+pad||point.x>box.x+box.w-pad||point.y<box.y+pad||point.y>box.y+box.h-pad)return false;
+   if(freeRegion&&actor.relation!=='on'&&!pointSafe(point.x,point.y,4))return false;
    if(inside&&!overview&&shape){const matrix=shape.getScreenCTM().inverse().multiply(svg.getScreenCTM());for(const[dx,dy]of [[0,0],[-pad,0],[pad,0],[0,-pad],[0,pad]])if(!shape.isPointInFill(new DOMPoint(point.x+dx,point.y+dy).matrixTransform(matrix)))return false;}
    if((!(overview&&inside)||map.kind==='outdoor')&&map.safeFloor&&!map.safeFloor(point.x,point.y,pad))return false;
    // A floor rectangle can meet another rectangle at a wall. Only actual door
@@ -776,7 +819,7 @@ async function prepareTemplateUI(){
  }
  function showPlaceActors(placeId){const target=$('#actors');target.replaceChildren();for(const item of actorItems.filter(a=>!placeId||a.placeId===placeId)){const row=actorTag(item.actor,true);row.onclick=item.element.onclick;target.append(row)}}
  function mountEvents(events=[]){for(const e of eventItems)e.element.remove();eventItems=[];$('#quests').replaceChildren();put('#hintcount',String(events.length));
-  for(const event of events){const place=(DATA.maps[activeId].places||[]).find(p=>p.id===event.placeId||p.name===event.placeName);if(!place)continue;const node=[...svg.querySelectorAll('[data-id]')].find(e=>e.dataset.id===place.id);if(!node)continue;const b=worldBox(node);let point={x:b.x+b.w/2,y:b.y+b.h/2};if(place.geometry?.room){const r=place.geometry.room;point={x:r.x+r.w*(r.circular?.65:.82),y:r.y+r.h*.25};const door=place.geometry.door;if(event.target?.kind==='door'&&door)point=door.ln.axis==='H'?{x:door.at,y:door.ln.at}:{x:door.ln.at,y:door.at};}else if(place.geometry?.outdoor){const[x,y,w,h]=place.bounds;point={x:x+w*.8,y:y+h*.25};}
+  for(const event of events){const place=(DATA.maps[activeId].places||[]).find(p=>p.id===event.placeId||p.name===event.placeName);if(!place)continue;const node=[...svg.querySelectorAll('[data-id]')].find(e=>e.dataset.id===place.id);if(!node)continue;const b=worldBox(node);let point={x:b.x+b.w/2,y:b.y+b.h/2};if(['near','around'].includes(event.relation)&&['h1','h2','village-static','diagon-knockturn'].includes(activeId)){point=freeGroundPoint(place,event.relation,[...actorItems,...eventItems].map(i=>i.point))||point;}if(place.geometry?.room){const r=place.geometry.room;point={x:r.x+r.w*(r.circular?.65:.82),y:r.y+r.h*.25};const door=place.geometry.door;if(event.target?.kind==='door'&&door)point=door.ln.axis==='H'?{x:door.at,y:door.ln.at}:{x:door.ln.at,y:door.at};}else if(place.geometry?.outdoor){const[x,y,w,h]=place.bounds;point={x:x+w*.8,y:y+h*.25};}
    const button=document.createElement('button');button.className='event-marker '+(event.hidden?'hidden-marker':'');button.setAttribute('aria-label',event.title||'Đầu mối');button.title=event.title||'Đầu mối';
    const v=uiElement('svg',{viewBox:'0 0 24 24','aria-hidden':'true'});v.setAttribute('fill','none');v.setAttribute('stroke','currentColor');v.setAttribute('stroke-width','1.6');v.setAttribute('stroke-linecap','round');v.setAttribute('stroke-linejoin','round');v.innerHTML=event.hidden?"<circle cx=\"10.5\" cy=\"10.5\" r=\"7.5\"/><path d=\"m16 16 6 6\"/>":"<path d=\"M5 6l1-3h3l1 3m4 0 1-3h3l1 3M4 6h5l1 10H2ZM15 6h5l2 10h-8ZM10 9h4v5h-4\"/><circle cx=\"6\" cy=\"17\" r=\"4\"/><circle cx=\"18\" cy=\"17\" r=\"4\"/>";button.append(v);
    const worldIconWidth=Math.min(42,Math.max(20,Math.min(originalVB[2],originalVB[3])*.043));
