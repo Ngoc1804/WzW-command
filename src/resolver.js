@@ -126,6 +126,6 @@ function resolve(d){
   diagnostics.push('unresolved-location-not-in-map-data:'+ref);
  }
  for(const place of places){place.description=place.description||place.desc||'Không gian yên tĩnh, không có gì đặc biệt.';place.overhear=place.overhear||'Không có hoạt động gì đáng chú ý.';place.inventory=source?{objects:[],diagnostics:[],illustrative:false}:composeRoom(place);}
- if(!places.length)places.push({id:'context',name:d.meta.areaName||'Không gian RP',desc:''});
+ if(!places.length)places.push({id:'context',name:d.meta.areaName||'Không gian RP',desc:'',type:'LOUNGE',props:[],inventory:composeRoom({type:'LOUNGE',props:[]})});
  return {worldSite,mapMode:worldMode,source,fixedId:source?fixedId:null,cluster:sandbox?null:cluster,places,bindings,unresolved,diagnostics,detail:false,route:source?'fixed':cluster&&!sandbox?'atlas':'sandbox',exact};
 }
