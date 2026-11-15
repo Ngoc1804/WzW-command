@@ -1,6 +1,7 @@
 // Browser QA: ten distinct Fixed owners and five canonical Generated indoor scopes.
 const fs=require('fs'),path=require('path'),assert=require('node:assert/strict'),{chromium}=require('playwright');
 const out='work/qa15';fs.mkdirSync(out,{recursive:true});
+const ATLAS=JSON.parse(fs.readFileSync('assets/atlas.json','utf8'));
 const fixed=[
  ['F01-h1-lake','h1','h1-lake-tree','near','outdoor'],
  ['F02-h2-courtyard','h2','h2-place-4','on','outdoor'],
@@ -24,7 +25,7 @@ const cases=[...fixed.map(x=>({kind:'Fixed',label:x[0],anchor:x[1],placeId:x[2],
 function payload(c){
  const npc=Array.from({length:3},(_,i)=>({name:'NPC '+(i+1)+' '+c.label,placeId:c.placeId,relation:c.relation,spot:c.spot,tagType:'gryffindor',activity:'Đang trò chuyện và hoạt động trong khu vực.'}));
  const events=Array.from({length:2},(_,i)=>({id:c.label+'-event-'+i,title:'Sự kiện '+(i+1)+' '+c.label,placeId:c.placeId,relation:c.relation,hidden:!!i,detail:'Có một cơ hội khám phá hợp lệ ở đây.'}));
- return{schemaVersion:'2.0.0',atlasAnchor:c.anchor,meta:{date:'10/10/1992',time:'15:30',areaName:c.label+' · Kiểm thử',quote:'Bản đồ kiểm tra tương tác.'},pcPlace:c.placeId,pcSpot:c.spot,places:[],actors:[{name:'PC',isPC:true,placeId:c.placeId,relation:c.relation,spot:c.spot,tagType:'gryffindor'},...npc],events};
+ return{schemaVersion:'2.0.0',atlasAnchor:c.anchor,meta:{date:'10/10/1992',time:'15:30',areaName:c.label+' · Kiểm thử',quote:'Bản đồ kiểm tra tương tác.'},pcPlace:c.placeId,pcSpot:c.spot,places:c.kind==='Indoor'?[(()=>{const p=ATLAS.clusters[c.anchor].rooms.find(x=>x.id===c.placeId);return{id:p.id,name:p.name,type:p.type,size:p.size||'M'};})()]:[],actors:[{name:'PC',isPC:true,placeId:c.placeId,relation:c.relation,spot:c.spot,tagType:'gryffindor'},...npc],events};
 }
 function reportRects(rects){
  let collisions=[];for(let i=0;i<rects.length;i++)for(let j=i+1;j<rects.length;j++){
