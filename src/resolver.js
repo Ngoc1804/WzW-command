@@ -5,7 +5,9 @@ function resolve(d){
  if(!fixedId&&cluster&&!cluster.rooms.length&&cluster.pointers.length===1&&DATA.maps[cluster.pointers[0]])fixedId=cluster.pointers[0];
  const sandbox=d.forceSandbox||(['h1','h2'].includes(fixedId)&&d.places.some(p=>p.isNewConstruction));
  const source=sandbox?null:fixedId?DATA.maps[fixedId]:null;
- let places=source?source.places.map(p=>({...p})):!sandbox&&cluster?cluster.rooms.map(p=>({...p})):[];
+ // MAP_DATA owns Generated scene membership; Atlas is an enrichment registry, not a room quota.
+ let places=source?source.places.map(p=>({...p})):[];
+ let registry=!source&&!sandbox&&cluster?cluster.rooms:[];
  const bindings={},used=new Set(),unresolved=[];
  // World registry selects one focus building, never every site in a macro region.
  let worldSite=null,worldMode=null;
@@ -31,9 +33,9 @@ function resolve(d){
    const level=explicitLevel||(focus.length===1?focus[0].level:null);
    if(focus.length===1)worldMode=focus[0].type?.startsWith('OUT_')?'outdoor':'indoor';
    else if(worldSite.rooms.length===1)worldMode=worldSite.rooms[0].type?.startsWith('OUT_')?'outdoor':'indoor';
-   places=worldSite.rooms.filter(room=>(!room.conditional||focus.includes(room))&&(!level||room.level===level)).map(room=>({...room}));
+   registry=worldSite.rooms.filter(room=>(!room.conditional||focus.includes(room))&&(!level||room.level===level));
+   // The World site/level selects a catalogue, never auto-adds its unrequested rooms.
    if(focus.length===1)bindings[d.pcPlace]=focus[0].id;
-   if(!places.length)places=[{id:worldSite.id,name:worldSite.name,description:worldSite.description||'',type:'LOUNGE'}];
   }
  }
  const exact=(ref,region=d.region)=>{
@@ -61,14 +63,29 @@ function resolve(d){
   }
   return null;
  };
+ // Generated catalogue lookups preserve native furniture/architecture without drawing unused rooms.
+ // Gemini is responsible for translating Vietnamese/English synonyms to a unique ID.
+ const catalogPlace=p=>{
+  if(source||sandbox)return null;
+  if(p.id){const idHits=registry.filter(x=>x.id===p.id);if(idHits.length===1)return idHits[0];}
+  const names=[p.name,...(p.aliases||[])].filter(Boolean).map(fold);
+  const matches=registry.filter(x=>[x.name,...(x.aliases||[])].filter(Boolean).some(n=>names.includes(fold(n))));
+  if(matches.length===1)return matches[0];
+  if(matches.length>1)diagnostics.push('ambiguous-atlas-room:'+p.name);
+  return null;
+ };
  const locate=p=>{
   if(p.id){const hit=places.find(x=>x.id===p.id);if(hit){if(key(hit.name)!==key(p.name))diagnostics.push('place-id-name-conflict:'+p.id);return hit;}}
-  const hit=exact(p.name,p.region||d.region);if(hit&&p.id)diagnostics.push('place-id-fallback:'+p.id);return hit;
+  const hit=exact(p.name,p.region||d.region);
+  if(hit){if(p.id&&p.id!==hit.id)diagnostics.push('place-id-fallback:'+p.id);return hit;}
+  return catalogPlace(p);
  };
  // Reserve explicitly addressed houses before allocating AU entries. Stable ordering avoids payload-order reshuffles.
  for(const p of d.places){const hit=locate(p);if(hit)used.add(hit.id);}
  for(const ref of [d.pcPlace,...d.actors.map(a=>a.placeId||a.placeName),...d.events.map(e=>e.placeId||e.placeName)]){const hit=exact(ref);if(hit)used.add(hit.id);}
- const sorted=[...d.places].sort((a,b)=>key(a.id||a.name).localeCompare(key(b.id||b.name)));
+ // Keep RP room order; only Fixed AU house allocation requires sorting for stable assignment.
+ const sorted=source?[...d.places].sort((a,b)=>key(a.id||a.name).localeCompare(key(b.id||b.name))):d.places;
+ const emitted=new Set();
  for(const p of sorted){
   let match=locate(p);
   if(!match&&source&&['village-static','diagon-knockturn'].includes(fixedId)&&/shop|store|pub|cafe|house|home|tiệm|quán|nhà/.test(key(p.type)+' '+key(p.name))){
@@ -77,12 +94,23 @@ function resolve(d){
    const pool=places.filter(x=>/^Nhà dân(?:\b|\s|$)/i.test(x.name)&&!used.has(x.id)&&(fixedId==='village-static'||region==='diagon'&&x.id.startsWith('da-')||region==='knockturn'&&x.id.startsWith('ka-'))).sort((a,b)=>a.id.localeCompare(b.id));
    if(pool.length){match=pool[0];used.add(match.id);}else diagnostics.push('no-empty-house-binding:'+p.name);
   }
-  if(match){bindings[p.name]=match.id;if(p.id)bindings[p.id]=match.id;Object.assign(match,p,{id:match.id,description:p.description||match.description||match.desc,desc:p.description||match.description||match.desc,...(source?{x:match.x,y:match.y}:{})});}
+  if(match){
+   // Exactly one rendered room per resolved physical identity, even if two labels were supplied.
+   if(emitted.has(match.id)){diagnostics.push('duplicate-resolved-place:'+match.id);if(p.id)bindings[p.id]=match.id;bindings[p.name]=match.id;continue;}
+   const canonical=places.find(x=>x.id===match.id);
+   const target=canonical||{...match};
+   const originalCoords=source?{x:target.x,y:target.y}:{};
+   // MAP_DATA wins all explicit RP fields; missing recipe/layout metadata survives from Atlas.
+   Object.assign(target,p,{id:match.id,description:p.description||target.description||target.desc,desc:p.description||target.description||target.desc,...originalCoords});
+   if(!canonical)places.push(target);
+   emitted.add(match.id);bindings[p.name]=match.id;if(p.id)bindings[p.id]=match.id;
+  }
   else if(source){unresolved.push(p);diagnostics.push('unresolved-fixed-place:'+p.name);}
   else{
-   const duplicate=places.some(x=>key(x.name)===key(p.name));
+   const duplicate=places.some(x=>key(x.name)===key(p.name)||p.id&&x.id===p.id);
    if(duplicate){unresolved.push(p);diagnostics.push('ambiguous-place:'+p.name);continue;}
-   places.push({...p,id:p.id||'rp:'+key(p.name),desc:p.description});
+   const id=p.id||'rp:'+key(p.name);
+   places.push({...p,id,desc:p.description});emitted.add(id);bindings[p.name]=id;if(p.id)bindings[p.id]=id;
   }
  }
  // New RP places are allowed in Generated, but an invalid ID must not become a fictitious named room.
