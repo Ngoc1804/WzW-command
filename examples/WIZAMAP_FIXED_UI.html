@@ -753,7 +753,7 @@ async function prepareTemplateUI(){
   return Math.max(0,Math.min(a.x+a.w+pad,b.x+b.w+pad)-Math.max(a.x-pad,b.x-pad))
    *Math.max(0,Math.min(a.y+a.h+pad,b.y+b.h+pad)-Math.max(a.y-pad,b.y-pad));
  }
- function relativeMarkerPoint(origin,region,w,h,kind,occupied){
+ function relativeMarkerPoint(origin,region,w,h,kind,occupied,guard=null){
   const step=Math.max(12,Math.min(55,Math.max(w*.62,h*1.15)));
   const margin=Math.max(28,Math.min(125,w*2.5));
   const candidates=[origin];
@@ -763,6 +763,7 @@ async function prepareTemplateUI(){
   }
   let best=null,score=Infinity;
   for(const point of candidates){
+   if(guard&&!guard(point))continue;
    if(region&&(point.x<region.x-margin||point.x>region.x+region.w+margin||point.y<region.y-margin||point.y>region.y+region.h+margin))continue;
    const box=markerFootprint(point,w,h,kind);
    const overlap=occupied.reduce((sum,other)=>sum+markerOverlap(box,other),0);
@@ -824,7 +825,7 @@ async function prepareTemplateUI(){
    const v=uiElement('svg',{viewBox:'0 0 24 24','aria-hidden':'true'});v.setAttribute('fill','none');v.setAttribute('stroke','currentColor');v.setAttribute('stroke-width','1.6');v.setAttribute('stroke-linecap','round');v.setAttribute('stroke-linejoin','round');v.innerHTML=event.hidden?"<circle cx=\"10.5\" cy=\"10.5\" r=\"7.5\"/><path d=\"m16 16 6 6\"/>":"<path d=\"M5 6l1-3h3l1 3m4 0 1-3h3l1 3M4 6h5l1 10H2ZM15 6h5l2 10h-8ZM10 9h4v5h-4\"/><circle cx=\"6\" cy=\"17\" r=\"4\"/><circle cx=\"18\" cy=\"17\" r=\"4\"/>";button.append(v);
    const worldIconWidth=Math.min(42,Math.max(20,Math.min(originalVB[2],originalVB[3])*.043));
    const blockers=[...actorItems.map(actorLabelFootprint),...eventItems.map(item=>markerFootprint(item.point,item.worldIconWidth,item.worldIconWidth*36/32,'event'))];
-   point=relativeMarkerPoint(point,worldBox(node),worldIconWidth,worldIconWidth*36/32,'event',blockers).point;
+   point=relativeMarkerPoint(point,worldBox(node),worldIconWidth,worldIconWidth*36/32,'event',blockers,['near','around'].includes(event.relation)&&['h1','h2','village-static','diagon-knockturn'].includes(activeId)?p=>pointSafe(p.x,p.y,4):null).point;
    button.onclick=()=>{layer.querySelectorAll('.event-marker').forEach(b=>b.classList.remove('chosen'));button.classList.add('chosen');if(typeof inspect==='function'&&sceneData){inspect(place);const c=$('#context-location');if(c){c.textContent=place.name+' · '+event.title;c.hidden=false;}put('#observation',typeof shortRP==='function'?shortRP(event.detail||place.description,'Có điều đáng chú ý tại đây.'):event.detail||'');}else{put('#place-title',event.title||'Đầu mối');put('#observation',event.detail||'')}};layer.append(button);eventItems.push({point,element:button,event,place,worldIconWidth});
   }renderPositions();
  }
