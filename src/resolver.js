@@ -41,6 +41,12 @@ function resolve(d){
   const bound=bindings[ref];if(bound)return places.find(p=>p.id===bound)||null;
   if(worldSite){const r=worldRef(ref),hits=places.filter(p=>fold(p.name)===r.label&&(!r.level||p.level===r.level));if(hits.length===1)return hits[0];}
   const byId=places.filter(p=>p.id===ref);if(byId.length===1)return byId[0];
+  // Preserve existing strict shop/room bindings; fuzzy tolerance is for outdoor overview owners only.
+  if(source&&!['h1','h2'].includes(fixedId)){
+   const canonical=key(ref),hits=places.filter(p=>key(p.name)===canonical||p.aliases?.some(a=>key(a)===canonical)||ATLAS.fixed[fixedId]?.places.find(x=>x.id===p.id)?.aliases?.some(a=>key(a)===canonical));
+   if(hits.length>1&&fixedId==='diagon-knockturn'&&['diagon','knockturn'].includes(region)){const scoped=hits.filter(p=>p.id.startsWith(region==='diagon'?'da-':'ka-'));return scoped.length===1?scoped[0]:null;}
+   return hits.length===1?hits[0]:null;
+  }
   const canonical=fold(ref),bare=stripRelation(ref);
   const labels=p=>[p.id,p.name,...(p.aliases||[]),...(fixedNames?.get(p.id)||[])].filter(Boolean).map(fold);
   const hits=places.filter(p=>labels(p).some(name=>name===canonical||name===bare));
