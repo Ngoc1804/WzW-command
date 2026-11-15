@@ -53,7 +53,8 @@ function indoorMap(scene,d){
  svg=svg.replace(floorEnd,'</g><g data-layer="corridor-furniture">'+corridorFurniture+'</g>'+furnishings+'</g><g data-layer="architecture">');
  svg=svg.replace(/<g data-layer="selection">[\s\S]*?<\/g><\/svg>$/,selection+'</g></svg>');
  // Only the room's north/back wall moves behind room furniture. Front/side walls and their artwork stay untouched.
- if(!single){
+ // The source-only corridor harness has no DOMParser; browser runtime always supplies it.
+ if(!single&&typeof DOMParser!=='undefined'){
   const doc=new DOMParser().parseFromString(svg,'image/svg+xml');
   const architecture=doc.querySelector('[data-layer="architecture"]');
   const roomFurniture=doc.querySelector('[data-layer="furniture"]');
