@@ -13,10 +13,32 @@ function inventoryNote(code){
 let selectedMapPlace=null;
 const fallbackHear='Không có hoạt động gì đáng chú ý.';
 const fallbackObserve='Không gian yên tĩnh, không có gì đặc biệt.';
+const idleHint='Đi khám phá nào';
+function inspectorText(selector,value,idle=false){const el=$(selector);if(!el)return;el.textContent=value;el.style.opacity=idle?'.48':'';el.style.fontStyle=idle?'italic':'';}
+function inferFixedRelation(entity,places){
+ if(['near','around','inside','on'].includes(entity.relation))return entity.relation;
+ if(entity.spot==='inside')return'inside';
+ const place=places.find(p=>p.id===entity.placeId||p.name===entity.placeName);
+ const ref=[entity.placeName,entity.placeId,place?.name].filter(Boolean).join(' ').toLowerCase();
+ if(/(?:quanh|đi dạo|around|h1-outer-lawns|h1-grounds)/.test(ref))return'around';
+ if(/(?:^|\s)(?:trên sân|on field|trên quảng trường)/.test(ref))return'on';
+ if(/(?:gần|ven|bờ|bìa|lối|dưới|near|edge|approach|path|lake-tree|h1-lake|h1-hagrid-hut)/.test(ref))return'near';
+ return '';
+}
 function shortRP(value,fallback=''){const s=String(value||'').replace(/\s+/g,' ').trim();return (s||fallback).split(/\s+/).slice(0,19).join(' ');}
 function putContextLocation(value){const el=$('#context-location');if(el){el.textContent=value||'';el.hidden=!value;}}
 function setAreaIdentity(){const parts=String(sceneData?.meta?.areaName||'').split(/\s*[·•]\s*/).filter(Boolean);put('#place-title',parts[0]||'Khu vực hiện tại');put('#place-area',parts.length>1?'· '+parts.slice(1).join(' · '):'');}
-function inspect(place){selectedMapPlace=place||null;setAreaIdentity();putContextLocation(place?.name||'');put('#drawer-name',place?.name||sceneData.pcPlace||'Vị trí');put('#activity',shortRP(place?.overhear,fallbackHear));put('#observation',shortRP(place?.description||place?.desc,fallbackObserve));const list=$('#actors');list.replaceChildren();for(const a of groupRoomActors(sceneData.actors).filter(a=>!a.isPC&&(!place||a.unresolvedAnchor||!a.placeId||a.placeId===place.id||key(a.placeName)===key(place.name)))){const row=actorTag(a,true);row.onclick=()=>showActorDetails(a,place);list.append(row);}}
+function inspect(place){
+ selectedMapPlace=place||null;setAreaIdentity();putContextLocation(place?.name||'');
+ put('#drawer-name',place?.name||'Vị trí');
+ inspectorText('#activity',place?shortRP(place.overhear,fallbackHear):idleHint,!place);
+ inspectorText('#observation',place?shortRP(place.description||place.desc,fallbackObserve):idleHint,!place);
+ const list=$('#actors');list.replaceChildren();
+ if(!place)return;
+ for(const a of groupRoomActors(sceneData.actors).filter(a=>!a.isPC&&a.placeId===place.id)){
+  const row=actorTag(a,true);row.onclick=()=>showActorDetails(a,place);list.append(row);
+ }
+}
 function renderContents(scene){const list=$('#quests');list.replaceChildren();const entries=[];
  for(const a of sceneData.actors){if(a.isPC||!a.placeId||a.unresolvedAnchor)continue;const place=scene.exact(a.placeId);if(place)entries.push({type:'actor',value:a,place,title:a.name,summary:shortRP(a.activity||a.summary||a.observation,'Có người ở khu vực này.').split(/\s+/).slice(0,10).join(' ')});}
  for(const e of sceneData.events){if(!e.placeId)continue;const place=scene.exact(e.placeId);if(place)entries.push({type:'event',value:e,place,title:e.title,summary:shortRP(e.detail,'Có điều thú vị ở đây.').split(/\s+/).slice(0,10).join(' ')});}
@@ -29,7 +51,7 @@ async function renderInput(input){const renderStart=performance.now();root.paren
  if(!window.WZW_ORIGINAL_MAPS)window.WZW_ORIGINAL_MAPS=structuredClone(DATA.maps);DATA.maps=structuredClone(window.WZW_ORIGINAL_MAPS);
  const scene=resolve(d);d.unresolvedPlaces=scene.unresolved;let mapId=scene.source?scene.fixedId:'rp-scene';if(scene.source){DATA.maps[mapId].places=scene.places.filter(p=>scene.source.places.some(x=>x.id===p.id));}else DATA.maps[mapId]=buildMap(scene,d);
  await setTemplate(mapId);
- async function mount(){DATA.maps[activeId].actorPoints=[];for(const a of d.actors){const place=scene.exact(a.placeId||a.placeName);a.placeId=place?.id;if(a.isPC){a.placeName=d.pcPlace;a.placeId=scene.exact(d.pcPlace)?.id;a.spot=d.pcSpot||a.spot;}a.inside=a.spot==='inside';a.scenePoint=undefined;a.unresolvedAnchor=false;const resolved=scene.exact(a.placeId||a.placeName);a.hearingText=resolved?.overhear||'';if(!resolved)a.unresolvedAnchor=true;const map=DATA.maps[activeId];if(!scene.source&&resolved){a.scenePoint=generatedActorPoint(map,resolved,a.spot,a);if(!a.scenePoint)a.unresolvedAnchor=true;else if(a.scenePoint.anchorOnly||a.scenePoint.noFeet)a.footstep='hidden';}/* Footstep visibility follows the active map's presentation policy. */}for(const e of d.events)e.placeId=scene.exact(e.placeId||e.placeName)?.id;await presentation.mountActors(d.actors.filter(a=>a.placeId&&!a.unresolvedAnchor));presentation.mountEvents(d.events.filter(e=>e.placeId));svg.addEventListener('wzw-place-selected',e=>inspect(scene.places.find(p=>p.id===e.detail.id)));inspect(scene.exact(d.pcPlace));renderContents(scene);}
+ async function mount(){DATA.maps[activeId].actorPoints=[];for(const a of d.actors){a.relation=inferFixedRelation(a,d.places);const place=scene.exact(a.placeId||a.placeName);a.placeId=place?.id;if(a.isPC){a.placeName=d.pcPlace;a.placeId=scene.exact(d.pcPlace)?.id;a.spot=d.pcSpot||a.spot;}a.inside=a.spot==='inside';a.scenePoint=undefined;a.unresolvedAnchor=false;const resolved=scene.exact(a.placeId||a.placeName);a.hearingText=resolved?.overhear||'';if(!resolved)a.unresolvedAnchor=true;const map=DATA.maps[activeId];if(!scene.source&&resolved){a.scenePoint=generatedActorPoint(map,resolved,a.spot,a);if(!a.scenePoint)a.unresolvedAnchor=true;else if(a.scenePoint.anchorOnly||a.scenePoint.noFeet)a.footstep='hidden';}/* Footstep visibility follows the active map's presentation policy. */}for(const e of d.events){e.relation=inferFixedRelation(e,d.places);e.placeId=scene.exact(e.placeId||e.placeName)?.id;}await presentation.mountActors(d.actors.filter(a=>a.placeId&&!a.unresolvedAnchor));presentation.mountEvents(d.events.filter(e=>e.placeId));svg.addEventListener('wzw-place-selected',e=>inspect(scene.places.find(p=>p.id===e.detail.id)));inspect(null);renderContents(scene);}
  await mount();root.querySelector('.sidebar-foot')?.remove();put('#map-caption',String(d.meta.areaName||'').toUpperCase());for(const [selector,value]of [['.quote',d.meta.quote],['.date',d.meta.date],['.clock',d.meta.time]]){const el=$(selector);if(el)el.textContent=value||'';}
  root.dataset.status='ready';root.dataset.renderMs=String(performance.now()-renderStart);window.WZW_SCENE={...scene,rendered:{kind:DATA.maps[activeId].kind,geometry:DATA.maps[activeId].geometry,footprints:DATA.maps[activeId].footprints},diagnostics:d.diagnostics};return scene;}
 let renderQueue=Promise.resolve(),initialized=false;

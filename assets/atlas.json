@@ -12812,7 +12812,11 @@
           "id": "region-4",
           "name": "Rừng Cấm",
           "aliases": [
-            "Forbidden Forest"
+            "Forbidden Forest",
+            "h1-forest-edge",
+            "h1-forbidden-forest",
+            "Bìa Rừng Cấm",
+            "Forbidden Forest edge"
           ]
         },
         {
@@ -12820,7 +12824,12 @@
           "name": "Hồ Đen",
           "aliases": [
             "Great Lake",
-            "Black Lake"
+            "Black Lake",
+            "h1-lake",
+            "h1-lake-shore",
+            "Bờ Hồ Đen",
+            "Ven Hồ Đen",
+            "Great Lake shore"
           ]
         },
         {
@@ -12829,14 +12838,24 @@
         },
         {
           "id": "region-0",
-          "name": "Lâu đài Hogwarts"
+          "name": "Lâu đài Hogwarts",
+          "aliases": [
+            "h1-castle",
+            "h1-outer-lawns",
+            "h1-grounds",
+            "Đường dạo quanh khuôn viên",
+            "Quanh lâu đài Hogwarts"
+          ]
         },
         {
           "id": "region:extra:5",
           "name": "Nhà Hagrid",
           "aliases": [
             "Hagrid's Hut",
-            "Hagrid Hut"
+            "Hagrid Hut",
+            "h1-hagrid-hut",
+            "Căn chòi của Hagrid",
+            "Hagrid's cottage"
           ]
         },
         {
@@ -12853,16 +12872,27 @@
             "Greenhouses",
             "Greenhouse 1",
             "Greenhouse 2",
-            "Greenhouse 3"
+            "Greenhouse 3",
+            "h1-greenhouses",
+            "Nhà kính Thảo dược học"
           ]
         },
         {
           "id": "region:extra:1",
-          "name": "Nhà cú"
+          "name": "Nhà cú",
+          "aliases": [
+            "h1-owlery-approach",
+            "Lối lên Tháp Cú"
+          ]
         },
         {
           "id": "region:extra:4",
-          "name": "Sân Quidditch"
+          "name": "Sân Quidditch",
+          "aliases": [
+            "h1-quidditch",
+            "h1-quidditch-approach",
+            "Lối vào Sân Quidditch"
+          ]
         },
         {
           "id": "region:extra:7",
@@ -12886,7 +12916,11 @@
         },
         {
           "id": "region-2",
-          "name": "Ga Hogsmeade"
+          "name": "Ga Hogsmeade",
+          "aliases": [
+            "h1-station-path",
+            "Đường ra Ga Hogsmeade"
+          ]
         },
         {
           "id": "suspension-bridge",
@@ -12901,7 +12935,12 @@
         },
         {
           "id": "lakeside-tree",
-          "name": "Cây cổ thụ · Bãi cỏ ven hồ"
+          "name": "Cây cổ thụ · Bãi cỏ ven hồ",
+          "aliases": [
+            "h1-lake-tree",
+            "Cây cổ thụ bờ Hồ Đen",
+            "Ancient tree by Black Lake"
+          ]
         },
         {
           "id": "train-v5",
@@ -13195,7 +13234,8 @@
             "West Tower Owlery",
             "Injured Owl Room",
             "Feed Store",
-            "Owlery Stairs"
+            "Owlery Stairs",
+            "h2-owlery"
           ]
         },
         {

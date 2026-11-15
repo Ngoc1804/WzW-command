@@ -9,7 +9,12 @@ function resolve(d){
  const bindings={},used=new Set(),unresolved=[];
  // World registry selects one focus building, never every site in a macro region.
  let worldSite=null,worldMode=null;
- const fold=v=>key(v).replace(/[’']/g,'').replace(/[^\p{L}\p{N}]+/gu,' ').trim();
+ const fold=v=>key(v).normalize('NFD').replace(/\p{M}/gu,'').replace(/đ/g,'d').replace(/[’']/g,'').replace(/[^\p{L}\p{N}]+/gu,' ').trim();
+ const stripRelation=v=>fold(v).replace(/^(?:o|tai|gan|quanh|ven|ben|duoi|tren|trong|di dao quanh|loi vao|loi ra|near|around|inside|on|by|at)\s+/,'');
+ const editDistance=(a,b)=>{if(Math.abs(a.length-b.length)>Math.max(2,Math.floor(Math.max(a.length,b.length)*.24)))return 999;
+  let prev=Array.from({length:b.length+1},(_,i)=>i);
+  for(let i=1;i<=a.length;i++){const cur=[i];for(let j=1;j<=b.length;j++)cur[j]=Math.min(cur[j-1]+1,prev[j]+1,prev[j-1]+(a[i-1]===b[j-1]?0:1));prev=cur;}return prev[b.length];};
+ const fixedNames=source&&ATLAS.fixed[fixedId]?new Map(ATLAS.fixed[fixedId].places.map(p=>[p.id,[p.name,...(p.aliases||[])].filter(Boolean)])):null;
  const worldRef=ref=>{let label=fold(ref);for(const alias of [...(worldSite?.aliases||[])].sort((a,b)=>b.length-a.length)){const a=fold(alias);if(label.startsWith(a+' ')){label=label.slice(a.length+1);break;}}const level=label.match(/^(g|f\d+)(?: |$)/)?.[1]?.toUpperCase();return{label:level?label.replace(/^(g|f\d+) ?/,''):label,level};};
  if(!source&&!sandbox&&cluster?.rpScope&&cluster.sites){
   const pcInput=d.places.find(p=>p.id===d.pcPlace||key(p.name)===key(d.pcPlace));
@@ -36,9 +41,19 @@ function resolve(d){
   const bound=bindings[ref];if(bound)return places.find(p=>p.id===bound)||null;
   if(worldSite){const r=worldRef(ref),hits=places.filter(p=>fold(p.name)===r.label&&(!r.level||p.level===r.level));if(hits.length===1)return hits[0];}
   const byId=places.filter(p=>p.id===ref);if(byId.length===1)return byId[0];
-  const canonical=key(ref),hits=places.filter(p=>key(p.name)===canonical||p.aliases?.some(a=>key(a)===canonical)||ATLAS.fixed[fixedId]?.places.find(x=>x.id===p.id)?.aliases?.some(a=>key(a)===canonical));
-  if(hits.length>1&&fixedId==='diagon-knockturn'&&['diagon','knockturn'].includes(region)){const scoped=hits.filter(p=>p.id.startsWith(region==='diagon'?'da-':'ka-'));return scoped.length===1?scoped[0]:null;}
-  return hits.length===1?hits[0]:null;
+  const canonical=fold(ref),bare=stripRelation(ref);
+  const labels=p=>[p.id,p.name,...(p.aliases||[]),...(fixedNames?.get(p.id)||[])].filter(Boolean).map(fold);
+  const hits=places.filter(p=>labels(p).some(name=>name===canonical||name===bare));
+  const scope=arr=>arr.length>1&&fixedId==='diagon-knockturn'&&['diagon','knockturn'].includes(region)?arr.filter(p=>p.id.startsWith(region==='diagon'?'da-':'ka-')):arr;
+  const direct=scope(hits);if(direct.length===1)return direct[0];if(direct.length>1)return null;
+  // Fuzzy is a spelling fallback, never a semantic location guess.
+  if(!source||bare.length<7)return null;
+  const scores=places.map(p=>({p,distance:Math.min(999,...labels(p).filter(s=>s.length>=7).map(s=>editDistance(bare,s)))})).sort((a,b)=>a.distance-b.distance);
+  const threshold=Math.min(3,Math.floor(bare.length*.16));
+  if(scores.length&&scores[0].distance<=threshold&&(!scores[1]||scores[1].distance-scores[0].distance>=2)){
+   diagnostics.push('fuzzy-fixed-match:'+ref+'->'+scores[0].p.id);return scores[0].p;
+  }
+  return null;
  };
  const locate=p=>{
   if(p.id){const hit=places.find(x=>x.id===p.id);if(hit){if(key(hit.name)!==key(p.name))diagnostics.push('place-id-name-conflict:'+p.id);return hit;}}
