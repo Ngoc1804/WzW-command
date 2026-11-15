@@ -347,19 +347,59 @@ async function prepareTemplateUI(){
   if(passage&&count===1&&safe(desired))return{point:desired,labelScale:factor};
   if(count>1&&inside&&!actor.zone&&!actor.placement?.match(/^(on_furniture|in_wall)$/)){const index=actorItems.filter(a=>a.placeId===place.id).length;desired={x:box.x+box.w*((index%columns)+.5)/columns,y:box.y+box.h*(Math.floor(index/columns)+.72)/rows};}
   const candidates=[desired];
-  if(inside||!overview||map.kind==='outdoor'&&count>1)for(let y=1;y<40;y++)for(let x=1;x<40;x++)candidates.push({x:box.x+box.w*x/40,y:box.y+box.h*y/40});
-  let best=null,bestCost=Infinity;
+  if(inside||!overview||count>1)for(let y=1;y<40;y++)for(let x=1;x<40;x++)candidates.push({x:box.x+box.w*x/40,y:box.y+box.h*y/40});
+  let best=null,bestCost=Infinity,bestOverlap=Infinity;
   for(const point of candidates){if(!safe(point))continue;
    const rect={x:point.x-size.width*factor/fitScale/2,y:point.y-(size.height+8)*factor/fitScale,w:size.width*factor/fitScale,h:(size.height+12)*factor/fitScale};
    if((inside||passage)&&!overview&&(rect.x<box.x+pad||rect.x+rect.w>box.x+box.w-pad||rect.y<box.y+pad||rect.y+rect.h>box.y+box.h-pad))continue;
    let overlap=0;for(const other of actorItems){const b=other.labelBox;if(!b)continue;overlap+=Math.max(0,Math.min(rect.x+rect.w,b.x+b.w)-Math.max(rect.x,b.x))*Math.max(0,Math.min(rect.y+rect.h,b.y+b.h)-Math.max(rect.y,b.y));}
    const cost=overlap*10000+Math.hypot(point.x-desired.x,point.y-desired.y);
-   if(cost<bestCost){bestCost=cost;best={point,labelScale:factor,labelBox:rect};}
+   if(cost<bestCost){bestCost=cost;bestOverlap=overlap;best={point,labelScale:factor,labelBox:rect};}
   }
-  // Macro maps describe a building, not its interior floor plan. Keep its exact
-  // informational anchor when detailed floor geometry is unavailable.
+  // Dense labels on a macro-map are informational anchors. Spread ribbons around
+  // the same named site only when its walkable patch cannot hold all ribbons.
+  if(overview&&count>1&&(!best||bestOverlap>0)){
+   const w=size.width*factor/fitScale,h=(size.height+12)*factor/fitScale;
+   const offset=relativeMarkerPoint(desired,box,w,h,'ribbon',actorItems.map(actorLabelFootprint));
+   return{point:offset.point,labelScale:factor,labelBox:offset.box,anchorOnly:true};
+  }
   return best||{point:desired,labelScale:factor,anchorOnly:true};
  }
+
+ // Place each marker near its actual place anchor, sharing collision clearance
+ // across NPC name ribbons and event icons. No RP coordinates are changed.
+ function markerFootprint(point,w,h,kind){
+  return{x:point.x-w/2,y:point.y-(kind==='ribbon'?h:h/2),w,h};
+ }
+ function actorLabelFootprint(item){
+  if(item.labelBox)return item.labelBox;
+  const w=item.worldLabelWidth||70,k=w/Math.max(1,item.element.offsetWidth||120);
+  return markerFootprint(item.point,w,(item.element.offsetHeight||24)*k+8,'ribbon');
+ }
+ function markerOverlap(a,b,pad=3){
+  return Math.max(0,Math.min(a.x+a.w+pad,b.x+b.w+pad)-Math.max(a.x-pad,b.x-pad))
+   *Math.max(0,Math.min(a.y+a.h+pad,b.y+b.h+pad)-Math.max(a.y-pad,b.y-pad));
+ }
+ function relativeMarkerPoint(origin,region,w,h,kind,occupied){
+  const step=Math.max(12,Math.min(55,Math.max(w*.62,h*1.15)));
+  const margin=Math.max(28,Math.min(125,w*2.5));
+  const candidates=[origin];
+  for(let ring=1;ring<=9;ring++)for(let spoke=0;spoke<16;spoke++){
+   const angle=spoke*Math.PI/8,radius=ring*step;
+   candidates.push({x:origin.x+Math.cos(angle)*radius,y:origin.y+Math.sin(angle)*radius});
+  }
+  let best=null,score=Infinity;
+  for(const point of candidates){
+   if(region&&(point.x<region.x-margin||point.x>region.x+region.w+margin||point.y<region.y-margin||point.y>region.y+region.h+margin))continue;
+   const box=markerFootprint(point,w,h,kind);
+   const overlap=occupied.reduce((sum,other)=>sum+markerOverlap(box,other),0);
+   const out=region?Math.max(0,region.x-point.x)+Math.max(0,point.x-region.x-region.w)+Math.max(0,region.y-point.y)+Math.max(0,point.y-region.y-region.h):0;
+   const cost=overlap*100000+Math.hypot(point.x-origin.x,point.y-origin.y)*.1+out*.15;
+   if(cost<score){score=cost;best={point,box,overlap};}
+  }
+  return best||{point:origin,box:markerFootprint(origin,w,h,kind),overlap:Infinity};
+ }
+
  function renderPositions(){if(svg!==scene)return;
   const base=$('#mapmount').getBoundingClientRect(),ctm=svg.getScreenCTM();if(!ctm||!base.width||!base.height)return;const inverse=ctm.inverse();
   // Resizing changes projection only; the actor anchor never shifts.
@@ -409,7 +449,10 @@ async function prepareTemplateUI(){
   for(const event of events){const place=(DATA.maps[activeId].places||[]).find(p=>p.id===event.placeId||p.name===event.placeName);if(!place)continue;const node=[...svg.querySelectorAll('[data-id]')].find(e=>e.dataset.id===place.id);if(!node)continue;const b=worldBox(node);let point={x:b.x+b.w/2,y:b.y+b.h/2};if(place.geometry?.room){const r=place.geometry.room;point={x:r.x+r.w*(r.circular?.65:.82),y:r.y+r.h*.25};const door=place.geometry.door;if(event.target?.kind==='door'&&door)point=door.ln.axis==='H'?{x:door.at,y:door.ln.at}:{x:door.ln.at,y:door.at};}else if(place.geometry?.outdoor){const[x,y,w,h]=place.bounds;point={x:x+w*.8,y:y+h*.25};}
    const button=document.createElement('button');button.className='event-marker '+(event.hidden?'hidden-marker':'');button.setAttribute('aria-label',event.title||'Đầu mối');button.title=event.title||'Đầu mối';
    const v=uiElement('svg',{viewBox:'0 0 24 24','aria-hidden':'true'});v.setAttribute('fill','none');v.setAttribute('stroke','currentColor');v.setAttribute('stroke-width','1.6');v.setAttribute('stroke-linecap','round');v.setAttribute('stroke-linejoin','round');v.innerHTML=event.hidden?"<circle cx=\"10.5\" cy=\"10.5\" r=\"7.5\"/><path d=\"m16 16 6 6\"/>":"<path d=\"M5 6l1-3h3l1 3m4 0 1-3h3l1 3M4 6h5l1 10H2ZM15 6h5l2 10h-8ZM10 9h4v5h-4\"/><circle cx=\"6\" cy=\"17\" r=\"4\"/><circle cx=\"18\" cy=\"17\" r=\"4\"/>";button.append(v);
-   button.onclick=()=>{layer.querySelectorAll('.event-marker').forEach(b=>b.classList.remove('chosen'));button.classList.add('chosen');if(typeof inspect==='function'&&sceneData){inspect(place);const c=$('#context-location');if(c){c.textContent=place.name+' · '+event.title;c.hidden=false;}put('#observation',typeof shortRP==='function'?shortRP(event.detail||place.description,'Có điều đáng chú ý tại đây.'):event.detail||'');}else{put('#place-title',event.title||'Đầu mối');put('#observation',event.detail||'')}};layer.append(button);eventItems.push({point,element:button,event,place,worldIconWidth:Math.min(42,Math.max(20,Math.min(originalVB[2],originalVB[3])*.043))});
+   const worldIconWidth=Math.min(42,Math.max(20,Math.min(originalVB[2],originalVB[3])*.043));
+   const blockers=[...actorItems.map(actorLabelFootprint),...eventItems.map(item=>markerFootprint(item.point,item.worldIconWidth,item.worldIconWidth*36/32,'event'))];
+   point=relativeMarkerPoint(point,worldBox(node),worldIconWidth,worldIconWidth*36/32,'event',blockers).point;
+   button.onclick=()=>{layer.querySelectorAll('.event-marker').forEach(b=>b.classList.remove('chosen'));button.classList.add('chosen');if(typeof inspect==='function'&&sceneData){inspect(place);const c=$('#context-location');if(c){c.textContent=place.name+' · '+event.title;c.hidden=false;}put('#observation',typeof shortRP==='function'?shortRP(event.detail||place.description,'Có điều đáng chú ý tại đây.'):event.detail||'');}else{put('#place-title',event.title||'Đầu mối');put('#observation',event.detail||'')}};layer.append(button);eventItems.push({point,element:button,event,place,worldIconWidth});
   }renderPositions();
  }
  function focusPoint(item){if(!item||!vb)return false;vb=[item.point.x-vb[2]/2,item.point.y-vb[3]/2,vb[2],vb[3]];paintVB();layer.querySelectorAll('.npc-tag.chosen,.event-marker.chosen').forEach(el=>el.classList.remove('chosen'));item.element.classList.add('chosen');item.element.focus({preventScroll:true});return true;}
