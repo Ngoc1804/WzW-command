@@ -121,8 +121,9 @@ function resolve(d){
   const hit=exact(name);if(hit){bindings[ref]=hit.id;diagnostics.push('reference-name-fallback:'+ref);continue;}
   if(source){diagnostics.push('unresolved-location:'+ref);continue;}
   if(d.actors.some(a=>a.placeId===ref&&!a.placeName)||d.events.some(e=>e.placeId===ref&&!e.placeName)){diagnostics.push('unresolved-location:'+ref);continue;}
-  if(places.some(p=>key(p.name)===key(name))){diagnostics.push('ambiguous-location:'+ref);continue;}
-  places.push({id:'rp:'+key(name),name,desc:''});
+  // MAP_DATA is the sole room-membership authority: unresolved actor/event refs
+  // must not silently fabricate additional Generated rooms.
+  diagnostics.push('unresolved-location-not-in-map-data:'+ref);
  }
  for(const place of places){place.description=place.description||place.desc||'Không gian yên tĩnh, không có gì đặc biệt.';place.overhear=place.overhear||'Không có hoạt động gì đáng chú ý.';place.inventory=source?{objects:[],diagnostics:[],illustrative:false}:composeRoom(place);}
  if(!places.length)places.push({id:'context',name:d.meta.areaName||'Không gian RP',desc:''});
