@@ -5,9 +5,9 @@
     "sha256": "6be864aa28afba03c67138826c1060530dfc2547de1ae2f9438417be91e75b4c"
   },
   "bundle.js": {
-    "bytes": 4324061,
-    "gzipBytes": 797616,
-    "sha256": "4f7d6e0953ce2569d3e49d7df2b5141c6cd296402620d8034065aa88db77dff3"
+    "bytes": 4325716,
+    "gzipBytes": 798166,
+    "sha256": "f1724a119229ac412d7643368a9690c959359a4d0ff9377e1155d9d22043e6b4"
   },
   "shell.css": {
     "bytes": 12761,
