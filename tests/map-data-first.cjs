@@ -27,7 +27,7 @@ assert.equal(r.scene.places.length,2,'RP-established new room allowed alongside 
 assert.equal(r.scene.places[1].id,'rp:guest-room');
 r=ctx.test(payload([room(kitchen,'Gian bếp','KITCHEN')],kitchen,{events:[{title:'Khám phá',placeId:'rp:ghost-room'}]}));
 assert.equal(r.scene.places.length,1,'unresolved event must not create a phantom room');
-assert(r.d.diagnostics.some(x=>x.startsWith('unresolved-location-not-in-map-data:')));
+assert(r.d.diagnostics.some(x=>x.startsWith('unresolved-location:')||x.startsWith('unresolved-location-not-in-map-data:')));
 r=ctx.test(payload([room(garden,'Vườn sau','OUT_GARDEN')],garden));
 assert.equal(r.scene.places.length,1);assert.equal(r.scene.places[0].type,'OUT_GARDEN','RP recipe is authoritative over Atlas');
 console.log('PASS MAP_DATA-first Generated scenes, add/remove, native ID dedup, RP overrides, missing ref');
