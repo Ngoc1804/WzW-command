@@ -43,4 +43,11 @@ assert.equal(r.scene.exact('Kho'),null,'ambiguous Vietnamese label must never pi
 r=ctx.test(payload([{id:'Kitchen',name:'Gian bếp'}],kitchen));
 assert.equal(r.scene.places[0].id,kitchen,'W4 English key resolves Atlas identity');
 assert.equal(r.scene.places[0].name,'Gian bếp','English key is never displayed instead of Vietnamese');
-console.log('PASS MAP_DATA-first Generated scenes, canonical ID identity, bilingual display, Atlas recipes');
+r=ctx.test(payload([{id:'AU-PC-HOME:w4-english-room',name:'Phòng mới W4',type:'OFFICE'}], 'AU-PC-HOME:w4-english-room'));
+assert.equal(r.scene.places.length,1,'explicit W4 English ID is accepted without Atlas room recipe');
+assert.equal(r.scene.places[0].id,'AU-PC-HOME:w4-english-room','never rewrite W4 key as rp slug');
+assert.equal(r.scene.places[0].inventory.recipeId,'OFFICE','recipe falls back to supplied RP type');
+assert.equal(r.scene.places[0].name,'Phòng mới W4','Vietnamese name remains presentation only');
+r=ctx.test(payload([{id:'AU-PC-HOME:w4-english-room',placeName:'Kitchen',name:'Kho mới W4',type:'OFFICE'}], 'AU-PC-HOME:w4-english-room'));
+assert.equal(r.scene.places[0].id,'AU-PC-HOME:w4-english-room','English ID always wins even if placeName points to another room');
+console.log('PASS MAP_DATA-first Generated scenes, ID-first W4 fallback, bilingual display, Atlas recipes');
