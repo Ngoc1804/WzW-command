@@ -33,6 +33,7 @@ function setAreaIdentity(title='',room=''){
 }
 function inspect(place,kind='room',entity=null){
  selectedMapPlace=place||null;
+ const go=$('#go-there');if(go)go.disabled=!place;put('#go-status','');
  const title=kind==='actor'?entity?.name:kind==='event'?entity?.title:place?.name;
  setAreaIdentity(title||'',place&&kind!=='room'?place.name:'');
  put('#drawer-name',title||sceneData?.meta?.areaName||'Khu vực');
@@ -43,6 +44,27 @@ function inspect(place,kind='room',entity=null){
  if(matchMedia('(max-width:720px)').matches){$('.layout')?.classList.add('drawer-open');$('#drawer-toggle')?.setAttribute('aria-expanded','true');}
  const actors=kind==='actor'?[entity]:groupRoomActors(sceneData.actors).filter(a=>!a.isPC&&a.placeId===place.id);
  for(const a of actors){if(!a||a.isPC)continue;const row=actorTag(a,true);row.onclick=()=>showActorDetails(a,place);list.append(row);}
+}
+function travelCopyText(){
+ if(!selectedMapPlace)return '';
+ const read=selector=>$(selector)?.textContent.trim()||'';
+ return `/NEXT - ${read('#place-title')||selectedMapPlace.name} - ${sceneData?.meta?.areaName||''} - ${selectedMapPlace.name}
+
+AI ĐÓ: ${read('#actors')}
+
+QUAN SÁT: ${read('#observation')}
+
+[ Nhập hành động ở đây ]`;
+}
+async function copyTravel(){
+ const text=travelCopyText();if(!text)return;
+ let copied=false;
+ try{if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(text);copied=true;}}catch{}
+ if(!copied){
+  const focus=document.activeElement,field=document.createElement('textarea');field.value=text;field.setAttribute('readonly','');field.style.cssText='position:fixed;left:-9999px;top:0';root.append(field);field.select();
+  try{copied=document.execCommand('copy');}catch{}finally{field.remove();focus?.focus();}
+ }
+ put('#go-status',copied?'Đã sao chép':'Không thể sao chép. Hãy cho phép quyền sao chép.');
 }
 function showEventDetails(event,place){inspect(place,'event',event);}
 function renderContents(scene){const list=$('#quests');list.replaceChildren();const entries=[],eventLocations=new Set();
@@ -88,7 +110,7 @@ async function initialize(){if(initialized)return;
  const layoutPayload=JSON.parse(await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'))).text());
  LAYOUT_SIZES=layoutPayload.layouts;
  for(const sizes of Object.values(LAYOUT_SIZES))for(const art of Object.values(sizes))if(art.defsRef){art.defs=layoutPayload.defs[art.defsRef];delete art.defsRef;}
- if(!document.getElementById("mapmount"))root.innerHTML=runtimeShell;bindUI();initialized=true;
+ if(!document.getElementById("mapmount"))root.innerHTML=runtimeShell;bindUI();const go=$('#go-there');if(go)go.onclick=copyTravel;initialized=true;
 }
 async function boot(){let input=window.MAP_DATA;
  try{const t=document.getElementById('map-data');if(t)input=JSON.parse(t.textContent)}

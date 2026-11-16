@@ -52,3 +52,4 @@ body.motion-off #mapmount *{animation-play-state:paused!important}#mapmount .tre
 .npc-tag.chosen{filter:brightness(1.16) drop-shadow(0 0 3px #d2a64d88)}
 @media(max-height:560px){.map-header{min-height:38px;padding:4px 9px}.map-header h1{font-size:16px}.map-header .date{font-size:9px}.map-header .header-quote{font-size:9px}.map-header .clock{font-size:11px}}
 @media(max-width:720px){.map-header{grid-template-columns:minmax(77px,auto) minmax(0,1fr) minmax(68px,auto);gap:5px;padding:5px 8px}.map-header h1{font-size:15px;letter-spacing:1px}.map-header .header-quote{font-size:8px}.map-header .date{font-size:9px}}
+.go-there{position:absolute;left:10px;bottom:9px;z-index:30;padding:9px 20px;border:1px solid #ac9977;background:#ede8d6;color:#713b37;font-weight:bold;letter-spacing:1px}.go-there:hover{background:#fff5e0}.go-status{position:absolute;left:10px;bottom:52px;z-index:30;background:#ede8d6;color:#713b37;font-size:11px;padding:3px 6px}.go-status:empty{display:none}
