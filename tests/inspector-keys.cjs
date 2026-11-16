@@ -14,7 +14,7 @@ for(const [owner,key,id,label] of [['h1','quidditch','region:extra:4','Sân Quid
 assert.equal(ctx.run(payload('h2','quidditch')).exact('quidditch'),null,'short keys must stay owner scoped');
 assert.equal(ctx.run(payload('F5-N','hogwarts-librari')).exact('hogwarts-librari'),null,'no fuzzy indoor guesses');
 const d=payload('F5-N','hogwarts-library',[{id:'hogwarts-library',name:'Thư viện Hogwarts',description:'Những kệ sách phủ kín tường.',overhear:'Có người đang đọc sách.'}]);
-d.actors.push({name:'Draco',placeId:'hogwarts-library',tagType:'gryffindor',activity:'Draco đang đọc sách.',observation:'Ánh nến soi trang sách.'},{name:'Harry',placeId:'F5-N:01',activity:'Harry đang tìm sách.'},{name:'Nhóm học sinh',members:['Ron','Hermione'],placeId:'hogwarts-library',activity:'Cả nhóm đang bàn bạc.'});
+d.actors.push({name:'Draco',placeId:'hogwarts-library',tagType:'gryffindor',activity:'Draco đang đọc sách.',observation:'Ánh nến soi trang sách.'},{name:'Harry',placeId:'F5-N:01',activity:'Harry đang tìm sách.'},{name:'Nhóm học sinh',spot:'inside',members:['Ron','Hermione'],placeId:'hogwarts-library',activity:'Cả nhóm đang bàn bạc.'});
 d.events=[{title:'Quyển sách lạ',placeId:'hogwarts-library',detail:'Một quyển sách khẽ rung.'},{title:'Dấu mực mới',placeId:'F5-N:01',detail:'Dấu mực chưa khô.',hidden:true},{title:'Trang giấy gấp',placeId:'hogwarts-library',detail:'Một trang giấy vừa rơi.'}];
 (async()=>{const b=await chromium.launch({executablePath:'/usr/bin/chromium',args:['--no-sandbox']});try{for(const mobile of [false,true]){
  const p=await b.newPage({viewport:mobile?{width:390,height:844}:{width:1400,height:950},isMobile:mobile,hasTouch:mobile});const errors=[];p.on('pageerror',e=>errors.push(e.message));
@@ -26,7 +26,7 @@ d.events=[{title:'Quyển sách lạ',placeId:'hogwarts-library',detail:'Một q
  assert.equal(await p.locator('#place-title').innerText(),'Draco');assert.equal(await p.locator('#place-area').innerText(),'Thư viện Hogwarts');
  assert.equal(await p.locator('#actors').innerText(),'Draco');assert.equal(await p.locator('#activity').innerText(),'Draco đang đọc sách.');assert.equal(await p.locator('#observation').innerText(),'Ánh nến soi trang sách.');
  await p.locator('.qa-tags .npc-tag').filter({hasText:'Nhóm học sinh'}).click({force:true});
- assert.equal(await p.locator('#actors .npc-tag').count(),1,'clicked group remains one ribbon');assert((await p.locator('#actors').innerText()).includes('Nhóm học sinh'));
+ assert.equal(await p.locator('#actors .actor-chip').count(),1,'clicked group remains one ribbon');assert((await p.locator('#actors').innerText()).includes('Nhóm học sinh'));
  await p.locator('.event-marker').first().click({force:true});
  const eventState=await p.evaluate(()=>['#area-heading','#place-title','#place-area','#activity','#observation','#actors'].map(s=>document.querySelector(s).textContent));
  assert.equal(eventState[1],d.events[0].title);assert.equal(eventState[2],'Thư viện Hogwarts');assert.equal(eventState[3],d.events[0].detail);assert.equal(eventState[4],d.places[0].description);assert(eventState[5].includes('Draco')&&eventState[5].includes('Harry'),'event includes canonical same-place NPCs');
