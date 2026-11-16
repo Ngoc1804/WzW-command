@@ -28,8 +28,9 @@ jobs:
       - name: Install headless browser test dependencies
         run: |
           npm install --no-save playwright@1.56.1
-          sudo apt-get update -qq
-          sudo apt-get install -y chromium
+          npx playwright install --with-deps chromium
+          CHROMIUM_BIN=$(node -e "process.stdout.write(require('playwright').chromium.executablePath())")
+          sudo ln -sf "$CHROMIUM_BIN" /usr/bin/chromium
           mkdir -p work
       - name: Runtime and 147-layout regression tests
         run: |
