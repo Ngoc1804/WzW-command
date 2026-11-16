@@ -683,6 +683,10 @@ async function prepareTemplateUI(){
   const node=[...svg.querySelectorAll('[data-id]')].find(n=>n.dataset.id===place.id&&!n.closest('defs'));
   const hit=node?.querySelector('.spot-hit'),shape=hit&&typeof hit.isPointInFill==='function'?hit:null;
   let box=place.freeRegion?regionBox(place):hit?worldBox(hit):place.bounds?{x:place.bounds[0],y:place.bounds[1],w:place.bounds[2],h:place.bounds[3]}:node?worldBox(node):null;
+  if(inside&&actor.scenePoint?.anchorOnly&&map.kind==='outdoor'){
+   const building=map.footprints?.find(f=>f.placeId===place.id&&f.kind==='building');
+   if(building){const [x,y,w,h]=building.bounds,columns=count>1?2:1,rows=Math.ceil(count/columns),index=actorItems.filter(a=>a.placeId===place.id).length,fit=$('#mapmount').getBoundingClientRect(),scale=Math.min(fit.width/originalVB[2],fit.height/originalVB[3]),labelWidth=Math.min(120,w*.84/columns,h*.7/rows*(element.offsetWidth||120)/(element.offsetHeight||24));return{point:{x:x+w*((index%columns)+.5)/columns,y:y+h*(Math.floor(index/columns)+.85)/rows},labelScale:labelWidth*scale/Math.max(1,element.offsetWidth||120),anchorOnly:true};}
+  }
   if(inside&&['h1','h2','village-static','diagon-knockturn'].includes(activeId)&&box){
    const b=box,fit=$('#mapmount').getBoundingClientRect(),scale=Math.min(fit.width/originalVB[2],fit.height/originalVB[3]),width=Math.min(150,b.w*.7),height=width*(element.offsetHeight||24)/Math.max(1,element.offsetWidth||120);
    const roof={x:b.x,y:b.y-height*4,w:b.w,h:height*3},origin={x:b.x+b.w/2,y:b.y-height*.3};
