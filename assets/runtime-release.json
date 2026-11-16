@@ -1,18 +1,18 @@
 {
   "repository": "Ngoc1804/wzw-hogwarts-map-2",
-  "runtimeCommit": "abd00e2cfee7ba9a690a09556dbe6a7358a38aec",
+  "runtimeCommit": "3289f450a5ce8df495500e0a068dce0e390ed5db",
   "files": {
     "shell.css": {
-      "bytes": 12761,
-      "sha256": "a6b111cd0418047e47f53649dc5640db65ac75a451ba45e1323a3816eeb66972"
+      "bytes": 13123,
+      "sha256": "3c792b2101c64059bc60601e35bd7581ea843f1e024305c62615a2380857ef40"
     },
     "templates-pack.js": {
       "bytes": 963681,
       "sha256": "ba5bf68beaa869d2f2e582f924a8601b36b849fe8f668adc11c2aa2f76201204"
     },
     "bundle.js": {
-      "bytes": 4420009,
-      "sha256": "ab4fc15c30253f9ab928d4c7f2b209011ca078c6663832994a23ef03d5cc6530"
+      "bytes": 4421132,
+      "sha256": "5410f04c2d2156a24ef52f04219170e7aaf6206e48978a0a3c108d039c9bf345"
     }
   }
 }
