@@ -3178,9 +3178,14 @@ function resolve(d){
   }
   else if(source){unresolved.push(p);diagnostics.push('unresolved-fixed-place:'+p.name);}
   else{
+   // A translated/shortened Atlas reference is not evidence of a new RP room.
+   // Newly established rooms require explicit rp: identity or construction intent.
+   if(registry.length&&!p.id?.startsWith('rp:')&&!p.isNewConstruction){
+    unresolved.push(p);diagnostics.push('unverified-atlas-room:'+p.name);continue;
+   }
    const duplicate=places.some(x=>key(x.name)===key(p.name)||p.id&&x.id===p.id);
    if(duplicate){unresolved.push(p);diagnostics.push('ambiguous-place:'+p.name);continue;}
-   const id=p.id||'rp:'+key(p.name);
+   const id=!registry.length&&p.id?p.id:p.id?.startsWith('rp:')?p.id:'rp:'+key(p.name);
    places.push({...p,id,desc:p.description});emitted.add(id);bindings[p.name]=id;if(p.id)bindings[p.id]=id;
   }
  }
@@ -3674,9 +3679,9 @@ function inspect(place){
   const row=actorTag(a,true);row.onclick=()=>showActorDetails(a,place);list.append(row);
  }
 }
-function renderContents(scene){const list=$('#quests');list.replaceChildren();const entries=[];
- for(const a of sceneData.actors){if(a.isPC||!a.placeId||a.unresolvedAnchor)continue;const place=scene.exact(a.placeId);if(place)entries.push({type:'actor',value:a,place,title:a.name,summary:shortRP(a.activity||a.summary||a.observation,'Có người ở khu vực này.').split(/\s+/).slice(0,10).join(' ')});}
- for(const e of sceneData.events){if(!e.placeId)continue;const place=scene.exact(e.placeId);if(place)entries.push({type:'event',value:e,place,title:e.title,summary:shortRP(e.detail,'Có điều thú vị ở đây.').split(/\s+/).slice(0,10).join(' ')});}
+function renderContents(scene){const list=$('#quests');list.replaceChildren();const entries=[],eventLocations=new Set();
+ for(const e of sceneData.events){const place=scene.exact(e.placeId||e.placeName);if(!place)continue;eventLocations.add(place.id);entries.push({type:'event',value:e,place,title:e.title,summary:shortRP(e.detail,'Có điều thú vị ở đây.').split(/\s+/).slice(0,10).join(' ')});}
+ for(const a of sceneData.actors){if(a.isPC||a.unresolvedAnchor)continue;const place=scene.exact(a.placeId||a.placeName);if(!place||eventLocations.has(place.id))continue;entries.push({type:'actor',value:a,place,title:a.name,summary:shortRP(a.activity||a.summary||a.observation,'Có người ở khu vực này.').split(/\s+/).slice(0,10).join(' ')});}
  put('#hintcount',String(entries.length));
  for(const entry of entries){const row=document.createElement('button');row.type='button';row.className='event-row';const name=document.createElement('strong');name.textContent=entry.title;const subtitle=document.createElement('em');subtitle.textContent=entry.summary;row.append(name,subtitle);row.title=entry.title+' · '+entry.summary;
  row.onclick=()=>{inspect(entry.place);if(entry.type==='actor'){showActorDetails(entry.value,entry.place);presentation?.focusActor(entry.value);}else{putContextLocation(entry.place.name+' · '+entry.value.title);put('#observation',shortRP(entry.value.detail||entry.place.description,fallbackObserve));presentation?.focusEvent(entry.value);}const layout=$('.layout');if(matchMedia('(max-width:720px)').matches&&layout){layout.classList.add('drawer-open');$('#drawer-toggle')?.setAttribute('aria-expanded','true');}};list.append(row);}
