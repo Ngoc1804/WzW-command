@@ -479,7 +479,10 @@ async function prepareTemplateUI(){
    element.onpointerenter=e=>{if(e.pointerType!=='touch'){hovered=element;renderPositions()}};element.onpointerleave=()=>{if(hovered===element){hovered=null;renderPositions()}};element.onfocus=()=>{hovered=element;renderPositions()};element.onblur=()=>{if(hovered===element){hovered=null;renderPositions()}};
    element.onclick=()=>{toggleXray(element);showActorDetails(actor,place)};
    const overview=['h1','h2','village-static','diagon-knockturn'].includes(activeId)||DATA.maps[activeId].kind==='outdoor';
-   const stance=overview&&inside?'hidden':actor.footstep==='walk'?'walk':'idle';let feet=null,stop=null;
+   // Hide footprints only for an Outdoor NPC whose tag is anchored to a building.
+   const fixedBuilding=!actor.scenePoint&&records.some(r=>r.node.dataset.occluder==='building'&&r.owner===place.id);
+   const buildingAnchor=!actor.isPC&&overview&&inside&&(actor.scenePoint?.buildingAnchor===true||fixedBuilding);
+   const stance=buildingAnchor?'hidden':actor.footstep==='walk'?'walk':'idle';let feet=null,stop=null;
    if(stance!=='hidden'){
     feet=uiElement('g',{class:'footstep',transform:`translate(${point.x} ${point.y}) scale(.6)`},footLayer);stop=mountFeet(feet,stance);
     // Feet are a character marker beneath the name, not furniture geometry.
@@ -3070,7 +3073,7 @@ function composeRoom(place){const rid=recipeId(place.type)||recipeId(place.inter
 
 function resolve(d){
  const diagnostics=d.diagnostics;
- const seenNames=new Set();for(const p of d.places){if(seenNames.has(key(p.name)))diagnostics.push('duplicate-place-name:'+p.name);seenNames.add(key(p.name));}
+ const seenNames=new Map();for(const p of d.places){const name=key(p.name),previous=seenNames.get(name);if(previous&&(!p.id||!previous.id||p.id===previous.id))diagnostics.push('duplicate-place-name:'+p.name);if(!previous)seenNames.set(name,p);}
  let cluster=ATLAS.clusters[d.atlasAnchor],fixedId=Object.hasOwn(DATA.maps,d.atlasAnchor)?d.atlasAnchor:null;
  if(!fixedId&&cluster&&!cluster.rooms.length&&cluster.pointers.length===1&&DATA.maps[cluster.pointers[0]])fixedId=cluster.pointers[0];
  const sandbox=d.forceSandbox||(['h1','h2'].includes(fixedId)&&d.places.some(p=>p.isNewConstruction));
@@ -3135,20 +3138,39 @@ function resolve(d){
  };
  // Generated catalogue lookups preserve native furniture/architecture without drawing unused rooms.
  // Gemini is responsible for translating Vietnamese/English synonyms to a unique ID.
+ // English technical identity always wins; Vietnamese display text never overrides a room ID.
  const catalogPlace=p=>{
   if(source||sandbox)return null;
-  if(p.id){const idHits=registry.filter(x=>x.id===p.id);if(idHits.length===1)return idHits[0];}
-  const names=[p.name,p.placeName,...(p.aliases||[])].filter(Boolean).map(fold);
-  const matches=registry.filter(x=>[x.name,...(x.aliases||[])].filter(Boolean).some(n=>names.includes(fold(n))));
+  const candidates=ref=>registry.filter(x=>[x.name,...(x.aliases||[])].filter(Boolean).some(n=>fold(n)===fold(ref)));
+  if(p.id){
+   const native=registry.filter(x=>x.id===p.id);if(native.length===1)return native[0];
+   // W4 English room keys (e.g. "Kitchen") may resolve to Atlas canonical IDs.
+   const english=candidates(p.id);if(english.length===1)return english[0];
+   if(english.length>1)diagnostics.push('ambiguous-english-room-id:'+p.id);
+   // Never use a Vietnamese label to override an explicitly supplied identity.
+   if(!p.placeName)return null;
+  }
+  const refs=[p.placeName,...(p.aliases||[]),...(!p.id?[p.name]:[])].filter(Boolean);
+  const matches=registry.filter(x=>refs.some(ref=>[x.name,...(x.aliases||[])].filter(Boolean).some(n=>fold(n)===fold(ref))));
   if(matches.length===1)return matches[0];
   if(matches.length>1)diagnostics.push('ambiguous-atlas-room:'+p.name);
   return null;
  };
  const locate=p=>{
-  if(p.id){const hit=places.find(x=>x.id===p.id);if(hit){if(key(hit.name)!==key(p.name))diagnostics.push('place-id-name-conflict:'+p.id);return hit;}}
+  if(p.id){const hit=places.find(x=>x.id===p.id);if(hit)return hit;}
+  if(!source&&!sandbox){
+   const native=catalogPlace(p);if(native)return native;
+   // A declared English/native key must never fall back to another room's Vietnamese name.
+   if(p.id||p.placeName)return null;
+  }
   const hit=exact(p.name,p.region||d.region);
   if(hit){if(p.id&&p.id!==hit.id)diagnostics.push('place-id-fallback:'+p.id);return hit;}
   return catalogPlace(p);
+ };
+ const bindName=(label,id)=>{
+  if(!label)return;
+  if(Object.hasOwn(bindings,label)&&bindings[label]!==id){bindings[label]=null;diagnostics.push('ambiguous-place-label:'+label);}
+  else if(!Object.hasOwn(bindings,label))bindings[label]=id;
  };
  // Reserve explicitly addressed houses before allocating AU entries. Stable ordering avoids payload-order reshuffles.
  for(const p of d.places){const hit=locate(p);if(hit)used.add(hit.id);}
@@ -3166,7 +3188,7 @@ function resolve(d){
   }
   if(match){
    // Exactly one rendered room per resolved physical identity, even if two labels were supplied.
-   if(emitted.has(match.id)){diagnostics.push('duplicate-resolved-place:'+match.id);if(p.id)bindings[p.id]=match.id;bindings[p.name]=match.id;continue;}
+   if(emitted.has(match.id)){diagnostics.push('duplicate-resolved-place:'+match.id);if(p.id)bindings[p.id]=match.id;bindName(p.name,match.id);continue;}
    const canonical=places.find(x=>x.id===match.id);
    const target=canonical||{...match};
    const originalCoords=source?{x:target.x,y:target.y}:{};
@@ -3174,7 +3196,7 @@ function resolve(d){
    const overrides={...p};if(!overrides.type)delete overrides.type;
    Object.assign(target,overrides,{id:match.id,description:p.description||target.description||target.desc,desc:p.description||target.description||target.desc,...originalCoords});
    if(!canonical)places.push(target);
-   emitted.add(match.id);bindings[p.name]=match.id;if(p.placeName)bindings[p.placeName]=match.id;if(p.id)bindings[p.id]=match.id;
+   emitted.add(match.id);bindName(p.name,match.id);bindName(p.placeName,match.id);if(p.id)bindings[p.id]=match.id;
   }
   else if(source){unresolved.push(p);diagnostics.push('unresolved-fixed-place:'+p.name);}
   else{
@@ -3183,10 +3205,10 @@ function resolve(d){
    if(registry.length&&!p.id?.startsWith('rp:')&&!p.isNewConstruction){
     unresolved.push(p);diagnostics.push('unverified-atlas-room:'+p.name);continue;
    }
-   const duplicate=places.some(x=>key(x.name)===key(p.name)||p.id&&x.id===p.id);
+   const duplicate=places.some(x=>p.id?x.id===p.id:key(x.name)===key(p.name));
    if(duplicate){unresolved.push(p);diagnostics.push('ambiguous-place:'+p.name);continue;}
    const id=!registry.length&&p.id?p.id:p.id?.startsWith('rp:')?p.id:'rp:'+key(p.name);
-   places.push({...p,id,desc:p.description});emitted.add(id);bindings[p.name]=id;if(p.id)bindings[p.id]=id;
+   places.push({...p,id,desc:p.description});emitted.add(id);bindName(p.name,id);if(p.id)bindings[p.id]=id;
   }
  }
  // New RP places are allowed in Generated, but an invalid ID must not become a fictitious named room.
@@ -3576,7 +3598,7 @@ function outdoorActorPoint(map,place,actor){
  // exterior scene. Do not move it out to the yard or invent an interior floor.
  if(actor.spot==='inside'){
   const buildings=supports.filter(f=>f.kind==='building'),building=buildings.length===1?buildings[0]:null;
-  if(building){place.inventory.diagnostics.push('outdoor-interior-anchor:'+place.id);return{...zonePoint(building.bounds,actor.zone),anchorOnly:true,noFeet:true};}
+  if(building){place.inventory.diagnostics.push('outdoor-interior-anchor:'+place.id);return{...zonePoint(building.bounds,actor.zone),anchorOnly:true,noFeet:true,buildingAnchor:true};}
   place.inventory.diagnostics.push('unresolved-support:indoor-building');
  }
  const[x,y,w,h]=place.bounds,points=[desired];for(let v=.08;v<.96;v+=.06)for(let u=.06;u<.96;u+=.06)points.push({x:x+w*u,y:y+h*v});
@@ -3704,7 +3726,7 @@ async function renderInput(input){const renderStart=performance.now();root.paren
  }
  let mapId=scene.source?scene.fixedId:'rp-scene';if(scene.source){DATA.maps[mapId].places=scene.places.filter(p=>scene.source.places.some(x=>x.id===p.id));}else DATA.maps[mapId]=buildMap(scene,d);
  await setTemplate(mapId);
- async function mount(){DATA.maps[activeId].actorPoints=[];for(const a of d.actors){a.relation=inferFixedRelation(a,d.places);const place=scene.exact(a.placeId||a.placeName);a.placeId=place?.id;if(a.isPC){a.placeName=d.pcPlace;a.placeId=scene.exact(d.pcPlace)?.id;a.spot=d.pcSpot||a.spot;}a.inside=a.spot==='inside';a.scenePoint=undefined;a.unresolvedAnchor=false;const resolved=scene.exact(a.placeId||a.placeName);a.hearingText=resolved?.overhear||'';if(!resolved)a.unresolvedAnchor=true;const map=DATA.maps[activeId];if(!scene.source&&resolved){a.scenePoint=generatedActorPoint(map,resolved,a.spot,a);if(!a.scenePoint)a.unresolvedAnchor=true;else if(a.scenePoint.anchorOnly||a.scenePoint.noFeet)a.footstep='hidden';}/* Footstep visibility follows the active map's presentation policy. */}for(const e of d.events){e.relation=inferFixedRelation(e,d.places);e.placeId=scene.exact(e.placeId||e.placeName)?.id;}await presentation.mountActors(d.actors.filter(a=>a.placeId&&!a.unresolvedAnchor));presentation.mountEvents(d.events.filter(e=>e.placeId));svg.addEventListener('wzw-place-selected',e=>inspect(scene.places.find(p=>p.id===e.detail.id)));inspect(null);renderContents(scene);}
+ async function mount(){DATA.maps[activeId].actorPoints=[];for(const a of d.actors){a.relation=inferFixedRelation(a,d.places);const place=scene.exact(a.placeId||a.placeName);a.placeId=place?.id;if(a.isPC){a.placeName=d.pcPlace;a.placeId=scene.exact(d.pcPlace)?.id;a.spot=d.pcSpot||a.spot;}a.inside=a.spot==='inside';a.scenePoint=undefined;a.unresolvedAnchor=false;const resolved=scene.exact(a.placeId||a.placeName);a.hearingText=resolved?.overhear||'';if(!resolved)a.unresolvedAnchor=true;const map=DATA.maps[activeId];if(!scene.source&&resolved){a.scenePoint=generatedActorPoint(map,resolved,a.spot,a);if(!a.scenePoint)a.unresolvedAnchor=true;else if(!a.isPC&&map.kind==='outdoor'&&a.scenePoint.buildingAnchor)a.footstep='hidden';}/* Footstep visibility follows the active map's presentation policy. */}for(const e of d.events){e.relation=inferFixedRelation(e,d.places);e.placeId=scene.exact(e.placeId||e.placeName)?.id;}await presentation.mountActors(d.actors.filter(a=>a.placeId&&!a.unresolvedAnchor));presentation.mountEvents(d.events.filter(e=>e.placeId));svg.addEventListener('wzw-place-selected',e=>inspect(scene.places.find(p=>p.id===e.detail.id)));inspect(null);renderContents(scene);}
  await mount();root.querySelector('.sidebar-foot')?.remove();put('#map-caption',String(d.meta.areaName||'').toUpperCase());for(const [selector,value]of [['.quote',d.meta.quote],['.date',d.meta.date],['.clock',d.meta.time]]){const el=$(selector);if(el)el.textContent=value||'';}
  root.dataset.status='ready';root.dataset.renderMs=String(performance.now()-renderStart);window.WZW_SCENE={...scene,rendered:{kind:DATA.maps[activeId].kind,geometry:DATA.maps[activeId].geometry,footprints:DATA.maps[activeId].footprints},diagnostics:d.diagnostics};return scene;}
 let renderQueue=Promise.resolve(),initialized=false;
