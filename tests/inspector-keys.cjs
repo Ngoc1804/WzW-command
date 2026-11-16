@@ -14,7 +14,7 @@ for(const [owner,key,id,label] of [['h1','quidditch','region:extra:4','Sân Quid
 assert.equal(ctx.run(payload('h2','quidditch')).exact('quidditch'),null,'short keys must stay owner scoped');
 assert.equal(ctx.run(payload('F5-N','hogwarts-librari')).exact('hogwarts-librari'),null,'no fuzzy indoor guesses');
 const d=payload('F5-N','hogwarts-library',[{id:'hogwarts-library',name:'Thư viện Hogwarts',description:'Những kệ sách phủ kín tường.',overhear:'Có người đang đọc sách.'}]);
-d.actors.push({name:'Draco',placeId:'hogwarts-library',tagType:'gryffindor',activity:'Draco đang đọc sách.',observation:'Ánh nến soi trang sách.'},{name:'Harry',placeId:'F5-N:01',activity:'Harry đang tìm sách.'},{name:'Nhóm học sinh',spot:'inside',members:['Ron','Hermione'],placeId:'hogwarts-library',activity:'Cả nhóm đang bàn bạc.'});
+d.actors.push({name:'Draco',spot:'inside',placeId:'hogwarts-library',tagType:'gryffindor',activity:'Draco đang đọc sách.',observation:'Ánh nến soi trang sách.'},{name:'Harry',spot:'inside',placeId:'F5-N:01',activity:'Harry đang tìm sách.'});
 d.events=[{title:'Quyển sách lạ',placeId:'hogwarts-library',detail:'Một quyển sách khẽ rung.'},{title:'Dấu mực mới',placeId:'F5-N:01',detail:'Dấu mực chưa khô.',hidden:true},{title:'Trang giấy gấp',placeId:'hogwarts-library',detail:'Một trang giấy vừa rơi.'}];
 (async()=>{const b=await chromium.launch({executablePath:'/usr/bin/chromium',args:['--no-sandbox']});try{for(const mobile of [false,true]){
  const p=await b.newPage({viewport:mobile?{width:390,height:844}:{width:1400,height:950},isMobile:mobile,hasTouch:mobile});const errors=[];p.on('pageerror',e=>errors.push(e.message));
@@ -25,13 +25,14 @@ d.events=[{title:'Quyển sách lạ',placeId:'hogwarts-library',detail:'Một q
  await p.locator('.qa-tags .npc-tag').filter({hasText:'Draco'}).click({force:true});
  assert.equal(await p.locator('#place-title').innerText(),'Draco');assert.equal(await p.locator('#place-area').innerText(),'Thư viện Hogwarts');
  assert.equal(await p.locator('#actors').innerText(),'Draco');assert.equal(await p.locator('#activity').innerText(),'Draco đang đọc sách.');assert.equal(await p.locator('#observation').innerText(),'Ánh nến soi trang sách.');
- await p.locator('.qa-tags .npc-tag').filter({hasText:'Nhóm học sinh'}).click({force:true});
- assert.equal(await p.locator('#actors .actor-chip').count(),1,'clicked group remains one ribbon');assert((await p.locator('#actors').innerText()).includes('Nhóm học sinh'));
  await p.locator('.event-marker').first().click({force:true});
  const eventState=await p.evaluate(()=>['#area-heading','#place-title','#place-area','#activity','#observation','#actors'].map(s=>document.querySelector(s).textContent));
  assert.equal(eventState[1],d.events[0].title);assert.equal(eventState[2],'Thư viện Hogwarts');assert.equal(eventState[3],d.events[0].detail);assert.equal(eventState[4],d.places[0].description);assert(eventState[5].includes('Draco')&&eventState[5].includes('Harry'),'event includes canonical same-place NPCs');
  await p.locator('#quests .event-row').first().click({force:true});assert.deepEqual(await p.evaluate(()=>['#area-heading','#place-title','#place-area','#activity','#observation','#actors'].map(s=>document.querySelector(s).textContent)),eventState,'sidebar and map event use same Inspector');
  await p.evaluate(()=>document.querySelector('#mapmount>svg').dispatchEvent(new CustomEvent('wzw-place-selected',{detail:{id:'F5-N:01'}})));
  assert.equal(await p.locator('#place-title').innerText(),'Thư viện Hogwarts');assert.equal(await p.locator('#place-area').innerText(),'');assert((await p.locator('#actors').innerText()).includes('Harry'));
+ await p.evaluate(async data=>await WZWMap.render(data),{...d,actors:[d.actors[0],{name:'Nhóm học sinh',spot:'inside',members:['Ron','Hermione'],placeId:'hogwarts-library',activity:'Cả nhóm đang bàn bạc.'}]});
+ await p.locator('.qa-tags .npc-tag').filter({hasText:'Nhóm học sinh'}).click({force:true});
+ assert.equal(await p.locator('#actors .actor-chip').count(),1,'clicked group remains one ribbon');assert((await p.locator('#actors').innerText()).includes('Nhóm học sinh'));
  await p.screenshot({path:'work/inspector-'+(mobile?'mobile':'desktop')+'.png'});assert.deepEqual(errors,[]);await p.close();
  }console.log('PASS exact scoped keys and desktop/mobile NPC/group/event/room Inspector');}finally{await b.close();}})().catch(e=>{console.error(e);process.exit(1)});
