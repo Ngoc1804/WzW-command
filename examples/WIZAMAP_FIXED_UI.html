@@ -731,7 +731,7 @@ async function prepareTemplateUI(){
    return true;
   };
   // Slots change on mount or viewport resize, never on zoom or pan.
-  if(actor.scenePoint?.anchorOnly&&overview&&inside)return{point:desired,labelScale:factor,anchorOnly:true};
+
   if(actor.placement==='in_wall'||['on_furniture','on_landscape'].includes(actor.placement)&&actor.supportId&&actor.scenePoint&&!actor.scenePoint.anchorOnly)return{point:desired,labelScale:factor};
   if(passage&&count===1&&safe(desired))return{point:desired,labelScale:factor};
   if(count>1&&inside&&!overview&&!actor.zone&&!actor.placement?.match(/^(on_furniture|in_wall)$/)){const index=actorItems.filter(a=>a.placeId===place.id).length;desired={x:box.x+box.w*((index%columns)+.5)/columns,y:box.y+box.h*(Math.floor(index/columns)+.72)/rows};}
