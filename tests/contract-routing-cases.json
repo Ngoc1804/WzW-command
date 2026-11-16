@@ -108,6 +108,7 @@
         "pcPlace": "Phòng RP",
         "places": [
           {
+            "id": "rp:phòng rp",
             "name": "Phòng RP",
             "type": "office"
           }
