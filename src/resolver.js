@@ -108,9 +108,14 @@ function resolve(d){
   }
   else if(source){unresolved.push(p);diagnostics.push('unresolved-fixed-place:'+p.name);}
   else{
+   // A translated/shortened Atlas reference is not evidence of a new RP room.
+   // Newly established rooms require explicit rp: identity or construction intent.
+   if(registry.length&&!p.id?.startsWith('rp:')&&!p.isNewConstruction){
+    unresolved.push(p);diagnostics.push('unverified-atlas-room:'+p.name);continue;
+   }
    const duplicate=places.some(x=>key(x.name)===key(p.name)||p.id&&x.id===p.id);
    if(duplicate){unresolved.push(p);diagnostics.push('ambiguous-place:'+p.name);continue;}
-   const id=p.id||'rp:'+key(p.name);
+   const id=p.id?.startsWith('rp:')?p.id:'rp:'+key(p.name);
    places.push({...p,id,desc:p.description});emitted.add(id);bindings[p.name]=id;if(p.id)bindings[p.id]=id;
   }
  }

@@ -39,9 +39,9 @@ function inspect(place){
   const row=actorTag(a,true);row.onclick=()=>showActorDetails(a,place);list.append(row);
  }
 }
-function renderContents(scene){const list=$('#quests');list.replaceChildren();const entries=[];
- for(const a of sceneData.actors){if(a.isPC||!a.placeId||a.unresolvedAnchor)continue;const place=scene.exact(a.placeId);if(place)entries.push({type:'actor',value:a,place,title:a.name,summary:shortRP(a.activity||a.summary||a.observation,'Có người ở khu vực này.').split(/\s+/).slice(0,10).join(' ')});}
- for(const e of sceneData.events){if(!e.placeId)continue;const place=scene.exact(e.placeId);if(place)entries.push({type:'event',value:e,place,title:e.title,summary:shortRP(e.detail,'Có điều thú vị ở đây.').split(/\s+/).slice(0,10).join(' ')});}
+function renderContents(scene){const list=$('#quests');list.replaceChildren();const entries=[],eventLocations=new Set();
+ for(const e of sceneData.events){const place=scene.exact(e.placeId||e.placeName);if(!place)continue;eventLocations.add(place.id);entries.push({type:'event',value:e,place,title:e.title,summary:shortRP(e.detail,'Có điều thú vị ở đây.').split(/\s+/).slice(0,10).join(' ')});}
+ for(const a of sceneData.actors){if(a.isPC||a.unresolvedAnchor)continue;const place=scene.exact(a.placeId||a.placeName);if(!place||eventLocations.has(place.id))continue;entries.push({type:'actor',value:a,place,title:a.name,summary:shortRP(a.activity||a.summary||a.observation,'Có người ở khu vực này.').split(/\s+/).slice(0,10).join(' ')});}
  put('#hintcount',String(entries.length));
  for(const entry of entries){const row=document.createElement('button');row.type='button';row.className='event-row';const name=document.createElement('strong');name.textContent=entry.title;const subtitle=document.createElement('em');subtitle.textContent=entry.summary;row.append(name,subtitle);row.title=entry.title+' · '+entry.summary;
  row.onclick=()=>{inspect(entry.place);if(entry.type==='actor'){showActorDetails(entry.value,entry.place);presentation?.focusActor(entry.value);}else{putContextLocation(entry.place.name+' · '+entry.value.title);put('#observation',shortRP(entry.value.detail||entry.place.description,fallbackObserve));presentation?.focusEvent(entry.value);}const layout=$('.layout');if(matchMedia('(max-width:720px)').matches&&layout){layout.classList.add('drawer-open');$('#drawer-toggle')?.setAttribute('aria-expanded','true');}};list.append(row);}
