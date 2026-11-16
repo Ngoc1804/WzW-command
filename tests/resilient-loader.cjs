@@ -13,7 +13,7 @@ const generated=spawnSync('python3',['tools/resilient_loader.py',base],{input:JS
   await page.setContent(html);
   await page.waitForFunction(()=>document.querySelector('#wzw-map')?.dataset.status==='ready'&&document.querySelector('#wzw-map')?.dataset.assetSource,{timeout:20000});
   assert.equal(await page.locator('#wzw-map').getAttribute('data-asset-source'),mode==='cdn'?'cdn':'embedded');assert.equal(await page.locator('#mapmount > svg').count(),1);
-  assert(await page.locator('#go-there').isDisabled());
+  assert(await page.locator('#go-there').isDisabled());if(mobile)await page.locator('#drawer-toggle').click();
   await page.locator('#quests .event-row').filter({hasText:'Hoạt động ngoài hiên'}).click();assert.equal(await page.locator('#actors').innerText(),'NPC hiên');
   await page.locator('#go-there').click();await page.waitForFunction(()=>document.querySelector('#go-status').textContent==='Đã sao chép');assert(copied.includes('AI ĐÓ: NPC hiên'));assert(copied.includes('[ Nhập hành động ở đây ]'));
   await page.locator('#quests .event-row').filter({hasText:'NPC khách'}).click();assert.equal(await page.locator('#actors').innerText(),'NPC khách');await page.locator('#go-there').click();assert(!copied.includes('NPC hiên'));
