@@ -83,7 +83,7 @@ Use the Atlas cluster's selected corridor by default. The topology is a starting
 
 ## 4. ROOMS, APPROVED LAYOUTS, INTERIORS
 
-GitHub Atlas is the spatial/furnishing source: `assets/atlas.json` has the current technical room ID, floor/wall materials, room size, static description and base interior recipe. `docs/ATLAS_COVERAGE_CURRENT.md` records current coverage and distinguishes verified sources from illustrative layouts. Gemini sends **RP changes and Vietnamese display overrides**; never dump the entire fixed inventory or generate SVG coordinates manually.
+GitHub Atlas is the spatial/furnishing source: `assets/atlas.json` has the current technical room ID, floor/wall materials, room size, static description and base interior recipe. `docs/WZW_MAP2_ATLAS_GITHUB_MASTER.md` documents the fuller historical design and intended furniture organization. Gemini sends **RP changes and Vietnamese display overrides**; never dump the entire fixed inventory or generate SVG coordinates manually.
 
 **49 native functional recipes, including 41 indoor and 8 outdoor:**
 

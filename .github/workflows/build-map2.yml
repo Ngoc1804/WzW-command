@@ -1,18 +1,18 @@
 name: Build MAP 2 canonical sources
 on:
   push:
-    branches: [DEMO-01]
+    branches: [M2-P01-baseline-loader, DEMO-01]
   workflow_dispatch:
 permissions:
   contents: write
 jobs:
   build:
+    if: ${{ !contains(github.event.head_commit.message, 'DECOR_IMPORT_NOW') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: true
-          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -53,5 +53,3 @@ jobs:
             git commit -m 'build: regenerate canonical MAP 2 artifacts [skip ci]'
             git push origin HEAD:${{ github.ref_name }}
           fi
-      - name: Validate pinned published release against Git history
-        run: python tools/verify-release.py

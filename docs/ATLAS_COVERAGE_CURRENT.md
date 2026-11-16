@@ -1,6 +1,6 @@
 # WZW MAP 2 — ATLAS COVERAGE & INTERIOR BASELINE
 
-> Applies to current `DEMO-01` source. Historical design specifications are preserved in Git history, not used as executable sources or proof of canonical completeness. Current Atlas is illustrated RP architecture, not an exhaustive canon floor plan.
+> Applies to current `DEMO-01` source. The recovered `WZW_MAP2_ATLAS_GITHUB_MASTER.md` is a historical specification, not proof of canonical completeness. Current Atlas is illustrated RP architecture, not an exhaustive canon floor plan.
 
 ## Exact data counts
 
@@ -17,7 +17,7 @@
 | Generated/non-Fixed room+site records | 390 |
 | Approved functional recipe/layout families | 49 |
 | Approved size variants | 147 |
-| Rooms with sourced descriptions in the historical design specification | 203 |
+| Rooms with direct description from recovered historical Master | 203 |
 | Rooms whose static descriptions are inferred from named function/recipe (NOT canon) | 187 |
 
 ## What changed
