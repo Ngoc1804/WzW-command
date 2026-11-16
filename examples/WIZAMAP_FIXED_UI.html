@@ -809,7 +809,10 @@ async function prepareTemplateUI(){
    element.onpointerenter=e=>{if(e.pointerType!=='touch'){hovered=element;renderPositions()}};element.onpointerleave=()=>{if(hovered===element){hovered=null;renderPositions()}};element.onfocus=()=>{hovered=element;renderPositions()};element.onblur=()=>{if(hovered===element){hovered=null;renderPositions()}};
    element.onclick=()=>{toggleXray(element);showActorDetails(actor,place)};
    const overview=['h1','h2','village-static','diagon-knockturn'].includes(activeId)||DATA.maps[activeId].kind==='outdoor';
-   const stance=overview&&inside?'hidden':actor.footstep==='walk'?'walk':'idle';let feet=null,stop=null;
+   // Hide footprints only for an Outdoor NPC whose tag is anchored to a building.
+   const fixedBuilding=!actor.scenePoint&&records.some(r=>r.node.dataset.occluder==='building'&&r.owner===place.id);
+   const buildingAnchor=overview&&inside&&(actor.scenePoint?.buildingAnchor===true||fixedBuilding);
+   const stance=buildingAnchor?'hidden':actor.footstep==='walk'?'walk':'idle';let feet=null,stop=null;
    if(stance!=='hidden'){
     feet=uiElement('g',{class:'footstep',transform:`translate(${point.x} ${point.y}) scale(.6)`},footLayer);stop=mountFeet(feet,stance);
     // Feet are a character marker beneath the name, not furniture geometry.

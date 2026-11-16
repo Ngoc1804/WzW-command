@@ -212,7 +212,7 @@ function outdoorActorPoint(map,place,actor){
  // exterior scene. Do not move it out to the yard or invent an interior floor.
  if(actor.spot==='inside'){
   const buildings=supports.filter(f=>f.kind==='building'),building=buildings.length===1?buildings[0]:null;
-  if(building){place.inventory.diagnostics.push('outdoor-interior-anchor:'+place.id);return{...zonePoint(building.bounds,actor.zone),anchorOnly:true,noFeet:true};}
+  if(building){place.inventory.diagnostics.push('outdoor-interior-anchor:'+place.id);return{...zonePoint(building.bounds,actor.zone),anchorOnly:true,noFeet:true,buildingAnchor:true};}
   place.inventory.diagnostics.push('unresolved-support:indoor-building');
  }
  const[x,y,w,h]=place.bounds,points=[desired];for(let v=.08;v<.96;v+=.06)for(let u=.06;u<.96;u+=.06)points.push({x:x+w*u,y:y+h*v});

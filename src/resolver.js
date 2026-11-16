@@ -1,6 +1,6 @@
 function resolve(d){
  const diagnostics=d.diagnostics;
- const seenNames=new Set();for(const p of d.places){if(seenNames.has(key(p.name)))diagnostics.push('duplicate-place-name:'+p.name);seenNames.add(key(p.name));}
+ const seenNames=new Map();for(const p of d.places){const name=key(p.name),previous=seenNames.get(name);if(previous&&(!p.id||!previous.id||p.id===previous.id))diagnostics.push('duplicate-place-name:'+p.name);if(!previous)seenNames.set(name,p);}
  let cluster=ATLAS.clusters[d.atlasAnchor],fixedId=Object.hasOwn(DATA.maps,d.atlasAnchor)?d.atlasAnchor:null;
  if(!fixedId&&cluster&&!cluster.rooms.length&&cluster.pointers.length===1&&DATA.maps[cluster.pointers[0]])fixedId=cluster.pointers[0];
  const sandbox=d.forceSandbox||(['h1','h2'].includes(fixedId)&&d.places.some(p=>p.isNewConstruction));
@@ -65,20 +65,39 @@ function resolve(d){
  };
  // Generated catalogue lookups preserve native furniture/architecture without drawing unused rooms.
  // Gemini is responsible for translating Vietnamese/English synonyms to a unique ID.
+ // English technical identity always wins; Vietnamese display text never overrides a room ID.
  const catalogPlace=p=>{
   if(source||sandbox)return null;
-  if(p.id){const idHits=registry.filter(x=>x.id===p.id);if(idHits.length===1)return idHits[0];}
-  const names=[p.name,p.placeName,...(p.aliases||[])].filter(Boolean).map(fold);
-  const matches=registry.filter(x=>[x.name,...(x.aliases||[])].filter(Boolean).some(n=>names.includes(fold(n))));
+  const candidates=ref=>registry.filter(x=>[x.name,...(x.aliases||[])].filter(Boolean).some(n=>fold(n)===fold(ref)));
+  if(p.id){
+   const native=registry.filter(x=>x.id===p.id);if(native.length===1)return native[0];
+   // W4 English room keys (e.g. "Kitchen") may resolve to Atlas canonical IDs.
+   const english=candidates(p.id);if(english.length===1)return english[0];
+   if(english.length>1)diagnostics.push('ambiguous-english-room-id:'+p.id);
+   // Never use a Vietnamese label to override an explicitly supplied identity.
+   if(!p.placeName)return null;
+  }
+  const refs=[p.placeName,...(p.aliases||[]),...(!p.id?[p.name]:[])].filter(Boolean);
+  const matches=registry.filter(x=>refs.some(ref=>[x.name,...(x.aliases||[])].filter(Boolean).some(n=>fold(n)===fold(ref))));
   if(matches.length===1)return matches[0];
   if(matches.length>1)diagnostics.push('ambiguous-atlas-room:'+p.name);
   return null;
  };
  const locate=p=>{
-  if(p.id){const hit=places.find(x=>x.id===p.id);if(hit){if(key(hit.name)!==key(p.name))diagnostics.push('place-id-name-conflict:'+p.id);return hit;}}
+  if(p.id){const hit=places.find(x=>x.id===p.id);if(hit)return hit;}
+  if(!source&&!sandbox){
+   const native=catalogPlace(p);if(native)return native;
+   // A declared English/native key must never fall back to another room's Vietnamese name.
+   if(p.id||p.placeName)return null;
+  }
   const hit=exact(p.name,p.region||d.region);
   if(hit){if(p.id&&p.id!==hit.id)diagnostics.push('place-id-fallback:'+p.id);return hit;}
   return catalogPlace(p);
+ };
+ const bindName=(label,id)=>{
+  if(!label)return;
+  if(Object.hasOwn(bindings,label)&&bindings[label]!==id){bindings[label]=null;diagnostics.push('ambiguous-place-label:'+label);}
+  else if(!Object.hasOwn(bindings,label))bindings[label]=id;
  };
  // Reserve explicitly addressed houses before allocating AU entries. Stable ordering avoids payload-order reshuffles.
  for(const p of d.places){const hit=locate(p);if(hit)used.add(hit.id);}
@@ -96,7 +115,7 @@ function resolve(d){
   }
   if(match){
    // Exactly one rendered room per resolved physical identity, even if two labels were supplied.
-   if(emitted.has(match.id)){diagnostics.push('duplicate-resolved-place:'+match.id);if(p.id)bindings[p.id]=match.id;bindings[p.name]=match.id;continue;}
+   if(emitted.has(match.id)){diagnostics.push('duplicate-resolved-place:'+match.id);if(p.id)bindings[p.id]=match.id;bindName(p.name,match.id);continue;}
    const canonical=places.find(x=>x.id===match.id);
    const target=canonical||{...match};
    const originalCoords=source?{x:target.x,y:target.y}:{};
@@ -104,7 +123,7 @@ function resolve(d){
    const overrides={...p};if(!overrides.type)delete overrides.type;
    Object.assign(target,overrides,{id:match.id,description:p.description||target.description||target.desc,desc:p.description||target.description||target.desc,...originalCoords});
    if(!canonical)places.push(target);
-   emitted.add(match.id);bindings[p.name]=match.id;if(p.placeName)bindings[p.placeName]=match.id;if(p.id)bindings[p.id]=match.id;
+   emitted.add(match.id);bindName(p.name,match.id);bindName(p.placeName,match.id);if(p.id)bindings[p.id]=match.id;
   }
   else if(source){unresolved.push(p);diagnostics.push('unresolved-fixed-place:'+p.name);}
   else{
@@ -113,10 +132,10 @@ function resolve(d){
    if(registry.length&&!p.id?.startsWith('rp:')&&!p.isNewConstruction){
     unresolved.push(p);diagnostics.push('unverified-atlas-room:'+p.name);continue;
    }
-   const duplicate=places.some(x=>key(x.name)===key(p.name)||p.id&&x.id===p.id);
+   const duplicate=places.some(x=>p.id?x.id===p.id:key(x.name)===key(p.name));
    if(duplicate){unresolved.push(p);diagnostics.push('ambiguous-place:'+p.name);continue;}
    const id=!registry.length&&p.id?p.id:p.id?.startsWith('rp:')?p.id:'rp:'+key(p.name);
-   places.push({...p,id,desc:p.description});emitted.add(id);bindings[p.name]=id;if(p.id)bindings[p.id]=id;
+   places.push({...p,id,desc:p.description});emitted.add(id);bindName(p.name,id);if(p.id)bindings[p.id]=id;
   }
  }
  // New RP places are allowed in Generated, but an invalid ID must not become a fictitious named room.

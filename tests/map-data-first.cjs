@@ -5,6 +5,7 @@ const DATA=JSON.parse(zlib.gunzipSync(Buffer.from(packed,'base64'))),ATLAS=JSON.
 const ctx=vm.createContext({DATA,ATLAS,VOCAB,RECIPES,KEYS:['unknown','adult']});
 vm.runInContext(['contract','props','resolver'].map(n=>fs.readFileSync('src/'+n+'.js','utf8')).join('\n')+';globalThis.test=x=>{const d=normalize(x);return{d,scene:resolve(d)}}',ctx);
 const kitchen='AU-PC-HOME:f1-kitchen',living='AU-PC-HOME:f1-living',garden='AU-PC-HOME:f1-rear-porch-garden';
+const storeId='AU-PC-HOME:basement-store',loftId='AU-PC-HOME:attic-loft-store';
 const room=(id,name,type)=>({id,name,type});
 const payload=(places,pcPlace=kitchen,extra={})=>({schemaVersion:'2.0.0',atlasAnchor:'AU-PC-HOME',pcPlace,pcSpot:'inside',places,actors:[{name:'Jude',isPC:true,placeId:pcPlace,spot:'inside'}],events:[],...extra});
 let r=ctx.test(payload([room(kitchen,'Gian bếp','KITCHEN'),room(living,'Phòng khách','LOUNGE')]));
@@ -35,4 +36,11 @@ assert.equal(r.scene.places[0].name,'Gian bếp','Vietnamese name is the display
 assert.equal(r.scene.exact('Gian bếp')?.id,kitchen);
 r=ctx.test(payload([room(garden,'Vườn sau','OUT_GARDEN')],garden));
 assert.equal(r.scene.places.length,1);assert.equal(r.scene.places[0].type,'OUT_GARDEN','RP recipe is authoritative over Atlas');
-console.log('PASS MAP_DATA-first Generated scenes, add/remove, native ID dedup, RP overrides, missing ref');
+r=ctx.test(payload([{id:storeId,name:'Kho'},{id:loftId,name:'Kho'}],storeId));
+assert.equal(r.scene.places.length,2,'different native IDs remain two rooms despite identical Vietnamese labels');
+assert(r.scene.exact(storeId)?.id===storeId&&r.scene.exact(loftId)?.id===loftId,'both identities stay addressable');
+assert.equal(r.scene.exact('Kho'),null,'ambiguous Vietnamese label must never pick a room');
+r=ctx.test(payload([{id:'Kitchen',name:'Gian bếp'}],kitchen));
+assert.equal(r.scene.places[0].id,kitchen,'W4 English key resolves Atlas identity');
+assert.equal(r.scene.places[0].name,'Gian bếp','English key is never displayed instead of Vietnamese');
+console.log('PASS MAP_DATA-first Generated scenes, canonical ID identity, bilingual display, Atlas recipes');
