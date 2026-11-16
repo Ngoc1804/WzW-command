@@ -1,13 +1,13 @@
 {
   "WIZAMAP_FIXED_UI.html": {
-    "bytes": 1043884,
-    "gzipBytes": 749349,
-    "sha256": "34fb155bfb48b67b5baaa37a01e63e2d1b317ac941596b05ef5ad2ff44b36dec"
+    "bytes": 1050219,
+    "gzipBytes": 753190,
+    "sha256": "079caadcd855b3d66f77019bcae1b4c6480c5de94512714591a221370dc44b87"
   },
   "bundle.js": {
-    "bytes": 4421132,
-    "gzipBytes": 806770,
-    "sha256": "5410f04c2d2156a24ef52f04219170e7aaf6206e48978a0a3c108d039c9bf345"
+    "bytes": 4422747,
+    "gzipBytes": 807064,
+    "sha256": "78fea0d3277bfa71f2e6c582ff75bc626bf275967fbcfb77058464002ebe53d6"
   },
   "shell.css": {
     "bytes": 13123,
@@ -15,8 +15,8 @@
     "sha256": "3c792b2101c64059bc60601e35bd7581ea843f1e024305c62615a2380857ef40"
   },
   "templates-pack.js": {
-    "bytes": 963681,
-    "gzipBytes": 721200,
-    "sha256": "ba5bf68beaa869d2f2e582f924a8601b36b849fe8f668adc11c2aa2f76201204"
+    "bytes": 968401,
+    "gzipBytes": 725347,
+    "sha256": "9a4c4c1a74cbc8063b3e66c1db5a87879da7ad8563f8b6072261f490f9b3afae"
   }
 }

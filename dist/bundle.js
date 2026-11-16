@@ -234,7 +234,7 @@ async function setTemplate(id){if(!DATA?.maps[id])return;activeId=id;stopScene()
  for(const b of document.querySelectorAll('[data-primary]')){const q={A:'h1',B:'hall',C:'ministry2',D:'express'}[b.dataset.primary];b.classList.toggle('active',q===id)}
 
 }
-// Template-only presentation adapter. MAP_DATA remains the future contract's responsibility.
+// Template presentation. MAP_DATA receiver: src/index.js.
 let presentation=null;
 function worldBox(node){const b=node.getBBox(),m=svg.getScreenCTM().inverse().multiply(node.getScreenCTM()),p=[[b.x,b.y],[b.x+b.width,b.y],[b.x,b.y+b.height],[b.x+b.width,b.y+b.height]].map(([x,y])=>new DOMPoint(x,y).matrixTransform(m)),xs=p.map(p=>p.x),ys=p.map(p=>p.y);return{x:Math.min(...xs),y:Math.min(...ys),w:Math.max(...xs)-Math.min(...xs),h:Math.max(...ys)-Math.min(...ys)}}
 function inMap(x,y,pad=0){return x-pad>=originalVB[0]&&y-pad>=originalVB[1]&&x+pad<=originalVB[0]+originalVB[2]&&y+pad<=originalVB[1]+originalVB[3]}
@@ -276,10 +276,9 @@ function groupRoomActors(actors){
 async function prepareTemplateUI(){
  if(presentation)presentation.dispose();
  const scene=svg,layer=document.createElement('div');layer.className='qa-tags';$('#mapmount').append(layer);
- const linkLayer=uiElement('g',{'data-layer':'actor-links','pointer-events':'none',stroke:'#a58c6a','stroke-width':'.7',opacity:'.65'},svg);
  const footLayer=uiElement('g',{'data-layer':'actor-feet','pointer-events':'none'},svg);
  const zones=[...svg.querySelectorAll('[data-forbidden]')].filter(e=>!e.closest('defs'));
- const records=zones.map(node=>{const box=worldBox(node);return{node,box,owner:node.closest('[data-id]')?.dataset.id,layer:Number(node.dataset.layer)||0,depth:node.hasAttribute('data-depth')&&Number.isFinite(+node.dataset.depth)?+node.dataset.depth:null,mask:null,promise:null}});let actorItems=[],eventItems=[],generation=0,placementSize=null;
+ const records=zones.map(node=>{const box=worldBox(node);return{node,box,owner:node.closest('[data-id]')?.dataset.id,layer:Number(node.dataset.layer)||0,depth:node.hasAttribute('data-depth')&&Number.isFinite(+node.dataset.depth)?+node.dataset.depth:null,mask:null,promise:null}});let actorItems=[],eventItems=[],generation=0;
  let hovered=null,pinned=null;
  const buildingAt=target=>records.find(r=>r.node.dataset.occluder==='building'&&r.node.contains(target))?.node||null;
  function toggleXray(target){pinned=pinned===target?null:target;hovered=null;renderPositions();}
@@ -291,10 +290,19 @@ async function prepareTemplateUI(){
 
  const maskFor=async r=>{if(!r.promise)r.promise=paintedMask(r.node).then(m=>{r.mask=m;if(r.depth===null&&m){let bottom=-1;for(let y=m.h-1;y>=0&&bottom<0;y--)for(let x=0;x<m.w;x++)if(m.pixels[(y*m.w+x)*4+3]>24){bottom=y;break;}if(bottom>=0)r.depth=m.box.y+(bottom+.5)/m.h*m.box.h;}return m}).catch(()=>null);await r.promise;return r.mask};
  function pointSafe(x,y,pad=0){if(!inMap(x,y,pad)||DATA.maps[activeId].safeFloor&&!DATA.maps[activeId].safeFloor(x,y,pad))return false;if(DATA.maps[activeId].kind==='outdoor')return true;for(const r of records){if(x+pad<r.box.x||x-pad>r.box.x+r.box.w||y+pad<r.box.y||y-pad>r.box.y+r.box.h)continue;if(!r.mask)return false;if(maskOverlaps(r.mask,{x:x-pad,y:y-pad,w:Math.max(.1,pad*2),h:Math.max(.1,pad*2)}))return false;}return true}
+ const regionSamples=new Map();
  async function readyMasks(){await Promise.all(records.map(maskFor))}
  // A loose W4 location is a regional hint, not an instruction to use the art's centre.
  // Search valid ground near the named landmark; SVG shapes and ID are unchanged.
+ function regionBox(place){const [u,v,w,h]=place.regionBox;return{x:originalVB[0]+u*originalVB[2],y:originalVB[1]+v*originalVB[3],w:w*originalVB[2],h:h*originalVB[3]};}
  function freeGroundPoint(place,relation,occupied=[]){
+  if(place.freeRegion){
+   const b=regionBox(place);let points=regionSamples.get(place.id);
+   if(!points){points=[];for(let y=1;y<45;y++)for(let x=1;x<45;x++){const p={x:b.x+b.w*x/45,y:b.y+b.h*y/45};if(pointSafe(p.x,p.y,5))points.push(p);}regionSamples.set(place.id,points);}
+   const uv=Array.isArray(place.position)?place.position:[.5,.5],clamp=v=>Number.isFinite(v)?Math.min(1,Math.max(0,v)):.5,target={x:b.x+b.w*clamp(uv[0]),y:b.y+b.h*clamp(uv[1])};
+   const cost=p=>Math.hypot(p.x-target.x,p.y-target.y)+occupied.reduce((v,q)=>v+Math.max(0,70-Math.hypot(p.x-q.x,p.y-q.y))*100,0);
+   return points.reduce((best,p)=>!best||cost(p)<cost(best)?p:best,null);
+  }
   const node=[...svg.querySelectorAll('[data-id]')].find(e=>e.dataset.id===place.id&&!e.closest('defs'));if(!node)return null;
   const b=worldBox(node),center={x:b.x+b.w/2,y:b.y+b.h/2},extent=Math.min(originalVB[2],originalVB[3]);
   const halo=Math.max(16,Math.min(extent*.14,Math.max(b.w,b.h)*.35));
@@ -320,9 +328,11 @@ async function prepareTemplateUI(){
   return safe[0];
  }
  function localPoint(place,inside,actor){
+  if(place.freeRegion)return freeGroundPoint(place,actor?.relation,actorItems.map(i=>i.point));
   if(actor?.scenePoint&&Number.isFinite(actor.scenePoint.x)&&Number.isFinite(actor.scenePoint.y))return actor.scenePoint;
   const node=[...svg.querySelectorAll('[data-id]')].find(e=>e.dataset.id===place.id&&!e.closest('defs'));if(!node)return null;
   const b=worldBox(node),center={x:b.x+b.w/2,y:b.y+b.h/2};
+  if((inside||actor?.relation==='inside')&&['h1','h2','village-static','diagon-knockturn'].includes(activeId))return{x:center.x,y:b.y};
   if(inside||actor?.relation==='inside'||actor?.relation==='on')return center;
   const overview=['h1','h2','village-static','diagon-knockturn'].includes(activeId)||DATA.maps[activeId].kind==='outdoor';
   if(overview&&['near','around'].includes(actor?.relation)){
@@ -342,9 +352,19 @@ async function prepareTemplateUI(){
   const map=DATA.maps[activeId],overview=['h1','h2','village-static','diagon-knockturn'].includes(activeId)||map.kind==='outdoor';
   const node=[...svg.querySelectorAll('[data-id]')].find(n=>n.dataset.id===place.id&&!n.closest('defs'));
   const hit=node?.querySelector('.spot-hit'),shape=hit&&typeof hit.isPointInFill==='function'?hit:null;
-  let box=hit?worldBox(hit):place.bounds?{x:place.bounds[0],y:place.bounds[1],w:place.bounds[2],h:place.bounds[3]}:node?worldBox(node):null;
-  const freeRegion=['near','around'].includes(actor.relation)&&overview;
-  if(freeRegion){const e=Math.min(originalVB[2],originalVB[3])*.13;box={x:Math.min(box.x,desired.x)-e,y:Math.min(box.y,desired.y)-e,w:Math.max(box.x+box.w,desired.x)+e-(Math.min(box.x,desired.x)-e),h:Math.max(box.y+box.h,desired.y)+e-(Math.min(box.y,desired.y)-e)};}
+  let box=place.freeRegion?regionBox(place):hit?worldBox(hit):place.bounds?{x:place.bounds[0],y:place.bounds[1],w:place.bounds[2],h:place.bounds[3]}:node?worldBox(node):null;
+  if(inside&&actor.scenePoint?.anchorOnly&&map.kind==='outdoor'){
+   const building=map.footprints?.find(f=>f.placeId===place.id&&f.kind==='building');
+   if(building){const [x,y,w,h]=building.bounds,columns=count>1?2:1,rows=Math.ceil(count/columns),index=actorItems.filter(a=>a.placeId===place.id).length,fit=$('#mapmount').getBoundingClientRect(),scale=Math.min(fit.width/originalVB[2],fit.height/originalVB[3]),labelWidth=Math.min(120,w*.84/columns,h*.7/rows*(element.offsetWidth||120)/(element.offsetHeight||24));return{point:{x:x+w*((index%columns)+.5)/columns,y:y+h*(Math.floor(index/columns)+.85)/rows},labelScale:labelWidth*scale/Math.max(1,element.offsetWidth||120),anchorOnly:true};}
+  }
+  if(inside&&['h1','h2','village-static','diagon-knockturn'].includes(activeId)&&box){
+   const b=box,fit=$('#mapmount').getBoundingClientRect(),scale=Math.min(fit.width/originalVB[2],fit.height/originalVB[3]),width=Math.min(150,b.w*.7),height=width*(element.offsetHeight||24)/Math.max(1,element.offsetWidth||120);
+   const roof={x:b.x,y:b.y-height*4,w:b.w,h:height*3},origin={x:b.x+b.w/2,y:b.y-height*.3};
+   const placed=relativeMarkerPoint(origin,roof,width,height+8,'ribbon',actorItems.map(actorLabelFootprint),p=>p.y<=b.y&&p.x>=b.x-width*.5&&p.x<=b.x+b.w+width*.5);
+   return{point:placed.point,labelBox:placed.box,labelScale:width*scale/Math.max(1,element.offsetWidth||120),anchorOnly:true};
+  }
+  const freeRegion=place.freeRegion||['near','around'].includes(actor.relation)&&overview;
+  if(freeRegion&&!place.freeRegion){const e=Math.min(originalVB[2],originalVB[3])*.13;box={x:Math.min(box.x,desired.x)-e,y:Math.min(box.y,desired.y)-e,w:Math.max(box.x+box.w,desired.x)+e-(Math.min(box.x,desired.x)-e),h:Math.max(box.y+box.h,desired.y)+e-(Math.min(box.y,desired.y)-e)};}
   const door=place.geometry?.door,spot=actor.spot||actor.pcSpot;
   const hall=place.geometry?.hall||[door?.ln.A,door?.ln.B].find(x=>x?.kind==='hall')||map.geometry?.halls?.find(h=>desired.x>=h.x&&desired.x<=h.x+h.w&&desired.y>=h.y&&desired.y<=h.y+h.h);
   const passage=!inside&&!overview&&(spot==='corridor'&&hall||spot==='threshold'&&door);
@@ -369,7 +389,7 @@ async function prepareTemplateUI(){
   const safe=point=>{
    if(actor.placement==='in_wall')return true;
    if(point.x<box.x+pad||point.x>box.x+box.w-pad||point.y<box.y+pad||point.y>box.y+box.h-pad)return false;
-   if(freeRegion&&actor.relation!=='on'&&!pointSafe(point.x,point.y,4))return false;
+   if(!(overview&&inside)&&actor.placement!=='on_landscape'&&actor.placement!=='on_furniture'&&!pointSafe(point.x,point.y,4))return false;
    if(inside&&!overview&&shape){const matrix=shape.getScreenCTM().inverse().multiply(svg.getScreenCTM());for(const[dx,dy]of [[0,0],[-pad,0],[pad,0],[0,-pad],[0,pad]])if(!shape.isPointInFill(new DOMPoint(point.x+dx,point.y+dy).matrixTransform(matrix)))return false;}
    if((!(overview&&inside)||map.kind==='outdoor')&&map.safeFloor&&!map.safeFloor(point.x,point.y,pad))return false;
    // A floor rectangle can meet another rectangle at a wall. Only actual door
@@ -385,10 +405,10 @@ async function prepareTemplateUI(){
    return true;
   };
   // Slots change on mount or viewport resize, never on zoom or pan.
-  if(actor.scenePoint?.anchorOnly)return{point:desired,labelScale:factor,anchorOnly:true};
+
   if(actor.placement==='in_wall'||['on_furniture','on_landscape'].includes(actor.placement)&&actor.supportId&&actor.scenePoint&&!actor.scenePoint.anchorOnly)return{point:desired,labelScale:factor};
   if(passage&&count===1&&safe(desired))return{point:desired,labelScale:factor};
-  if(count>1&&inside&&!actor.zone&&!actor.placement?.match(/^(on_furniture|in_wall)$/)){const index=actorItems.filter(a=>a.placeId===place.id).length;desired={x:box.x+box.w*((index%columns)+.5)/columns,y:box.y+box.h*(Math.floor(index/columns)+.72)/rows};}
+  if(count>1&&inside&&!overview&&!actor.zone&&!actor.placement?.match(/^(on_furniture|in_wall)$/)){const index=actorItems.filter(a=>a.placeId===place.id).length;desired={x:box.x+box.w*((index%columns)+.5)/columns,y:box.y+box.h*(Math.floor(index/columns)+.72)/rows};}
   const candidates=[desired];
   if(inside||!overview||count>1)for(let y=1;y<40;y++)for(let x=1;x<40;x++)candidates.push({x:box.x+box.w*x/40,y:box.y+box.h*y/40});
   let best=null,bestCost=Infinity,bestOverlap=Infinity;
@@ -403,7 +423,7 @@ async function prepareTemplateUI(){
   // the same named site only when its walkable patch cannot hold all ribbons.
   if(overview&&count>1&&(!best||bestOverlap>0)){
    const w=size.width*factor/fitScale,h=(size.height+12)*factor/fitScale;
-   const offset=relativeMarkerPoint(desired,box,w,h,'ribbon',actorItems.map(actorLabelFootprint));
+   const offset=relativeMarkerPoint(desired,box,w,h,'ribbon',actorItems.map(actorLabelFootprint),safe);
    return{point:offset.point,labelScale:factor,labelBox:offset.box,anchorOnly:true};
   }
   return best||{point:desired,labelScale:factor,anchorOnly:true};
@@ -451,9 +471,7 @@ async function prepareTemplateUI(){
   // labels independently of the artwork: that changes their apparent location.
   const fitScale=Math.min(base.width/originalVB[2],base.height/originalVB[3]);
   const mapScale=Math.hypot(ctm.a,ctm.b),ratio=mapScale/fitScale;
-  linkLayer.replaceChildren();
-  const anchorStacks=new Map();for(const item of actorItems){item.stackOffset=0;if(item.inside&&item.actor.scenePoint?.anchorOnly){if(!anchorStacks.has(item.placeId))anchorStacks.set(item.placeId,[]);anchorStacks.get(item.placeId).push(item);}}
-  for(const group of anchorStacks.values()){group.sort((a,b)=>Number(b.actor.isPC)-Number(a.actor.isPC));let offset=0;for(const item of group){item.stackOffset=offset;item.element.dataset.stackIndex=String(group.indexOf(item));offset+=item.element.offsetHeight+6;}}
+  for(const item of actorItems)item.stackOffset=0;
   for(const item of [...actorItems,...eventItems]){
    const point=new DOMPoint(item.point.x,item.point.y).matrixTransform(ctm),actor=!!item.actor;const scaleAtFit=actor?((item.worldLabelWidth||120)*fitScale/Math.max(1,item.element.offsetWidth)):((item.worldIconWidth||32)*fitScale/Math.max(1,item.element.offsetWidth));const markerScale=ratio*scaleAtFit;
    item.element.style.transformOrigin=actor?'50% 100%':'50% 50%';
@@ -471,9 +489,9 @@ async function prepareTemplateUI(){
  }
  function clearActors(){hovered=pinned=null;for(const a of actorItems){a.stop?.();a.element.remove();a.feet?.remove()}actorItems=[];renderPositions()}
  async function mountActors(actors=[]){const version=++generation;await readyMasks();if(svg!==scene||version!==generation)return;clearActors();
-  const resolved=actors.map(a=>{const place=(DATA.maps[activeId].places||[]).find(p=>p.id===a.placeId||p.name===a.placeName);return place?{...a,placeId:place.id}:a;}),displayActors=groupRoomActors(resolved);
+  const resolved=actors.map(a=>{a={...a,placeId:DATA.maps[activeId].lookupAliases?.[a.placeId]||a.placeId};const place=(DATA.maps[activeId].places||[]).find(p=>p.id===a.placeId||p.name===a.placeName);return place?{...a,placeId:place.id}:a;}),displayActors=groupRoomActors(resolved);
   const mountBox=$('#mapmount').getBoundingClientRect(),actorFitScale=Math.min(mountBox.width/originalVB[2],mountBox.height/originalVB[3]);
-  for(const actor of displayActors){const place=(DATA.maps[activeId].places||[]).find(p=>p.id===actor.placeId||p.name===actor.placeName);if(!place)continue;const inside=actor.inside===true||actor.spot==='inside'||actor.pcSpot==='inside';
+  for(const actor of displayActors){const place=(DATA.maps[activeId].places||[]).find(p=>p.id===actor.placeId||p.name===actor.placeName);if(!place||place.disabled)continue;const inside=actor.inside===true||actor.spot==='inside'||actor.pcSpot==='inside';
    const element=actorTag(actor);element.classList.add('npc-tag');element.title=actor.activity||place.name;layer.append(element);
    const placement=actorPlacement(place,inside,actor,element,displayActors.filter(a=>a.placeId===place.id).length);if(!placement){element.remove();continue;}const{point,labelScale,labelBox}=placement;element.dataset.placeId=place.id;element.dataset.anchorX=point.x;element.dataset.anchorY=point.y;element.dataset.placement=placement.anchorOnly?'anchor':'floor';
    element.onpointerenter=e=>{if(e.pointerType!=='touch'){hovered=element;renderPositions()}};element.onpointerleave=()=>{if(hovered===element){hovered=null;renderPositions()}};element.onfocus=()=>{hovered=element;renderPositions()};element.onblur=()=>{if(hovered===element){hovered=null;renderPositions()}};
@@ -481,7 +499,7 @@ async function prepareTemplateUI(){
    const overview=['h1','h2','village-static','diagon-knockturn'].includes(activeId)||DATA.maps[activeId].kind==='outdoor';
    // Hide footprints only for an Outdoor NPC whose tag is anchored to a building.
    const fixedBuilding=!actor.scenePoint&&records.some(r=>r.node.dataset.occluder==='building'&&r.owner===place.id);
-   const buildingAnchor=!actor.isPC&&overview&&inside&&(actor.scenePoint?.buildingAnchor===true||fixedBuilding);
+   const buildingAnchor=['h1','h2','village-static','diagon-knockturn'].includes(activeId)&&inside;
    const stance=buildingAnchor?'hidden':actor.footstep==='walk'?'walk':'idle';let feet=null,stop=null;
    if(stance!=='hidden'){
     feet=uiElement('g',{class:'footstep',transform:`translate(${point.x} ${point.y}) scale(.6)`},footLayer);stop=mountFeet(feet,stance);
@@ -493,19 +511,19 @@ async function prepareTemplateUI(){
  }
  function showPlaceActors(placeId){const target=$('#actors');target.replaceChildren();for(const item of actorItems.filter(a=>!placeId||a.placeId===placeId)){const row=actorTag(item.actor,true);row.onclick=item.element.onclick;target.append(row)}}
  function mountEvents(events=[]){for(const e of eventItems)e.element.remove();eventItems=[];$('#quests').replaceChildren();put('#hintcount',String(events.length));
-  for(const event of events){const place=(DATA.maps[activeId].places||[]).find(p=>p.id===event.placeId||p.name===event.placeName);if(!place)continue;const node=[...svg.querySelectorAll('[data-id]')].find(e=>e.dataset.id===place.id);if(!node)continue;const b=worldBox(node);let point={x:b.x+b.w/2,y:b.y+b.h/2};if(['near','around'].includes(event.relation)&&['h1','h2','village-static','diagon-knockturn'].includes(activeId)){point=freeGroundPoint(place,event.relation,[...actorItems,...eventItems].map(i=>i.point))||point;}if(place.geometry?.room){const r=place.geometry.room;point={x:r.x+r.w*(r.circular?.65:.82),y:r.y+r.h*.25};const door=place.geometry.door;if(event.target?.kind==='door'&&door)point=door.ln.axis==='H'?{x:door.at,y:door.ln.at}:{x:door.ln.at,y:door.at};}else if(place.geometry?.outdoor){const[x,y,w,h]=place.bounds;point={x:x+w*.8,y:y+h*.25};}
+  for(const supplied of events){const event={...supplied,placeId:DATA.maps[activeId].lookupAliases?.[supplied.placeId]||supplied.placeId};const place=(DATA.maps[activeId].places||[]).find(p=>p.id===event.placeId||p.name===event.placeName);if(!place||place.disabled)continue;const node=[...svg.querySelectorAll('[data-id]')].find(e=>e.dataset.id===place.id);if(!node&&!place.freeRegion)continue;const b=place.freeRegion?regionBox(place):worldBox(node);let point=localPoint(place,event.relation==='inside',{...event,spot:event.relation==='inside'?'inside':'outdoor'});if(!point)continue;
    const button=document.createElement('button');button.className='event-marker '+(event.hidden?'hidden-marker':'');button.setAttribute('aria-label',event.title||'Đầu mối');button.title=event.title||'Đầu mối';
    const v=uiElement('svg',{viewBox:'0 0 24 24','aria-hidden':'true'});v.setAttribute('fill','none');v.setAttribute('stroke','currentColor');v.setAttribute('stroke-width','1.6');v.setAttribute('stroke-linecap','round');v.setAttribute('stroke-linejoin','round');v.innerHTML=event.hidden?"<circle cx=\"10.5\" cy=\"10.5\" r=\"7.5\"/><path d=\"m16 16 6 6\"/>":"<path d=\"M5 6l1-3h3l1 3m4 0 1-3h3l1 3M4 6h5l1 10H2ZM15 6h5l2 10h-8ZM10 9h4v5h-4\"/><circle cx=\"6\" cy=\"17\" r=\"4\"/><circle cx=\"18\" cy=\"17\" r=\"4\"/>";button.append(v);
    const worldIconWidth=Math.min(42,Math.max(20,Math.min(originalVB[2],originalVB[3])*.043));
    const blockers=[...actorItems.map(actorLabelFootprint),...eventItems.map(item=>markerFootprint(item.point,item.worldIconWidth,item.worldIconWidth*36/32,'event'))];
-   point=relativeMarkerPoint(point,worldBox(node),worldIconWidth,worldIconWidth*36/32,'event',blockers,['near','around'].includes(event.relation)&&['h1','h2','village-static','diagon-knockturn'].includes(activeId)?p=>pointSafe(p.x,p.y,4):null).point;
+   point=relativeMarkerPoint(point,b,worldIconWidth,worldIconWidth*36/32,'event',blockers,event.relation==='inside'&&['h1','h2','village-static','diagon-knockturn'].includes(activeId)?null:p=>pointSafe(p.x,p.y,4)).point;
    button.onclick=()=>{layer.querySelectorAll('.event-marker').forEach(b=>b.classList.remove('chosen'));button.classList.add('chosen');if(typeof showEventDetails==='function'&&sceneData){showEventDetails(event,place);}else{put('#place-title',event.title||'Đầu mối');put('#place-area',place.name);put('#activity',event.detail||place.overhear||'');put('#observation',place.description||place.desc||'');showPlaceActors(place.id)}};layer.append(button);eventItems.push({point,element:button,event,place,worldIconWidth});
   }renderPositions();
  }
  function focusPoint(item){if(!item||!vb)return false;vb=[item.point.x-vb[2]/2,item.point.y-vb[3]/2,vb[2],vb[3]];paintVB();layer.querySelectorAll('.npc-tag.chosen,.event-marker.chosen').forEach(el=>el.classList.remove('chosen'));item.element.classList.add('chosen');item.element.focus({preventScroll:true});return true;}
  function focusActor(actor){const item=actorItems.find(x=>x.actor===actor||x.actor.name===actor.name||x.actor.members?.includes(actor.name));return focusPoint(item);}
  function focusEvent(event){const item=eventItems.find(x=>x.event===event||(event.id&&x.event.id===event.id)||(x.event.title===event.title&&x.event.placeId===event.placeId));return focusPoint(item);}
- const resize=new ResizeObserver(renderPositions);resize.observe($('#mapmount'));presentation={mountActors,mountEvents,showPlaceActors,focusActor,focusEvent,renderPositions,pointSafe,readyMasks,get records(){return records},dispose(){generation++;scene.removeEventListener('pointerover',overXray);scene.removeEventListener('pointerout',outXray);scene.removeEventListener('click',clickXray,true);scene.removeEventListener('keydown',keyXray,true);clearActors();resize.disconnect();layer.remove();linkLayer.remove();footLayer.remove();for(const r of records)r.node.classList.remove('occluded')}};
+ const resize=new ResizeObserver(renderPositions);resize.observe($('#mapmount'));presentation={mountActors,mountEvents,showPlaceActors,focusActor,focusEvent,renderPositions,pointSafe,readyMasks,get records(){return records},dispose(){generation++;scene.removeEventListener('pointerover',overXray);scene.removeEventListener('pointerout',outXray);scene.removeEventListener('click',clickXray,true);scene.removeEventListener('keydown',keyXray,true);clearActors();resize.disconnect();layer.remove();footLayer.remove();for(const r of records)r.node.classList.remove('occluded')}};
  // Accessibility uses the same selection path as mouse/touch.
  scene.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.closest('[data-id]')){e.preventDefault();eventClick(e)}});
  return presentation;

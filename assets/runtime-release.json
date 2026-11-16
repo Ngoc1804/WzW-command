@@ -7,12 +7,12 @@
       "sha256": "3c792b2101c64059bc60601e35bd7581ea843f1e024305c62615a2380857ef40"
     },
     "templates-pack.js": {
-      "bytes": 963681,
-      "sha256": "ba5bf68beaa869d2f2e582f924a8601b36b849fe8f668adc11c2aa2f76201204"
+      "bytes": 968401,
+      "sha256": "9a4c4c1a74cbc8063b3e66c1db5a87879da7ad8563f8b6072261f490f9b3afae"
     },
     "bundle.js": {
-      "bytes": 4421132,
-      "sha256": "5410f04c2d2156a24ef52f04219170e7aaf6206e48978a0a3c108d039c9bf345"
+      "bytes": 4422747,
+      "sha256": "78fea0d3277bfa71f2e6c582ff75bc626bf275967fbcfb77058464002ebe53d6"
     }
   }
 }
