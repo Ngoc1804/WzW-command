@@ -18,8 +18,8 @@ Source rebuild, SVG/ID checks, MAP_DATA-first/routing and 147 shell/inventory ca
 
 - Use the exact 49 `type` IDs in W4's ROOM SEEDS. Existing inputs still work; furniture and corridorFinish fields are optional.
 - Loader must pin one verified distribution commit for shell.css, templates-pack.js and bundle.js. A new commit does not update old SHA-pinned snippets.
-- W4's human-readable Fixed IDs/free-region contract is ahead of the current resolver. For example, H2 `courtyard-1` and Hall `staff-room` are not native artwork IDs; resolver currently has only a small shortKeys table. Do not claim full compatibility with those IDs until aliases and scene-ID-to-anchor/region placement are implemented and tested, or Gemini uses native IDs.
-- `anchor`/relative region `position` are not yet handled by the contract/resolver as the complete W4 contract describes. Generated room interiors use stable local IDs and exact types; they do not need native Atlas room IDs.
+- Exact-ID audit of the user-attached W4 with arbitrary display names: 263 Fixed IDs checked, 57 resolve, 206 remain unresolved. H2 `courtyard-1` and Hall `staff-room` are supported; examples still missing include H1 `station-dock`/`school-gate`, Hall `filch-office` and many House/Express/Ministry IDs. See `docs/W4_COMPATIBILITY_AUDIT.json`. Do not claim full W4 compatibility or change existing native IDs to hide this gap. Add verified aliases or synchronize W4 before broad use.
+- Fixed local scene ID + `anchor` is still unresolved (tested scene-staff anchored to gf-staff); relative region `position` is not yet processed as the full W4 contract describes. Generated room interiors with local IDs and exact types pass the control case and do not need native Atlas room IDs.
 - AI Studio rendering itself needs an end-to-end check with the final pinned loader and actual Gemini MAP_DATA. GitHub browser tests establish runtime behavior, not AI Studio-specific embedding support.
 
 ## Release status
