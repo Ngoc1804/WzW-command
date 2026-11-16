@@ -3147,8 +3147,9 @@ function resolve(d){
    // W4 English room keys (e.g. "Kitchen") may resolve to Atlas canonical IDs.
    const english=candidates(p.id);if(english.length===1)return english[0];
    if(english.length>1)diagnostics.push('ambiguous-english-room-id:'+p.id);
-   // Never use a Vietnamese label to override an explicitly supplied identity.
-   if(!p.placeName)return null;
+   // A supplied English/W4 ID is authoritative even without an Atlas entry.
+   // Never replace it with a different ID via placeName or Vietnamese label.
+   return null;
   }
   const refs=[p.placeName,...(p.aliases||[]),...(!p.id?[p.name]:[])].filter(Boolean);
   const matches=registry.filter(x=>refs.some(ref=>[x.name,...(x.aliases||[])].filter(Boolean).some(n=>fold(n)===fold(ref))));
@@ -3202,12 +3203,12 @@ function resolve(d){
   else{
    // A translated/shortened Atlas reference is not evidence of a new RP room.
    // Newly established rooms require explicit rp: identity or construction intent.
-   if(registry.length&&!p.id?.startsWith('rp:')&&!p.isNewConstruction){
+   if(registry.length&&!p.id&&!p.isNewConstruction){
     unresolved.push(p);diagnostics.push('unverified-atlas-room:'+p.name);continue;
    }
    const duplicate=places.some(x=>p.id?x.id===p.id:key(x.name)===key(p.name));
    if(duplicate){unresolved.push(p);diagnostics.push('ambiguous-place:'+p.name);continue;}
-   const id=!registry.length&&p.id?p.id:p.id?.startsWith('rp:')?p.id:'rp:'+key(p.name);
+   const id=p.id||'rp:'+key(p.name);
    places.push({...p,id,desc:p.description});emitted.add(id);bindName(p.name,id);if(p.id)bindings[p.id]=id;
   }
  }

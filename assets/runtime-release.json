@@ -11,8 +11,8 @@
       "sha256": "ba5bf68beaa869d2f2e582f924a8601b36b849fe8f668adc11c2aa2f76201204"
     },
     "bundle.js": {
-      "bytes": 4328264,
-      "sha256": "f03697147e0209f40c016190c1f0f83c3bbd9d5d91c750ae18338aa868f7a1ec"
+      "bytes": 4328253,
+      "sha256": "d774c182206b63193324bf6a72cbee4ecf04055ef812592c2a4ffa503d5ed25c"
     }
   }
 }
