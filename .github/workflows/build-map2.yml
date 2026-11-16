@@ -1,7 +1,7 @@
 name: Build MAP 2 canonical sources
 on:
   push:
-    branches: [M2-P01-baseline-loader, DEMO-01]
+    branches: [DEMO-01]
   workflow_dispatch:
 permissions:
   contents: write

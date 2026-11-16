@@ -1,40 +1,43 @@
-# WZW MAP 2 — ATLAS COVERAGE & INTERIOR BASELINE
+# MAP 2 — Atlas Master synchronization (DEMO-01)
 
-> Applies to current `DEMO-01` source. The recovered `WZW_MAP2_ATLAS_GITHUB_MASTER.md` is a historical specification, not proof of canonical completeness. Current Atlas is illustrated RP architecture, not an exhaustive canon floor plan.
+**Executable source:** `assets/atlas.json`; **immutable design source:** `docs/WZW_MAP2_ATLAS_GITHUB_MASTER.md`. Master is not parsed at runtime; its historical Information Gate and auto-cluster-room rules are **not active**.
 
-## Exact data counts
+## Exact coverage
 
-| Category | Records |
+| Data | Count / status |
 |---|---:|
-| Fixed artwork (immutable) | 13 |
-| Native Fixed anchors | 348 |
-| Hogwarts & AU clusters (including World macro scopes) | 59 |
-| Hogwarts/AU room records | 285 |
-| World sites | 53 |
-| Previously defined World rooms | 64 |
-| Site-level World illustration records newly added | 41 |
-| Current World room/site records | 105 |
-| Generated/non-Fixed room+site records | 390 |
-| Approved functional recipe/layout families | 49 |
-| Approved size variants | 147 |
-| Rooms with direct description from recovered historical Master | 203 |
-| Rooms whose static descriptions are inferred from named function/recipe (NOT canon) | 187 |
+| Fixed artwork / native anchors | 13 / 348 — unchanged |
+| Generated Hogwarts/AU scopes/rooms | 56 / 285; native IDs and names preserved |
+| World macro scopes / sites / room-or-scene entries | 3 / 53 / 105 |
+| All Generated + World records | 390 |
+| Master room IDs matched to runtime | 285/285 |
+| Room descriptions previously identical to Master | 203 |
+| Additional room descriptions compacted from Master in this synchronization | 82 |
+| Master design notes attached to Hogwarts/AU rooms | 285/285 |
+| World site components mapped to Master | 67/67 (53 sites) |
+| Approved layout/recipe families and sizes | 49 × 3 = 147 |
+| Explicit Master recipe conflicts preserved for review | 7 |
 
-## What changed
+### Recipe disagreements (do not override reviewed artwork/functions automatically)
 
-All 390 non-Fixed room/site records have `type`, short `description`, `size:S|M|L`, `architecture:{floor,wall}`, and `interiorPlan` with verified native recipe and a sample of matching native asset IDs. Most existing Hogwarts room IDs are untouched; 41 locations which previously had no rooms now expose one **site-level map illustration** with ID ending `:site`. That is a marker/scene surface, NOT a claim that a canon-confirmed room/floor exists within the building. Existing 64 World rooms remain intact.
+| Room ID | Master recipe | Current renderer type |
+|---|---|---|
+| `DUNGEONS-N:05` | `BATHROOM` | `UTILITY_ROOM` |
+| `KITCHENS-N:04` | `BATHROOM` | `KITCHEN` |
+| `F1-N:05` | `TOWER_CLOCKWORK` | `STORAGE` |
+| `F6-N:02` | `PREFECTS_BATHROOM` | `PASSAGE_PROPS` |
+| `F6-S:04` | `TOWER_CLOCKWORK` | `STORAGE` |
+| `F7-N:03` | `TOWER_CLOCKWORK` | `STORAGE` |
+| `F8-N:01` | `HEADMASTER_OFFICE` | `PASSAGE_PROPS` |
 
-49 basic function-based fallback formulas in `assets/room-formulas.json` specify materials, room size profiles, prop families and furniture zones. When a matching approved SVG layout S/M/L exists, **the approved layout wins**; generated formulas are not permitted to replace it. New Custom spaces without approved artwork can reuse these compact formulas, native SVG assets, clear doorway padding and basic non-overlap placement.
+For those seven entries, `interiorPlan.masterRecipe` and `masterRecipeConflict` record the original Master source while `type` and `interiorPlan.recipe` retain existing runtime functions. Examples: a corridor remains a passage, a gear store remains storage, not an office/clock room. This is an intentional no-regression policy pending per-room approval.
 
-## Known limitations
+## World/AU and illustration integrity
 
-1. This is NOT the full Harry Potter universe or a definitive architectural canon map. Geography, room/floor counts and interiors for many story locations remain unspecified.
-2. Site-level World illustrations do not reconstruct an entire Manor, hotel, village, Quidditch stadium or hospital on their own.
-3. 187 descriptions are functional/illustrative, not independently verified passages from books or film.
-4. 13 Fixed artwork components and their internal furnishings are preserved, not regenerated from per-room formulas.
-5. Visual equivalence between procedural new rooms and approved HTML/SVG layouts is NOT certified. Formula output needs direct viewport comparison for the relevant new rooms, including S/M/L and mixed hallway cases.
-6. GitHub stores no campaign/story settings. Live activities, overhear summaries, actor tags, dialogue and quests come only from Gemini MAP_DATA.
+Every one of 67 World site components has an exact Master design note under `components[].masterDesign`; 53 sites are preserved. The 105 World records retain their canonical IDs and illustrative/conditional markers. **Site-level scene entries are illustrative, not confirmation of canonical interior rooms**. The 285 Hogwarts/AU rooms inherit exact Master design notes; 82 existing shorter/recipe-derived descriptions were replaced with the concise first descriptive sentence of the matching Master room row. No speculative rooms, actors or quests were created.
 
-## Validation
+Runtime layout priority remains **approved SVG S/M/L → functional recipe/formula → safe native fallback**. Atlas defaults never add a room absent from `MAP_DATA.places[]`, nor override explicit Gemini room content. Fixed SVGs and their furniture are not regenerated. User-visible text remains Gemini's Vietnamese responsibility.
 
-`tools/atlas.py` verifies all room IDs and formulas, `tests/canonical-sources.cjs` verifies counts, and `tools/check-id-links.py` verifies recipe/native asset IDs. Browser regression and a Google AI Studio Preview test are separate requirements; an automated build pass alone is not a visual acceptance of every site.
+## Validation scope
+
+`tools/atlas.py`, `tools/check-id-links.py`, `tests/canonical-sources.cjs` and browser regressions check IDs, recipes, layouts and loader. GitHub Actions success alone is **not** approval of every illustrated interior or a Google AI Studio live Preview. Previous generated verification JSON was removed; obtain fresh evidence from the latest CI run.
