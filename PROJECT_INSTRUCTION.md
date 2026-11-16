@@ -1,30 +1,23 @@
-# MAP 2 — PROJECT INSTRUCTIONS (STORY-NEUTRAL)
+# MAP 2 — ACTIVE PROJECT CONTRACT
 
-## Ownership and delivery
+## Ownership
+`Gemini RP → MAP_DATA 2.0.0 → GitHub renderer → Browser Preview`.
+Gemini supplies current RP facts, locations, actors, events and **Vietnamese display text**. Existing room IDs remain native English/W4/Atlas keys. GitHub renders accepted data only; it does not create RP actions, actors, quests, routes or translations. The map overview does not transfer knowledge to PC memory.
 
-`Gemini RP → MAP_DATA v2.0.0 → 13 Fixed / Atlas JSON / 49 approved layouts S/M/L / formula fallback → Browser Preview`.
+## Canonical sources
+- `examples/WIZAMAP_FIXED_UI.html`: approved Fixed/UI source; 13 Fixed artworks and their furniture/geometry are immutable.
+- `assets/atlas.json`: 59 scopes, 285 Hogwarts/AU rooms, 105 World room/site records, 53 World sites; Atlas enriches only rooms actually requested in MAP_DATA.
+- `assets/recipes.json` + `assets/layout-sizes.json`: 49 approved recipe families × S/M/L; matching approved art wins over procedural defaults.
+- `assets/room-formulas.json`: fallback for rooms without approved art. `assets/catalog.json`: native SVG/asset IDs; `assets/source/corridors.js`: 10 corridor geometries.
+- `src/{contract,props,resolver,draw,build,index}.js`: renderer source. `tools/rebuild.py` generates `dist/{shell.css,templates-pack.js,bundle.js}`.
+- `docs/ATLAS_COVERAGE_CURRENT.md`: current coverage and illustrative-vs-source limitations. Historical design snapshots remain in Git history, never an executable source.
+- `assets/FINAL_NOTICES.txt`: required third-party attribution; preserve.
 
-- **Gemini** chooses PC/NPC/quest/story facts, current date and locations, and supplies Vietnamese display strings. Technical Atlas IDs remain in English/native form. Map-wide activity overviews are permitted without applying a Player Information Gate; they do not transfer knowledge to narrative PC/NPC memory and must not reveal a quest solution.
-- **GitHub** renders accepted data, resolves native room IDs, controls wall/floor, 10 corridor geometry forms, 49 approved layout families, native assets, markers, zoom and the Inspector. GitHub does not generate RP facts or quests.
-- **Atlas Master**: `docs/WZW_MAP2_ATLAS_GITHUB_MASTER.md` is the intact recovered historical design specification; it is reference material, not an automatically parsed executable source.
-- **Active canonical source**: `assets/atlas.json` stores 285 Hogwarts/AU rooms, 105 World room/site records and 53 World sites, each room with descriptive/furnishing metadata. `assets/room-formulas.json` provides 49 functional fallback patterns. `docs/ATLAS_COVERAGE_CURRENT.md` discloses illustrated vs canon-confirmed details.
-- **Visuals**: `examples/WIZAMAP_FIXED_UI.html` is the canonical Fixed/UI source, `assets/recipes.json` and `assets/layout-sizes.json` are the approved 49 S/M/L interior design sources, `assets/catalog.json` contains native SVG and `assets/source/corridors.js` contains corridor geometry. 13 Fixed artworks and their furniture remain immutable.
-- **Runtime**: `src/contract.js`, `src/resolver.js`, `src/props.js`, `src/draw.js`, `src/build.js`, `src/index.js`, and the pinned `assets/runtime-release.json`. The HTML loader imports `dist/shell.css`, `dist/templates-pack.js`, and `dist/bundle.js`.
+## Runtime behavior
+Render the most specific existing Fixed map; otherwise use a requested Atlas/World/Custom scene. Existing IDs win over translated names; `places[].name` is Vietnamese presentation only. Preserve Fixed geometry, anchors, furniture and 6-step footprints. An outdoor NPC whose resolved point anchors inside a building uses `footstep:hidden`; do not generalize this rule to every outdoor NPC. Event rows take precedence over actor rows at the same place. Do not fabricate empty rooms or unverified aliases.
 
-## Interior build order
+## Story prompts
+`prompts/MAP_PROMPT_OUTLINE.md` is the **only canonical shared /MAP prompt**. Fill only `QUEST_DISTRIBUTION`, `MAP_QUEST_LIMIT`, `SPECIAL_ROOMS`, `ICON_MAPPING` for a specific RP; return the filled prompt in chat. Never commit story/campaign data or additional prompt variants here.
 
-1. **Approved layout first**: preserve all existing SVG, authored furniture positions, size and decor when the matching recipe and S/M/L reference art is available. Never replace reviewed artistry with an auto-grid.
-2. **Fallback formula second**: when no approved room artwork exists, use function-based assets, walls, floor, size and furniture zones from `room-formulas.json`. Place clusters by real function, keep door openings/travel lanes clear, avoid overlap. These are illustrative baselines, not canon-guaranteed décor.
-3. **Safe object fallback last**: use named native assets or validated vector shapes for missing objects. No synthetic magical effects or narrative event simulation.
-
-## Only reusable prompt in repository
-
-`prompts/MAP_PROMPT_OUTLINE.md` is the ONE English-language common prompt. It contains the template, layout and scope lists, NPC tag types, DATA contract, all map rules and three jsDelivr runtime links.
-
-For each story, fill **only** `QUEST_DISTRIBUTION`, `MAP_QUEST_LIMIT`, `SPECIAL_ROOMS`, `ICON_MAPPING`. Deliver the resulting `MAP_PROMPT_[STORY].md` to the user **inside the ChatGPT conversation**. Do not commit story-specific prompt data or generated story Markdown to GitHub. No Atlas Mini / standalone MAP_RULES / MAP_PROMPT on GitHub.
-
-## Build and test
-
-`python tools/rebuild.py` verifies atlas and existing art, builds runtime distribution and runs ID checks. The build does **not** generate story prompts. `node tests/canonical-sources.cjs`, `python tools/test_all.py` and `tests/loader.cjs` check structural, browser and loader behavior. GitHub Actions publishes only distribution assets, release manifest and build metrics. Update the common loader's SHA only AFTER the new distribution is published and verified.
-
-Do not change `main`. Never erase `assets/FINAL_NOTICES.txt`.
+## Maintenance / release
+`python tools/rebuild.py` → `node tests/canonical-sources.cjs` → `python tools/test_all.py`. Source edits require reproducible dist, all regressions passing and verified published release SHA. `python tools/verify-release.py` verifies the pinned jsDelivr commit actually contains the current dist, not just a matching manifest label. After CI publishes changed dist, pin the resulting build commit in `assets/runtime-release.json` and the three loader URLs, then verify again; never pin unpublished content. Keep `main` unchanged. Maintain `DEMO-01` and do not delete or modify old Git history.

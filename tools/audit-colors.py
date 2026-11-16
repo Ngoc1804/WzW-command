@@ -10,7 +10,8 @@ for id,a in json.load(open('assets/catalog.json')).items():
   status='REVIEW_INHERITANCE' if missing else 'REVIEW_BLACK' if black else 'EXPLICIT_PAINT'
   rows.append([id,a.get('name',id),status,len(shapes),missing,black,none,len(a.get('colorSlots',[]))])
  except Exception as e:rows.append([id,a.get('name',id),'PARSE_ERROR',0,0,0,0,0])
-with open('docs/ASSET_COLOR_AUDIT.csv','w') as f:
+Path('work').mkdir(exist_ok=True)
+with open('work/ASSET_COLOR_AUDIT.csv','w') as f:
  w=csv.writer(f,lineterminator="\n");w.writerow(['id','name','status','shapes','fill_unspecified','explicit_black','fill_none','color_slots']);w.writerows(rows)
 from collections import Counter
 print(dict(Counter(r[2] for r in rows)))
