@@ -13,7 +13,7 @@
 
 ## Interior build order
 
-1. **Approved layout first**: preserve all existing SVG, authored furniture positions, size and decor when the matching recipe and S/M/L reference art is available. Never replace reviewed artistry with an auto-grid.
+1. **Locked shell, furniture-only variation**: preserve existing floor/wall/door SVG, room dimensions and layer ordering. Keep authored furniture as the approved variant; functional rooms may use the ID-seeded group variants in `recipes.json`/`room-formulas.json`. Special rooms retain approved furniture/colors by default. Explicit MAP_DATA furniture/props overrides win. Never rotate/shear native artwork or change shell construction. Hogwarts corridor-only paint/texture follows paired levels in `assets/styles.json`; finishing never changes geometry/layer order. See `docs/FURNITURE_VARIANTS.md`.
 2. **Fallback formula second**: when no approved room artwork exists, use function-based assets, walls, floor, size and furniture zones from `room-formulas.json`. Place clusters by real function, keep door openings/travel lanes clear, avoid overlap. These are illustrative baselines, not canon-guaranteed décor.
 3. **Safe object fallback last**: use named native assets or validated vector shapes for missing objects. No synthetic magical effects or narrative event simulation.
 

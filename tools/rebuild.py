@@ -2,7 +2,7 @@
 from pathlib import Path
 import subprocess,sys,json,hashlib
 root=Path(__file__).resolve().parents[1]
-for name in ['atlas.py','check-approved-svg.py','build.py','asset-review.py','check-id-links.py']:
+for name in ['atlas.py','check-approved-svg.py','build.py','check-furniture-locks.py','asset-review.py','check-id-links.py']:
  subprocess.run([sys.executable,str(root/'tools'/name)],cwd=root,check=True)
  if name=='build.py':
   manifest=root/'assets/runtime-release.json';release=json.loads(manifest.read_text())

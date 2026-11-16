@@ -55,12 +55,13 @@ function visualAsset(prop){
 // Furniture stays upright. Only uniform scale/translation is used; no wall shear.
 function layoutSize(value){return ({small:'S',medium:'M',large:'L',S:'S',M:'M',L:'L'})[value]||'M';}
 function furnitureLayout(place){
- const inventory=place.inventory||composeRoom(place),art=(typeof LAYOUT_SIZES!=='undefined'&&LAYOUT_SIZES[inventory.recipeId]?.[layoutSize(place.size)]);
+ const inventory=place.inventory||composeRoom(place),art=furnitureReference((typeof LAYOUT_SIZES!=='undefined'&&LAYOUT_SIZES[inventory.recipeId]?.[layoutSize(place.size)]),inventory.furnishing,layoutSize(place.size));
  const nodes=new Map((art?.objects||[]).map(x=>[x.id,x]));const objects=[],extra=[];
  const north=art?.source==='FINAL'?[]:art?.objects.filter(o=>o.bounds[1]+o.bounds[3]<5&&!/portrait|blackboard|banner|crest/.test(o.item))||[];
  const band=north.length?105:20;
  for(const item of inventory.objects){
-  const node=nodes.get(item.id);
+  let node=nodes.get(item.id);
+  if(node&&item.item!==node.item&&CATALOG[item.item]?.svg){const asset=CATALOG[item.item],vb=furnitureViewBox(asset),[x,y,w,h]=node.bounds;node={...node,item:item.item,svg:`<svg x="${x}" y="${y}" width="${w}" height="${h}" viewBox="${vb.join(' ')}">${namespaceArt(asset.svg.replace(/^<svg\b[^>]*>/,'').replace(/<\/svg>\s*$/,''),'swap-'+furnitureHash(item.id)+'-')}</svg>`};}
   if(!node){extra.push(item);continue;}
   if(item.count>1)extra.push({...item,id:item.id+':remaining',count:item.count-1});
   const [x,y,w,h]=node.bounds;let magnify=1,dx=0,dy=band;
@@ -97,18 +98,20 @@ function formulaZone(prop,index,recipe){
  return zones[index%zones.length];
 }
 function drawFurniture(place,prefix,room,layout,door){
+ layout=arrangeFurniture(place,room,layout,door);
+ const choice=layout.inventory.furnishing,painted=choice&&(choice.style!=='approved'||Object.keys(choice.materials).length),furniturePrefix=painted?prefix+'finish-':prefix;
  const pad={left:14,right:14,top:14,bottom:44};
  if(door){const ln=door.ln;if(ln.axis==='H')pad[Math.abs(ln.at-room.y)<.1?'top':'bottom']=52;else pad[Math.abs(ln.at-room.x)<.1?'left':'right']=52;}
  const circle=room.circular;const usableW=circle?room.w*.68:room.w,usableH=circle?room.h*.68:room.h;
  const native=layout.art?.source==='APPROVED_DECOR';const scale=native?1:Math.min((usableW-pad.left-pad.right)/layout.width,(usableH-pad.top-pad.bottom)/layout.height,.95);
  const x=native?room.x:room.x+(room.w-usableW)/2+pad.left+(usableW-pad.left-pad.right-layout.width*scale)/2;
  const y=native?room.y:room.y+(room.h-usableH)/2+pad.top+(usableH-pad.top-pad.bottom-layout.height*scale)/2;
- let markup=layout.art?namespaceArt(layout.art.defs,prefix):'';if(native)markup+=`<g data-approved-decor="true" transform="translate(${room.x} ${room.y})">${namespaceArt(layout.art.decorSvg||'',prefix)}</g>`;const footprints=[];
+ let markup=layout.art?namespaceArt(layout.art.defs,prefix):'';if(painted&&layout.art)markup+=namespaceArt(furniturePaint(layout.art.defs,choice),furniturePrefix);if(native)markup+=`<g data-approved-decor="true" transform="translate(${room.x} ${room.y})">${namespaceArt(layout.art.decorSvg||'',prefix)}</g>`;const footprints=[];
  for(const o of layout.objects){
   const [bx,by,bw,bh]=o.bounds;const box=[x+bx*scale,y+by*scale,bw*scale,bh*scale];
   const asset=CATALOG[o.node.item];
-  footprints.push({id:o.item.id,name:o.item.name,item:o.node.item,bounds:box,blocksActor:largeFurniture(o.node.item,o.item.name,asset),surface:asset?.surface});
-  markup+=`<g data-instance="${escapeXML(o.item.id)}" data-state="${escapeXML(o.item.state||'intact')}" data-footprint="${box.join(' ')}" pointer-events="none" transform="translate(${x} ${y}) scale(${scale})"><g transform="translate(${o.dx} ${o.dy}) scale(${o.magnify})">${namespaceArt(o.node.svg,prefix)}</g></g>`;
+  footprints.push({id:o.item.id,name:o.item.name,item:o.node.item,bounds:box,blocksActor:largeFurniture(o.node.item,o.item.name,asset),surface:asset?.surface,supportBounds:furnitureSupportBounds(asset,box)});
+  markup+=`<g data-instance="${escapeXML(o.item.id)}" data-state="${escapeXML(o.item.state||'intact')}" data-footprint="${box.join(' ')}" pointer-events="none" transform="translate(${x} ${y}) scale(${scale})"><g transform="translate(${o.dx} ${o.dy}) scale(${o.magnify})">${namespaceArt(furniturePaint(o.node.svg,choice),furniturePrefix)}</g></g>`;
  }
  for(const o of layout.objects)if(o.item.state&&o.item.state!=='intact'){const b=footprints.find(f=>f.id===o.item.id)?.bounds;if(b)markup+=`<g pointer-events="none"><title>${escapeXML(o.item.name+' · '+o.item.state)}</title><path d="M${b[0]} ${b[1]}l8 8m-8 0l8 -8" stroke="#783d45" stroke-width="2"/></g>`;}
  const extras=layout.art?layout.extra:layout.extra.map((p,i)=>({...p,zone:p.zone||formulaZone(p,i,layout.inventory.recipeId)}));
@@ -122,7 +125,7 @@ function largeFurniture(item,name,asset){
 }
 function placeExtraProps(place,prefix,room,props,door,base){
  const footprints=[],occupied=base.map(f=>f.bounds),diagnostics=place.inventory.diagnostics;
- let svg='';const candidates=[];
+ let svg='';const candidates=[],surfaceOccupied=base.filter(f=>CATALOG[f.item]?.mount==='surface'||CATALOG[f.item]?.placement?.role==='detail').map(f=>f.bounds);
  for(let y=room.y+18;y<room.y+room.h-25;y+=28)for(let x=room.x+18;x<room.x+room.w-25;x+=28)candidates.push({x,y});
  const overlap=(a,b)=>a[0]<b[0]+b[2]+4&&a[0]+a[2]+4>b[0]&&a[1]<b[1]+b[3]+4&&a[1]+a[3]+4>b[1];
  const valid=box=>box[0]>=room.x+26&&box[1]>=room.y+8&&box[0]+box[2]<=room.x+room.w-8&&box[1]+box[3]<=room.y+room.h-46&&(!room.circular||[[0,0],[1,0],[0,1],[1,1]].every(([u,v])=>Math.hypot(box[0]+box[2]*u-room.x-room.w/2,box[1]+box[3]*v-room.y-room.h/2)<room.w/2-8))&&(!room.sourceFloor||[[0,0],[1,0],[0,1],[1,1]].every(([u,v])=>room.sourceFloor(box[0]+box[2]*u,box[1]+box[3]*v)))&&(!door||!overlap(box,door.ln.axis==='H'?[door.at-door.width/2-8,door.ln.at-26,door.width+16,52]:[door.ln.at-26,door.at-door.width/2-8,52,door.width+16]));
@@ -130,22 +133,29 @@ function placeExtraProps(place,prefix,room,props,door,base){
   const matches=Object.values(CATALOG).filter(a=>key(a.name)===key(prop.name)||a.aliases?.some(n=>key(n)===key(prop.name)));
   const asset=CATALOG[prop.item||propAliases[key(prop.name)]]||(matches.length===1?matches[0]:null)||visualAsset(prop);
   if(prop.visual&&!visualAsset(prop))diagnostics.push('invalid-visual:'+prop.name);
-  const ref=asset?.occupancy,vb=ref?[ref.x,ref.y,ref.width,ref.height]:asset?.viewBox||[0,0,40,40];
-  const mount=prop.mount==='wall'||asset?.mount==='wall'?'wall':'floor';
+  const vb=furnitureViewBox(asset);
+  const mount=prop.supportId||prop.mount==='surface'||asset?.mount==='surface'?'surface':prop.mount==='wall'||asset?.mount==='wall'?'wall':'floor';
   const desired=zonePoint([room.x,room.y,room.w,room.h],prop.zone);
   const count=Number.isInteger(prop.count)&&prop.count>=0?prop.count:1;
   let drawn=0;
   for(let n=0;n<count;n++){
-   let width=largeFurniture(prop.item||'',prop.name,asset)?48:22,height=width*Math.min(2,Math.max(.3,vb[3]/Math.max(vb[2],1)));
-   let box;
-   {
+   let width=Number.isFinite(prop.width)?Math.max(12,Math.min(220,prop.width)):largeFurniture(prop.item||'',prop.name,asset)?48:22,height=width*Math.min(2,Math.max(.3,vb[3]/Math.max(vb[2],1)));
+   let box,support;
+   if(mount==='surface'){
+    const supports=[...base,...footprints].filter(f=>f.supportBounds&&(!prop.supportId||f.id===prop.supportId||f.id.startsWith(prop.supportId+':'))).sort((a,b)=>Math.hypot(a.bounds[0]-desired.x,a.bounds[1]-desired.y)-Math.hypot(b.bounds[0]-desired.x,b.bounds[1]-desired.y));
+    for(const f of supports){const [x,y,w,h]=f.supportBounds;if(width>w-4||height>h-4)continue;
+     for(let sy=y+2;sy+height<=y+h-2&&!box;sy+=8)for(let sx=x+2;sx+width<=x+w-2;sx+=8){const b=[sx,sy,width,height];if(!surfaceOccupied.some(o=>overlap(b,o))){box=b;support=f;break;}}
+     if(box)break;
+    }
+    if(!box)break;surfaceOccupied.push(box);
+   }else {
     const ordered=[...candidates].sort((a,b)=>Math.hypot(a.x-desired.x,a.y-desired.y)-Math.hypot(b.x-desired.x,b.y-desired.y));
     const point=ordered.find(p=>{const b=[p.x,p.y,width,height];return valid(b)&&!occupied.some(o=>overlap(b,o))&&(mount!=='wall'||Math.min(p.x-room.x,room.x+room.w-p.x,p.y-room.y,room.y+room.h-p.y)<45);});
     if(!point)break;box=[point.x,point.y,width,height];
    }
-   occupied.push(box);const id=prop.id+':'+n;
-   footprints.push({id,name:prop.name,item:prop.item,bounds:box,blocksActor:mount==='floor'&&largeFurniture(prop.item||'',prop.name,asset),surface:asset?.surface});
-   if(asset&&!prop.informationOnly)svg+=`<svg data-rp-instance="${escapeXML(id)}" data-state="${escapeXML(prop.state||'intact')}" pointer-events="none" x="${box[0]}" y="${box[1]}" width="${box[2]}" height="${box[3]}" viewBox="${vb.join(' ')}" overflow="visible"><title>${escapeXML(prop.name)}</title>${namespaceArt(asset.svg.replace(/^<svg\b[^>]*>/,'').replace(/<\/svg>\s*$/,''),prefix+'extra'+i+'-'+n+'-')}</svg>`;
+   if(mount!=='surface')occupied.push(box);const id=prop.id+':'+n;
+   footprints.push({id,name:prop.name,item:prop.item,bounds:box,blocksActor:mount==='floor'&&largeFurniture(prop.item||'',prop.name,asset),surface:asset?.surface,supportId:support?.id,supportBounds:furnitureSupportBounds(asset,box)});
+   if(asset&&!prop.informationOnly)svg+=`<svg data-rp-instance="${escapeXML(id)}" data-state="${escapeXML(prop.state||'intact')}" pointer-events="none" x="${box[0]}" y="${box[1]}" width="${box[2]}" height="${box[3]}" viewBox="${vb.join(' ')}" overflow="visible"><title>${escapeXML(prop.name)}</title>${namespaceArt(furniturePaint(asset.svg.replace(/^<svg\b[^>]*>/,'').replace(/<\/svg>\s*$/,''),place.inventory.furnishing),prefix+'extra'+i+'-'+n+'-')}</svg>`;
    else svg+=`<g data-prop-fallback="true" pointer-events="none"><path d="M${box[0]+11} ${box[1]}l11 11 -11 11 -11 -11Z" fill="#d8c6a6" stroke="#8d7658"/><title>${escapeXML(prop.name)}</title></g>`;
    drawn++;
   }
