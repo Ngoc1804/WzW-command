@@ -62,7 +62,7 @@ body.motion-off #mapmount *{animation-play-state:paused!important}#mapmount .tre
 </svg>
 
 
- VỊ TRÍ</div><h2 id="place-title"></h2><div class="area" id="place-area"></div><div class="context-location" id="context-location" hidden></div><div class="ornament">❧</div></div><section><h3><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24">
+ <span id="area-heading">Khu vực</span></div><h2 id="place-title"></h2><div class="area" id="place-area"></div><div class="context-location" id="context-location" hidden></div><div class="ornament">❧</div></div><section><h3><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24">
 <path d="M15 12h-5"></path>
 <path d="M15 8h-5"></path>
 <path d="M19 17V5a2 2 0 0 0-2-2H4"></path>
@@ -526,9 +526,9 @@ const ZOOM_MIN=1;
 function zoom(f){if(!vb||!originalVB||!Number.isFinite(f)||f<=0)return;const current=originalVB[2]/vb[2],next=Math.max(ZOOM_MIN,current/f);if(!Number.isFinite(next))return;const ratio=current/next;vb=[vb[0]+vb[2]*(1-ratio)/2,vb[1]+vb[3]*(1-ratio)/2,vb[2]*ratio,vb[3]*ratio];paintVB()}
 function getPoint(){if(!svg)return null;const r=svg.getBoundingClientRect();if(!r.width||!r.height)return null;const ratio=Math.min(r.width/vb[2],r.height/vb[3]);const w=vb[2]*ratio,h=vb[3]*ratio;return {r,left:r.left+(r.width-w)/2,top:r.top+(r.height-h)/2,k:ratio}}
 function showActorDetails(actor,place){
- if(typeof inspect==='function'&&sceneData)inspect(place);
+ if(typeof inspect==='function'&&sceneData){inspect(place,'actor',actor);const layout=$('.layout');if(matchMedia('(max-width:720px)').matches&&layout){layout.classList.add('drawer-open');$('#drawer-toggle')?.setAttribute('aria-expanded','true');}return;}
  const spot=place?.name||actor.placeName||actor.placeId||'';
- const location=$('#context-location');if(location){location.textContent=[spot,actor.name].filter(Boolean).join(' · ');location.hidden=false;}
+ put('#place-title',actor.name);put('#place-area',spot);const location=$('#context-location');if(location){location.textContent='';location.hidden=true;}const actors=$('#actors');actors.replaceChildren();if(!actor.isPC){const row=actorTag(actor,true);row.onclick=()=>showActorDetails(actor,place);actors.append(row);}
  put('#drawer-name',spot||actor.name||'Vị trí');
  put('#activity',typeof shortRP==='function'?shortRP(actor.activity||actor.summary||place?.overhear,'Không có hoạt động gì đáng chú ý.'):actor.activity||actor.summary||place?.overhear||'');
  put('#observation',typeof shortRP==='function'?shortRP(actor.observation||place?.description||place?.desc,'Không gian yên tĩnh, không có gì đặc biệt.'):actor.observation||place?.desc||'');
@@ -829,7 +829,7 @@ async function prepareTemplateUI(){
    const worldIconWidth=Math.min(42,Math.max(20,Math.min(originalVB[2],originalVB[3])*.043));
    const blockers=[...actorItems.map(actorLabelFootprint),...eventItems.map(item=>markerFootprint(item.point,item.worldIconWidth,item.worldIconWidth*36/32,'event'))];
    point=relativeMarkerPoint(point,worldBox(node),worldIconWidth,worldIconWidth*36/32,'event',blockers,['near','around'].includes(event.relation)&&['h1','h2','village-static','diagon-knockturn'].includes(activeId)?p=>pointSafe(p.x,p.y,4):null).point;
-   button.onclick=()=>{layer.querySelectorAll('.event-marker').forEach(b=>b.classList.remove('chosen'));button.classList.add('chosen');if(typeof inspect==='function'&&sceneData){inspect(place);const c=$('#context-location');if(c){c.textContent=place.name+' · '+event.title;c.hidden=false;}put('#observation',typeof shortRP==='function'?shortRP(event.detail||place.description,'Có điều đáng chú ý tại đây.'):event.detail||'');}else{put('#place-title',event.title||'Đầu mối');put('#observation',event.detail||'')}};layer.append(button);eventItems.push({point,element:button,event,place,worldIconWidth});
+   button.onclick=()=>{layer.querySelectorAll('.event-marker').forEach(b=>b.classList.remove('chosen'));button.classList.add('chosen');if(typeof showEventDetails==='function'&&sceneData){showEventDetails(event,place);}else{put('#place-title',event.title||'Đầu mối');put('#place-area',place.name);put('#activity',event.detail||place.overhear||'');put('#observation',place.description||place.desc||'');showPlaceActors(place.id)}};layer.append(button);eventItems.push({point,element:button,event,place,worldIconWidth});
   }renderPositions();
  }
  function focusPoint(item){if(!item||!vb)return false;vb=[item.point.x-vb[2]/2,item.point.y-vb[3]/2,vb[2],vb[3]];paintVB();layer.querySelectorAll('.npc-tag.chosen,.event-marker.chosen').forEach(el=>el.classList.remove('chosen'));item.element.classList.add('chosen');item.element.focus({preventScroll:true});return true;}

@@ -27,24 +27,30 @@ function inferFixedRelation(entity,places){
 }
 function shortRP(value,fallback=''){const s=String(value||'').replace(/\s+/g,' ').trim();return (s||fallback).split(/\s+/).slice(0,19).join(' ');}
 function putContextLocation(value){const el=$('#context-location');if(el){el.textContent=value||'';el.hidden=!value;}}
-function setAreaIdentity(){const parts=String(sceneData?.meta?.areaName||'').split(/\s*[·•]\s*/).filter(Boolean);put('#place-title',parts[0]||'Khu vực hiện tại');put('#place-area',parts.length>1?'· '+parts.slice(1).join(' · '):'');}
-function inspect(place){
- selectedMapPlace=place||null;setAreaIdentity();putContextLocation(place?.name||'');
- put('#drawer-name',place?.name||'Vị trí');
- inspectorText('#activity',place?shortRP(place.overhear,fallbackHear):idleHint,!place);
- inspectorText('#observation',place?shortRP(place.description||place.desc,fallbackObserve):idleHint,!place);
+function setAreaIdentity(title='',room=''){
+ put('#area-heading',sceneData?.meta?.areaName||'Khu vực hiện tại');
+ put('#place-title',title);put('#place-area',room);putContextLocation('');
+}
+function inspect(place,kind='room',entity=null){
+ selectedMapPlace=place||null;
+ const title=kind==='actor'?entity?.name:kind==='event'?entity?.title:place?.name;
+ setAreaIdentity(title||'',place&&kind!=='room'?place.name:'');
+ put('#drawer-name',title||sceneData?.meta?.areaName||'Khu vực');
+ inspectorText('#activity',place?shortRP(kind==='actor'?entity?.activity||entity?.summary||place.overhear:kind==='event'?entity?.detail||place.overhear:place.overhear,fallbackHear):idleHint,!place);
+ inspectorText('#observation',place?shortRP(kind==='actor'?entity?.observation||place.description||place.desc:place.description||place.desc,fallbackObserve):idleHint,!place);
  const list=$('#actors');list.replaceChildren();
  if(!place)return;
- for(const a of groupRoomActors(sceneData.actors).filter(a=>!a.isPC&&a.placeId===place.id)){
-  const row=actorTag(a,true);row.onclick=()=>showActorDetails(a,place);list.append(row);
- }
+ if(matchMedia('(max-width:720px)').matches){$('.layout')?.classList.add('drawer-open');$('#drawer-toggle')?.setAttribute('aria-expanded','true');}
+ const actors=kind==='actor'?[entity]:groupRoomActors(sceneData.actors).filter(a=>!a.isPC&&a.placeId===place.id);
+ for(const a of actors){if(!a||a.isPC)continue;const row=actorTag(a,true);row.onclick=()=>showActorDetails(a,place);list.append(row);}
 }
+function showEventDetails(event,place){inspect(place,'event',event);}
 function renderContents(scene){const list=$('#quests');list.replaceChildren();const entries=[],eventLocations=new Set();
  for(const e of sceneData.events){const place=scene.exact(e.placeId||e.placeName);if(!place)continue;eventLocations.add(place.id);entries.push({type:'event',value:e,place,title:e.title,summary:shortRP(e.detail,'Có điều thú vị ở đây.').split(/\s+/).slice(0,10).join(' ')});}
  for(const a of sceneData.actors){if(a.isPC||a.unresolvedAnchor)continue;const place=scene.exact(a.placeId||a.placeName);if(!place||eventLocations.has(place.id))continue;entries.push({type:'actor',value:a,place,title:a.name,summary:shortRP(a.activity||a.summary||a.observation,'Có người ở khu vực này.').split(/\s+/).slice(0,10).join(' ')});}
  put('#hintcount',String(entries.length));
  for(const entry of entries){const row=document.createElement('button');row.type='button';row.className='event-row';const name=document.createElement('strong');name.textContent=entry.title;const subtitle=document.createElement('em');subtitle.textContent=entry.summary;row.append(name,subtitle);row.title=entry.title+' · '+entry.summary;
- row.onclick=()=>{inspect(entry.place);if(entry.type==='actor'){showActorDetails(entry.value,entry.place);presentation?.focusActor(entry.value);}else{putContextLocation(entry.place.name+' · '+entry.value.title);put('#observation',shortRP(entry.value.detail||entry.place.description,fallbackObserve));presentation?.focusEvent(entry.value);}const layout=$('.layout');if(matchMedia('(max-width:720px)').matches&&layout){layout.classList.add('drawer-open');$('#drawer-toggle')?.setAttribute('aria-expanded','true');}};list.append(row);}
+ row.onclick=()=>{if(entry.type==='actor'){showActorDetails(entry.value,entry.place);presentation?.focusActor(entry.value);}else{showEventDetails(entry.value,entry.place);presentation?.focusEvent(entry.value);}const layout=$('.layout');if(matchMedia('(max-width:720px)').matches&&layout){layout.classList.add('drawer-open');$('#drawer-toggle')?.setAttribute('aria-expanded','true');}};list.append(row);}
 }
 async function renderInput(input){const renderStart=performance.now();root.parentElement.querySelectorAll('[data-rp-detail]').forEach(e=>e.remove());sceneData=normalize(input);const d=sceneData;
  if(d.fatal){

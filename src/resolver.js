@@ -38,14 +38,17 @@ function resolve(d){
    if(focus.length===1)bindings[d.pcPlace]=focus[0].id;
   }
  }
+ // Stable W4 keys live in the resolver; Atlas and native artwork IDs stay unchanged.
+ const shortKeys={h1:{quidditch:'region:extra:4','black-lake':'region-3','hagrid-hut':'region:extra:5'},'F5-N':{'hogwarts-library':'F5-N:01'}}[d.atlasAnchor]||{};
  const exact=(ref,region=d.region)=>{
   if(!ref)return null;
   const bound=bindings[ref];if(bound)return places.find(p=>p.id===bound)||null;
   if(worldSite){const r=worldRef(ref),hits=places.filter(p=>fold(p.name)===r.label&&(!r.level||p.level===r.level));if(hits.length===1)return hits[0];}
   const byId=places.filter(p=>p.id===ref);if(byId.length===1)return byId[0];
+  const shortId=shortKeys[key(ref)];if(shortId)return places.find(p=>p.id===shortId)||null;
   // Preserve existing strict shop/room bindings; fuzzy tolerance is for outdoor overview owners only.
   if(source&&!['h1','h2'].includes(fixedId)){
-   const canonical=key(ref),hits=places.filter(p=>key(p.name)===canonical||p.aliases?.some(a=>key(a)===canonical)||ATLAS.fixed[fixedId]?.places.find(x=>x.id===p.id)?.aliases?.some(a=>key(a)===canonical));
+   const canonical=fold(ref),hits=places.filter(p=>fold(p.name)===canonical||p.aliases?.some(a=>fold(a)===canonical)||ATLAS.fixed[fixedId]?.places.find(x=>x.id===p.id)?.aliases?.some(a=>fold(a)===canonical));
    if(hits.length>1&&fixedId==='diagon-knockturn'&&['diagon','knockturn'].includes(region)){const scoped=hits.filter(p=>p.id.startsWith(region==='diagon'?'da-':'ka-'));return scoped.length===1?scoped[0]:null;}
    return hits.length===1?hits[0]:null;
   }
@@ -70,7 +73,7 @@ function resolve(d){
   if(source||sandbox)return null;
   const candidates=ref=>registry.filter(x=>[x.name,...(x.aliases||[])].filter(Boolean).some(n=>fold(n)===fold(ref)));
   if(p.id){
-   const native=registry.filter(x=>x.id===p.id);if(native.length===1)return native[0];
+   const native=registry.filter(x=>x.id===(shortKeys[key(p.id)]||p.id));if(native.length===1)return native[0];
    // W4 English room keys (e.g. "Kitchen") may resolve to Atlas canonical IDs.
    const english=candidates(p.id);if(english.length===1)return english[0];
    if(english.length>1)diagnostics.push('ambiguous-english-room-id:'+p.id);
@@ -85,7 +88,7 @@ function resolve(d){
   return null;
  };
  const locate=p=>{
-  if(p.id){const hit=places.find(x=>x.id===p.id);if(hit)return hit;}
+  if(p.id){const hit=source?exact(p.id,p.region||d.region):places.find(x=>x.id===p.id);if(hit)return hit;}
   if(!source&&!sandbox){
    const native=catalogPlace(p);if(native)return native;
    // A declared English/native key must never fall back to another room's Vietnamese name.

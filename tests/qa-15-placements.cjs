@@ -24,7 +24,7 @@ const indoor=[
 const cases=[...fixed.map(x=>({kind:'Fixed',label:x[0],anchor:x[1],placeId:x[2],relation:x[3],spot:x[4]})),...indoor.map(x=>({kind:'Indoor',label:x[0],anchor:x[1],placeId:x[2],relation:x[3],spot:x[4]}))];
 function payload(c){
  const npc=Array.from({length:3},(_,i)=>({name:'NPC '+(i+1)+' '+c.label,placeId:c.placeId,relation:c.relation,spot:c.spot,tagType:'gryffindor',activity:'Đang trò chuyện và hoạt động trong khu vực.'}));
- const events=Array.from({length:2},(_,i)=>({id:c.label+'-event-'+i,title:'Sự kiện '+(i+1)+' '+c.label,placeId:c.placeId,relation:c.relation,hidden:!!i,detail:'Có một cơ hội khám phá hợp lệ ở đây.'}));
+ const events=Array.from({length:3},(_,i)=>({id:c.label+'-event-'+i,title:'Sự kiện '+(i+1)+' '+c.label,placeId:c.placeId,relation:c.relation,hidden:!!i,detail:'Có một cơ hội khám phá hợp lệ ở đây.'}));
  return{schemaVersion:'2.0.0',atlasAnchor:c.anchor,meta:{date:'10/10/1992',time:'15:30',areaName:c.label+' · Kiểm thử',quote:'Bản đồ kiểm tra tương tác.'},pcPlace:c.placeId,pcSpot:c.spot,places:c.kind==='Indoor'?[(()=>{const p=ATLAS.clusters[c.anchor].rooms.find(x=>x.id===c.placeId);return{id:p.id,name:p.name,type:p.type,size:p.size||'M'};})()]:[],actors:[{name:'PC',isPC:true,placeId:c.placeId,relation:c.relation,spot:c.spot,tagType:'gryffindor'},...npc],events};
 }
 function reportRects(rects){
@@ -56,10 +56,10 @@ function reportRects(rects){
    row.canonicalId=details.canonicalId;row.tags=details.tagCount;row.events=details.eventCount;row.overlaps=reportRects(details.rects);
    row.idle=details.sidebarNPC===''&&details.hear==='Đi khám phá nào'&&details.observe==='Đi khám phá nào';
    row.unresolved=details.unresolved;
-   row.pass=details.status==='ready'&&!!details.canonicalId&&details.tagCount===4&&details.eventCount===2&&row.overlaps.length===0&&row.idle&&row.unresolved===0;
+   row.pass=details.status==='ready'&&!!details.canonicalId&&details.tagCount===4&&details.eventCount===3&&row.overlaps.length===0&&row.idle&&row.unresolved===0;
    row.errors=[];
    if(details.tagCount!==4)row.errors.push('tags '+details.tagCount+'/4');
-   if(details.eventCount!==2)row.errors.push('events '+details.eventCount+'/2');
+   if(details.eventCount!==3)row.errors.push('events '+details.eventCount+'/3');
    if(row.overlaps.length)row.errors.push('overlap '+JSON.stringify(row.overlaps));
    if(!row.idle)row.errors.push('idle inspector');
    if(!details.canonicalId)row.errors.push('unresolved place');
