@@ -115,7 +115,7 @@ function resolve(d){
    }
    const duplicate=places.some(x=>key(x.name)===key(p.name)||p.id&&x.id===p.id);
    if(duplicate){unresolved.push(p);diagnostics.push('ambiguous-place:'+p.name);continue;}
-   const id=p.id?.startsWith('rp:')?p.id:'rp:'+key(p.name);
+   const id=!registry.length&&p.id?p.id:p.id?.startsWith('rp:')?p.id:'rp:'+key(p.name);
    places.push({...p,id,desc:p.description});emitted.add(id);bindings[p.name]=id;if(p.id)bindings[p.id]=id;
   }
  }
