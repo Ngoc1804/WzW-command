@@ -6,5 +6,9 @@ const native=Object.values(data.clusters).flatMap(c=>c.rooms);
 const sites=Object.values(data.clusters).flatMap(c=>c.sites||[]);
 assert.equal(native.filter(r=>r.interiorPlan?.masterDesign).length,285,'all 285 rooms reference Master design');
 assert.equal(sites.reduce((n,s)=>n+(s.components||[]).filter(c=>c.masterDesign).length,0),67,'all World site components reference Master design');
-assert.equal(native.filter(r=>r.interiorPlan?.masterRecipeConflict).length,7,'seven explicit Master recipe conflicts remain identified');
+const approved={"DUNGEONS-N:05":"UTILITY_ROOM","KITCHENS-N:04":"KITCHEN","F1-N:05":"STORAGE","F6-N:02":"PASSAGE_PROPS","F6-S:04":"STORAGE","F7-N:03":"STORAGE","F8-N:01":"PASSAGE_PROPS"};
+assert.equal(native.filter(r=>r.interiorPlan?.masterRecipeConflict).length,0,'no unresolved Master recipe conflicts');
+assert.equal(native.filter(r=>r.interiorPlan?.recipeDecision==='runtime-approved').length,7,'seven runtime-approved recipe decisions');
+for(const [id,recipe] of Object.entries(approved)){const room=native.find(r=>r.id===id);assert(room,'missing approved room '+id);assert.equal(room.type,recipe,id+' type');assert.equal(room.interiorPlan.recipe,recipe,id+' active recipe');assert.equal(room.interiorPlan.recipeDecision,'runtime-approved',id+' decision');}
+console.log('PASS seven locked runtime recipes; immutable Master provenance retained');
 console.log('PASS Master-aligned atlas IDs and design notes');

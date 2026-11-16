@@ -16,11 +16,11 @@
 | Master design notes attached to Hogwarts/AU rooms | 285/285 |
 | World site components mapped to Master | 67/67 (53 sites) |
 | Approved layout/recipe families and sizes | 49 × 3 = 147 |
-| Explicit Master recipe conflicts preserved for review | 7 |
+| Legacy Master recipe differences resolved in favor of running recipes | 7/7 |
 
-### Recipe disagreements (do not override reviewed artwork/functions automatically)
+### Recipe decisions (runtime recipes approved; Master retained as historical provenance)
 
-| Room ID | Master recipe | Current renderer type |
+| Room ID | Original Master recipe | **Locked runtime recipe** |
 |---|---|---|
 | `DUNGEONS-N:05` | `BATHROOM` | `UTILITY_ROOM` |
 | `KITCHENS-N:04` | `BATHROOM` | `KITCHEN` |
@@ -30,7 +30,7 @@
 | `F7-N:03` | `TOWER_CLOCKWORK` | `STORAGE` |
 | `F8-N:01` | `HEADMASTER_OFFICE` | `PASSAGE_PROPS` |
 
-For those seven entries, `interiorPlan.masterRecipe` and `masterRecipeConflict` record the original Master source while `type` and `interiorPlan.recipe` retain existing runtime functions. Examples: a corridor remains a passage, a gear store remains storage, not an office/clock room. This is an intentional no-regression policy pending per-room approval.
+**Approved:** the seven listed rooms use only `type` and `interiorPlan.recipe` from the running renderer. `interiorPlan.recipeDecision:runtime-approved` locks the decision. `masterRecipe` remains as historical, non-executable provenance from the immutable Master; `masterRecipeConflict` is removed. A corridor remains `PASSAGE_PROPS`, a gear store remains `STORAGE`. No pending recipe decision.
 
 ## World/AU and illustration integrity
 

@@ -711,7 +711,7 @@
             "masterDesign": "Khu chậu rửa, nguồn nước, khăn và buồng/thiết bị phù hợp; bề mặt đá/gạch chống ẩm.",
             "masterRecipe": "BATHROOM",
             "masterRecipeStatus": "source",
-            "masterRecipeConflict": true
+            "recipeDecision": "runtime-approved"
           }
         }
       ]
@@ -1175,7 +1175,7 @@
             "masterDesign": "Khu chậu rửa, nguồn nước, khăn và buồng/thiết bị phù hợp; bề mặt đá/gạch chống ẩm.",
             "masterRecipe": "BATHROOM",
             "masterRecipeStatus": "source",
-            "masterRecipeConflict": true
+            "recipeDecision": "runtime-approved"
           }
         },
         {
@@ -1692,7 +1692,7 @@
             "masterDesign": "Chừa sân thao tác chính, cụm dụng cụ/bia tập ngoài rìa và cửa ra thoáng, chỉ đặt thiết bị gắn với hoạt động RP.",
             "masterRecipe": "TOWER_CLOCKWORK",
             "masterRecipeStatus": "source",
-            "masterRecipeConflict": true
+            "recipeDecision": "runtime-approved"
           }
         },
         {
@@ -4959,7 +4959,7 @@
             "masterDesign": "Trục lưu thông thuộc cụm; sàn/đường đi liền mạch, cửa đến phòng liên quan, đèn/tranh/ghế rìa; không để vật trang trí bít cửa.",
             "masterRecipe": "PREFECTS_BATHROOM",
             "masterRecipeStatus": "source",
-            "masterRecipeConflict": true
+            "recipeDecision": "runtime-approved"
           }
         },
         {
@@ -5382,7 +5382,7 @@
             "masterDesign": "Khoang cơ khí/chuông, bánh răng, cáp hoặc bộ truyền trên bệ; chừa lối đi cho bảo trì, không dùng bàn học làm vật chính.",
             "masterRecipe": "TOWER_CLOCKWORK",
             "masterRecipeStatus": "source",
-            "masterRecipeConflict": true
+            "recipeDecision": "runtime-approved"
           }
         }
       ]
@@ -5643,7 +5643,7 @@
             "masterDesign": "Khoang cơ khí/chuông, bánh răng, cáp hoặc bộ truyền trên bệ; chừa lối đi cho bảo trì, không dùng bàn học làm vật chính.",
             "masterRecipe": "TOWER_CLOCKWORK",
             "masterRecipeStatus": "source",
-            "masterRecipeConflict": true
+            "recipeDecision": "runtime-approved"
           }
         },
         {
@@ -6236,7 +6236,7 @@
             "masterDesign": "Trục lưu thông thuộc cụm; sàn/đường đi liền mạch, cửa đến phòng liên quan, đèn/tranh/ghế rìa; không để vật trang trí bít cửa.",
             "masterRecipe": "HEADMASTER_OFFICE",
             "masterRecipeStatus": "source",
-            "masterRecipeConflict": true
+            "recipeDecision": "runtime-approved"
           }
         },
         {
