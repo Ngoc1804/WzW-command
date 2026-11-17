@@ -26,4 +26,4 @@ Source rebuild, SVG/ID checks, MAP_DATA-first/routing and 147 shell/inventory ca
 
 ## Verification boundary
 
-Integration passed GitHub Actions run 44126346850 before cleanup. Cleanup is re-tested in the subsequent run. Live CDN/AI Studio embedding is a separate delivery check; CI is not proof of Gemini's output quality. Update old SHA-pinned loader snippets to the verified runtime release when deploying to Gemini.
+Integration passed run 44126346850. Cleanup and contract locks then passed 41/41 suites in GitHub Actions run [44127313919](https://github.com/Ngoc1804/wzw-hogwarts-map-2/actions/runs/44127313919), including 263 IDs, 263 local-ID/anchor cases and browser coverage for all 13 owners. Verified generated distribution: 5da16379d034bbc088bba9f637ee345f57ac8d02. The release manifest is pinned to this exact build. Live CDN/AI Studio embedding is a separate delivery check; CI is not proof of Gemini's output quality. Update old SHA-pinned loader snippets to the verified runtime release when deploying to Gemini.
