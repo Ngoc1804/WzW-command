@@ -2,8 +2,8 @@ const fs=require('fs'),vm=require('vm'),zlib=require('zlib'),assert=require('ass
 const html=fs.readFileSync('examples/WIZAMAP_FIXED_UI.html','utf8');
 const DATA=JSON.parse(zlib.gunzipSync(Buffer.from(html.match(/id="wzw-embedded-atlas"[^>]*>(.*?)<\/script>/s)[1],'base64')));
 const ATLAS=JSON.parse(fs.readFileSync('assets/atlas.json')),VOCAB=JSON.parse(fs.readFileSync('assets/vocabulary.json')),RECIPES=JSON.parse(fs.readFileSync('assets/recipes.json'));
-const ctx=vm.createContext({DATA,ATLAS,VOCAB,RECIPES,KEYS:['unknown','gryffindor']});
-vm.runInContext(['contract','props','resolver'].map(n=>fs.readFileSync('src/'+n+'.js','utf8')).join('\n')+';globalThis.run=x=>resolve(normalize(x))',ctx);
+const ctx=vm.createContext({DATA,ATLAS,VOCAB,RECIPES,FIXED_CONTRACT:JSON.parse(fs.readFileSync('assets/fixed-contract.json')),KEYS:['unknown','gryffindor']});
+vm.runInContext(['contract','props','fixed-locations','resolver'].map(n=>fs.readFileSync('src/'+n+'.js','utf8')).join('\n')+';globalThis.run=x=>resolve(normalize(x))',ctx);
 function payload(owner,key,places=[]){return{schemaVersion:'2.0.0',atlasAnchor:owner,pcPlace:key,pcSpot:'inside',meta:{areaName:'Khu Bắc · Tầng 5'},places,actors:[{name:'PC',isPC:true,placeId:key}],events:[]};}
 for(const [owner,key,id,label] of [['h1','quidditch','region:extra:4','Sân Quidditch'],['h1','black-lake','region-3','Hồ Đen'],['h1','hagrid-hut','region:extra:5','Nhà Hagrid'],['F5-N','hogwarts-library','F5-N:01','Thư viện Hogwarts']]){
  const r=ctx.run(payload(owner,key,[{id:key,name:label}]));

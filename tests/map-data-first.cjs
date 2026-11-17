@@ -2,8 +2,8 @@
 const fs=require('fs'),vm=require('vm'),zlib=require('zlib'),assert=require('assert');
 const h=fs.readFileSync('examples/WIZAMAP_FIXED_UI.html','utf8'),packed=h.match(/<script[^>]*id="wzw-embedded-atlas"[^>]*>(.*?)<\/script>/s)[1];
 const DATA=JSON.parse(zlib.gunzipSync(Buffer.from(packed,'base64'))),ATLAS=JSON.parse(fs.readFileSync('assets/atlas.json')),VOCAB=JSON.parse(fs.readFileSync('assets/vocabulary.json')),RECIPES=JSON.parse(fs.readFileSync('assets/recipes.json'));
-const ctx=vm.createContext({DATA,ATLAS,VOCAB,RECIPES,KEYS:['unknown','adult']});
-vm.runInContext(['contract','props','resolver'].map(n=>fs.readFileSync('src/'+n+'.js','utf8')).join('\n')+';globalThis.test=x=>{const d=normalize(x);return{d,scene:resolve(d)}}',ctx);
+const ctx=vm.createContext({DATA,ATLAS,VOCAB,RECIPES,FIXED_CONTRACT:JSON.parse(fs.readFileSync('assets/fixed-contract.json')),KEYS:['unknown','adult']});
+vm.runInContext(['contract','props','fixed-locations','resolver'].map(n=>fs.readFileSync('src/'+n+'.js','utf8')).join('\n')+';globalThis.test=x=>{const d=normalize(x);return{d,scene:resolve(d)}}',ctx);
 const kitchen='AU-PC-HOME:f1-kitchen',living='AU-PC-HOME:f1-living',garden='AU-PC-HOME:f1-rear-porch-garden';
 const storeId='AU-PC-HOME:basement-store',loftId='AU-PC-HOME:attic-loft-store';
 const room=(id,name,type)=>({id,name,type});

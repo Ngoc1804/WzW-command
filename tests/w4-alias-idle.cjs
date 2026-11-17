@@ -1,11 +1,11 @@
 const fs=require('fs'),vm=require('vm'),zlib=require('zlib'),assert=require('assert'),{chromium}=require('playwright');
 const html=fs.readFileSync('examples/WIZAMAP_FIXED_UI.html','utf8'),packed=html.match(/<script[^>]*id="wzw-embedded-atlas"[^>]*>(.*?)<\/script>/s)[1];
 const DATA=JSON.parse(zlib.gunzipSync(Buffer.from(packed,'base64'))),ATLAS=JSON.parse(fs.readFileSync('assets/atlas.json')),VOCAB=JSON.parse(fs.readFileSync('assets/vocabulary.json')),RECIPES=JSON.parse(fs.readFileSync('assets/recipes.json'));
-const ctx=vm.createContext({DATA,ATLAS,VOCAB,RECIPES,KEYS:['unknown','gryffindor']});
-vm.runInContext(['contract','props','resolver'].map(x=>fs.readFileSync('src/'+x+'.js','utf8')).join('\n')+';globalThis.run=x=>resolve(normalize(x))',ctx);
-for(const [ref,id] of [['h1-lake-tree','lakeside-tree'],['h1-hagrid-hut','region:extra:5'],['h1-forest-edge','region-4'],['h1-outer-lawns','region-0'],['h1-greenhouses','region:extra:0'],['h1-quidditch-approach','region:extra:4']]){
+const ctx=vm.createContext({DATA,ATLAS,VOCAB,RECIPES,FIXED_CONTRACT:JSON.parse(fs.readFileSync('assets/fixed-contract.json')),KEYS:['unknown','gryffindor']});
+vm.runInContext(['contract','props','fixed-locations','resolver'].map(x=>fs.readFileSync('src/'+x+'.js','utf8')).join('\n')+';globalThis.run=x=>resolve(normalize(x))',ctx);
+for(const [ref,id] of [['h1-lake-tree','lakeside-tree'],['h1-hagrid-hut','region:extra:5'],['h1-forest-edge','region-4'],['h1-outer-lawns','school-grounds'],['h1-greenhouses','region:extra:0'],['h1-quidditch-approach','region:extra:4']]){
  const r=ctx.run({schemaVersion:'2.0.0',atlasAnchor:'h1',pcPlace:ref,places:[],actors:[{name:'PC',isPC:true}],events:[]});
- assert.equal(r.exact(ref)?.id,id,ref);assert.equal(r.places.length,DATA.maps.h1.places.length);
+ assert.equal(r.exact(ref)?.id,id,ref);assert.equal(r.places.length,new Set(Object.values(JSON.parse(fs.readFileSync('assets/fixed-contract.json')).h1)).size);
 }
 (async()=>{
  const b=await chromium.launch({executablePath:'/usr/bin/chromium',args:['--no-sandbox']});
