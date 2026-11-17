@@ -12,7 +12,7 @@ Single status document for the current release. Feature definitions live in FURN
 
 ## Verification
 
-Source rebuild, SVG/ID checks, MAP_DATA-first/routing and 147 shell/inventory cases pass locally. Furniture geometry: 267 cases, 263 variants placed, four crowded STUDY_ROOM S/M rows/groups cases retain approved furniture. Corridor finishes: 60 shape/palette cases pass. Browser CI and exact release/CDN verification are pending for this integrated revision.
+Source rebuild, SVG/ID checks, MAP_DATA-first/routing and 147 shell/inventory cases pass locally. Furniture geometry: 267 cases, 263 variants placed, four crowded STUDY_ROOM S/M rows/groups cases retain approved furniture. Corridor finishes: 60 shape/palette cases pass. GitHub Actions run 43948811399 succeeded for source commit 716e4bbbde2c5ac7dc8830374d4bc1ba83bd438b, including browser and 147-layout regression tests; the generated distribution was published as 2e8409b48115555a951c190516785d5d4c2dfd29. The release manifest is now pinned to that exact distribution commit; automated checks verify its bytes, not only a single syntactic SHA. Live jsDelivr delivery and Google AI Studio embedding still require a separate end-to-end smoke test.
 
 ## Gemini compatibility checks
 
@@ -24,4 +24,10 @@ Source rebuild, SVG/ID checks, MAP_DATA-first/routing and 147 shell/inventory ca
 
 ## Release status
 
-This document is updated after the integrated GitHub checks finish. No release SHA should be declared verified until the matching assets and tests are confirmed.
+- **CI:** PASS (GitHub Actions run [43948811399](https://github.com/Ngoc1804/wzw-hogwarts-map-2/actions/runs/43948811399)). Source tested: `716e4bbb`; generated `dist` published: `2e8409b48115555a951c190516785d5d4c2dfd29`.
+- **Release pin:** `assets/runtime-release.json` points to `2e8409b48115555a951c190516785d5d4c2dfd29`, not the older `3289f450` build. `tools/check-release-pin.py` checks every pinned `dist` byte count and SHA-256 against local generated artifacts and the pinned Git commit.
+- **Source cleanup:** one canonical Fixed/UI source, one generated `dist`, one canonical build pipeline. Asset/layout/furniture preview pages are development tools, **not competing runtimes**. Existing original SVGs, IDs and shell geometry remain locked. No alternative runtime has been deleted merely because its filename resembles a source asset.
+- **Still blocking broad W4 use:** the exact W4 audit checks 263 Fixed IDs, of which 206 are unresolved. Local scene IDs with explicit Fixed `anchor` and normalized free-region `position` also lack complete runtime support; these need targeted compatibility work. This is distinct from passing existing CI.
+- **Not yet verified:** live CDN fetch and real Gemini/AI Studio Preview with the final pinned loader. Before using Gemini, update any old HTML snippets pinned to another SHA.
+
+Do not claim full W4/Gemini readiness solely because CI passed.
