@@ -1,0 +1,25 @@
+{
+  "counts": {
+    "h1": 21,
+    "h2": 5,
+    "hall": 15,
+    "gryffindor-common": 8,
+    "ravenclaw-common": 7,
+    "hufflepuff-common": 7,
+    "slytherin-common": 8,
+    "village-static": 36,
+    "pitch-static": 14,
+    "express": 31,
+    "diagon-knockturn": 73,
+    "ministry2": 7,
+    "ministry-8-10": 31
+  },
+  "files": {
+    "assets/fixed-contract.json": "e62f790668bd402ede97a1c30d6c9469452b13df558ad6f68d09f80bf1994fe4",
+    "src/fixed-locations.js": "5f531aa42560c0b06afe6a18ef858a02066f84db9b7020241601b42171531e89",
+    "src/resolver.js": "a1985f75c54b062689a25bea19b8b8b050630f9c54a638dd603886dbe1b54f1c",
+    "src/index.js": "a6c3da3f2ca8350f10f573ae0bd41dca6efc5a398250fca6196ffbc1cb288b6f",
+    "tests/fixed-contract.cjs": "01297b7bff3d312ef77d495eda449980d9dd14d0503114c038c4f1953c0afc3b",
+    "tests/fixed-contract-browser.cjs": "b229b7efd7fe0c1ca816bd4d71fd3c032d16eec17a01f679cf8d992ced817b1f"
+  }
+}

@@ -14,20 +14,16 @@ Single status document for the current release. Feature definitions live in FURN
 
 Source rebuild, SVG/ID checks, MAP_DATA-first/routing and 147 shell/inventory cases pass locally. Furniture geometry: 267 cases, 263 variants placed, four crowded STUDY_ROOM S/M rows/groups cases retain approved furniture. Corridor finishes: 60 shape/palette cases pass. GitHub Actions run 43948811399 succeeded for source commit 716e4bbbde2c5ac7dc8830374d4bc1ba83bd438b, including browser and 147-layout regression tests; the generated distribution was published as 2e8409b48115555a951c190516785d5d4c2dfd29. The release manifest is now pinned to that exact distribution commit; automated checks verify its bytes, not only a single syntactic SHA. Live jsDelivr delivery and Google AI Studio embedding still require a separate end-to-end smoke test.
 
-## Gemini compatibility checks
+## W4 compatibility and canonical ownership
 
-- Use the exact 49 `type` IDs in W4's ROOM SEEDS. Existing inputs still work; furniture and corridorFinish fields are optional.
-- Loader must pin one verified distribution commit for shell.css, templates-pack.js and bundle.js. A new commit does not update old SHA-pinned snippets.
-- Exact-ID audit of the user-attached W4 with arbitrary display names: 263 Fixed IDs checked, 57 resolve, 206 remain unresolved. H2 `courtyard-1` and Hall `staff-room` are supported; examples still missing include H1 `station-dock`/`school-gate`, Hall `filch-office` and many House/Express/Ministry IDs. See `docs/W4_COMPATIBILITY_AUDIT.json`. Do not claim full W4 compatibility or change existing native IDs to hide this gap. Add verified aliases or synchronize W4 before broad use.
-- Fixed local scene ID + `anchor` is still unresolved (tested scene-staff anchored to gf-staff); relative region `position` is not yet processed as the full W4 contract describes. Generated room interiors with local IDs and exact types pass the control case and do not need native Atlas room IDs.
-- AI Studio rendering itself needs an end-to-end check with the final pinned loader and actual Gemini MAP_DATA. GitHub browser tests establish runtime behavior, not AI Studio-specific embedding support.
+- 263/263 approved Fixed keys resolve independently of display names. All 263 also pass with separate scene IDs + anchors.
+- Fixed lookup and interactive membership have one owner: assets/fixed-contract.json + src/fixed-locations.js. Source SVG IDs remain technical anchors; decorative artwork is preserved and unlisted targets are disabled only in runtime presentation.
+- Generated rooms accept name + exact type without native Atlas IDs. Atlas remains for default visuals. Shared free regions retain separate scene labels/positions.
+- Old name/alias inputs and deterministic AU shop binding remain tested compatibility paths; they do not expand the approved default interaction catalogue.
+- Removed the duplicate Fixed matching/allocation path from resolver.js after integration passed browser CI. No historical art, native asset library or locked wall/floor/layer source was deleted.
+- docs/W4_COMPATIBILITY_AUDIT.json is the current ID result; the former 206-unresolved result is superseded.
+- tests/fixed-contract.cjs and fixed-contract-browser.cjs are permanent regressions; tools/check-fixed-lock.py protects the approved ID mapping and lookup code after final verification.
 
-## Release status
+## Verification boundary
 
-- **CI:** PASS (GitHub Actions run [43948811399](https://github.com/Ngoc1804/wzw-hogwarts-map-2/actions/runs/43948811399)). Source tested: `716e4bbb`; generated `dist` published: `2e8409b48115555a951c190516785d5d4c2dfd29`.
-- **Release pin:** `assets/runtime-release.json` points to `2e8409b48115555a951c190516785d5d4c2dfd29`, not the older `3289f450` build. `tools/check-release-pin.py` checks every pinned `dist` byte count and SHA-256 against local generated artifacts and the pinned Git commit.
-- **Source cleanup:** one canonical Fixed/UI source, one generated `dist`, one canonical build pipeline. Asset/layout/furniture preview pages are development tools, **not competing runtimes**. Existing original SVGs, IDs and shell geometry remain locked. No alternative runtime has been deleted merely because its filename resembles a source asset.
-- **Still blocking broad W4 use:** the exact W4 audit checks 263 Fixed IDs, of which 206 are unresolved. Local scene IDs with explicit Fixed `anchor` and normalized free-region `position` also lack complete runtime support; these need targeted compatibility work. This is distinct from passing existing CI.
-- **Not yet verified:** live CDN fetch and real Gemini/AI Studio Preview with the final pinned loader. Before using Gemini, update any old HTML snippets pinned to another SHA.
-
-Do not claim full W4/Gemini readiness solely because CI passed.
+Integration passed GitHub Actions run 44126346850 before cleanup. Cleanup is re-tested in the subsequent run. Live CDN/AI Studio embedding is a separate delivery check; CI is not proof of Gemini's output quality. Update old SHA-pinned loader snippets to the verified runtime release when deploying to Gemini.
