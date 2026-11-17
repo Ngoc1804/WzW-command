@@ -19,14 +19,14 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Verify published runtime pin against exact dist bytes
+        run: python tools/check-release-pin.py
       - name: Build and validate source inventory
         run: |
           python tools/rebuild.py
           node --check dist/bundle.js
           node tests/canonical-sources.cjs
           git diff --check
-      - name: Verify published runtime pin against exact dist bytes
-        run: python tools/check-release-pin.py
       - name: Install headless browser test dependencies
         run: |
           npm install --no-save playwright@1.56.1 linkedom@0.18.12 @napi-rs/canvas@0.1.100

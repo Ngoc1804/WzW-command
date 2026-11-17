@@ -5,6 +5,7 @@ function resolve(d){
  if(!fixedId&&cluster&&!cluster.rooms.length&&cluster.pointers.length===1&&DATA.maps[cluster.pointers[0]])fixedId=cluster.pointers[0];
  const sandbox=d.forceSandbox||(['h1','h2'].includes(fixedId)&&d.places.some(p=>p.isNewConstruction));
  const source=sandbox?null:fixedId?DATA.maps[fixedId]:null;
+ if(source)return resolveFixed(d,fixedId,source);
  // MAP_DATA owns Generated scene membership; Atlas is an enrichment registry, not a room quota.
  let places=source?source.places.map(p=>({...p})):[];
  let registry=!source&&!sandbox&&cluster?cluster.rooms:[];
@@ -131,11 +132,7 @@ function resolve(d){
   }
   else if(source){unresolved.push(p);diagnostics.push('unresolved-fixed-place:'+p.name);}
   else{
-   // A translated/shortened Atlas reference is not evidence of a new RP room.
-   // Newly established rooms require explicit rp: identity or construction intent.
-   if(registry.length&&!p.id&&!p.isNewConstruction){
-    unresolved.push(p);diagnostics.push('unverified-atlas-room:'+p.name);continue;
-   }
+   // Room membership comes from MAP_DATA; Atlas only enriches visuals.
    const duplicate=places.some(x=>p.id?x.id===p.id:key(x.name)===key(p.name));
    if(duplicate){unresolved.push(p);diagnostics.push('ambiguous-place:'+p.name);continue;}
    const id=p.id||'rp:'+key(p.name);

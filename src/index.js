@@ -18,6 +18,7 @@ function inspectorText(selector,value,idle=false){const el=$(selector);if(!el)re
 function inferFixedRelation(entity,places){
  if(['near','around','inside','on'].includes(entity.relation))return entity.relation;
  if(entity.spot==='inside')return'inside';
+ if(entity.spot==='outdoor'&&/black-lake|lakeside|region-3/.test(entity.placeId||''))return'near';
  const place=places.find(p=>p.id===entity.placeId||p.name===entity.placeName);
  const ref=[entity.placeName,entity.placeId,place?.name].filter(Boolean).join(' ').toLowerCase();
  if(/(?:quanh|đi dạo|around|h1-outer-lawns|h1-grounds)/.test(ref))return'around';
@@ -92,6 +93,7 @@ async function renderInput(input){const renderStart=performance.now();root.paren
  }
  let mapId=scene.source?scene.fixedId:'rp-scene';if(scene.source){DATA.maps[mapId].places=scene.places.filter(p=>scene.source.places.some(x=>x.id===p.id));}else DATA.maps[mapId]=finishCorridorMap(buildMap(scene,d),scene,d);
  await setTemplate(mapId);
+ if(scene.source)mountFixedScene(scene);
  async function mount(){DATA.maps[activeId].actorPoints=[];for(const a of d.actors){a.relation=inferFixedRelation(a,d.places);const place=scene.exact(a.placeId||a.placeName);a.placeId=place?.id;if(a.isPC){a.placeName=d.pcPlace;a.placeId=scene.exact(d.pcPlace)?.id;a.spot=d.pcSpot||a.spot;}a.inside=a.spot==='inside';a.scenePoint=undefined;a.unresolvedAnchor=false;const resolved=scene.exact(a.placeId||a.placeName);a.hearingText=resolved?.overhear||'';if(!resolved)a.unresolvedAnchor=true;const map=DATA.maps[activeId];if(!scene.source&&resolved){a.scenePoint=generatedActorPoint(map,resolved,a.spot,a);if(!a.scenePoint)a.unresolvedAnchor=true;else if(!a.isPC&&map.kind==='outdoor'&&a.scenePoint.buildingAnchor)a.footstep='hidden';}/* Footstep visibility follows the active map's presentation policy. */}for(const e of d.events){e.relation=inferFixedRelation(e,d.places);e.placeId=scene.exact(e.placeId||e.placeName)?.id;}await presentation.mountActors(d.actors.filter(a=>a.placeId&&!a.unresolvedAnchor));presentation.mountEvents(d.events.filter(e=>e.placeId));svg.addEventListener('wzw-place-selected',e=>inspect(scene.places.find(p=>p.id===e.detail.id)));inspect(null);renderContents(scene);}
  await mount();root.querySelector('.sidebar-foot')?.remove();put('#map-caption',String(d.meta.areaName||'').toUpperCase());for(const [selector,value]of [['.quote',d.meta.quote],['.date',d.meta.date],['.clock',d.meta.time]]){const el=$(selector);if(el)el.textContent=value||'';}
  root.dataset.status='ready';root.dataset.renderMs=String(performance.now()-renderStart);window.WZW_SCENE={...scene,rendered:{kind:DATA.maps[activeId].kind,geometry:DATA.maps[activeId].geometry,footprints:DATA.maps[activeId].footprints,corridorFinish:DATA.maps[activeId].corridorFinish},diagnostics:d.diagnostics};return scene;}
