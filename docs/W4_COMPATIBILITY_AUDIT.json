@@ -5,9 +5,9 @@
   "unresolved": 0,
   "localAnchorCases": 263,
   "scopes": 13,
-  "evidence": "https://github.com/Ngoc1804/wzw-hogwarts-map-2/actions/runs/44127313919",
+  "evidence": "https://github.com/Ngoc1804/wzw-hogwarts-map-2/actions/runs/44825123793",
   "note": "Supersedes the pre-integration 206-unresolved report. Browser tests cover all 13 owners and two positions in one shared region.",
-  "runtimeCommit": "5da16379d034bbc088bba9f637ee345f57ac8d02",
-  "suitesPassed": 41,
-  "suitesTotal": 41
+  "runtimeCommit": "e060cbb27862f9d175e6cea774935344c31d8b20",
+  "suitesPassed": 43,
+  "suitesTotal": 43
 }
