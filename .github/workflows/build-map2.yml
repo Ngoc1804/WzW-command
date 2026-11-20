@@ -46,6 +46,8 @@ jobs:
           name: map2-15-case-visual-qa
           path: |
             work/qa15/
+            work/presentation-*.png
+            work/inspector-*.png
             work/furniture-variants*
             work/furniture-unit-qa.json
             work/furniture-render-qa.json
