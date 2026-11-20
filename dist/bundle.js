@@ -88,11 +88,11 @@ const TOKENS={
     "header": "#3B2925"
   },
   "motion": {
-    "idlePeriodMs": 6400,
+    "idlePeriodMs": 3200,
     "stepMs": 550,
     "steps": 6,
     "hideMs": 2000,
-    "reduced": "idle alternation, no translation"
+    "reduced": "static idle pair"
   },
   "patrolRule": "Use patrol only while explicitly on patrol; prefect otherwise uses normal identity"
 };
@@ -103,9 +103,22 @@ const COLORS=Object.values(TOKENS.colors).map(c=>[c.name,c.main,c.accent]);
 function ribbon(name,index=0,pc=false){const [,main,accent]=COLORS[index],N='http://www.w3.org/2000/svg',b=document.createElement('button');b.className='ribbon'+(pc?' pc':'')+([3,4,9,11].includes(index)?' light':'');b.style.setProperty('--main',main);b.style.setProperty('--accent',accent);const w=Math.max(140,Math.min(260,Array.from(name).length*8+60));b.style.width=(w*.7)+'px';b.setAttribute('aria-label',name);const v=document.createElementNS(N,'svg');v.setAttribute('viewBox',`0 0 ${w} 44`);v.setAttribute('aria-hidden','true');const path=(d,fill,stroke)=>{const p=document.createElementNS(N,'path');p.setAttribute('d',d);p.setAttribute('fill',fill);p.setAttribute('stroke',stroke);p.setAttribute('stroke-width','1.1');v.append(p);return p};path(`M0 12H31V38H0L10 25Z M${w} 12H${w-31}V38H${w}L${w-10} 25Z`,accent,main);path(`M23 7L31 12V38L23 33Z M${w-23} 7L${w-31} 12V38L${w-23} 33Z`,main,main);path(`M23 7Q${w/2}-3 ${w-23} 7V34Q${w/2} 24 23 34Z`,main,accent);path(`M30 11Q${w/2} 2 ${w-30} 11`,'none',accent);const text=document.createElementNS(N,'text');text.setAttribute('x',w/2);text.setAttribute('y','26');text.setAttribute('text-anchor','middle');text.setAttribute('fill',[3,4,9,11].includes(index)?'#172344':'#f8edda');text.setAttribute('style','font:600 17px Georgia,serif');text.textContent=name;v.append(text);b.append(v);return b}
 function chip(name,index,pc){const b=document.createElement('button');b.className='actor-chip'+([3,4,9,11].includes(index)?' light':'');b.style.setProperty('--main',COLORS[index][1]);b.style.setProperty('--accent',COLORS[index][2]);b.textContent=name;return b}
 function addUse(g,side){const e=document.createElementNS(NS,'use');e.setAttribute('href','#demo-shoe-'+side);g.append(e);return e}
-function setupFeet(g){g.replaceChildren();if(g.dataset.motion==='idle'){
- const l=addUse(g,'r'),r=addUse(g,'l');l.setAttribute('transform','translate(-8 0) rotate(-6)');r.setAttribute('transform','translate(8 0) rotate(6)');
-}else for(let i=0;i<6;i++){const e=addUse(g,i%2?'l':'r');e.setAttribute('transform',`translate(${i%2?7:-7} ${Math.floor(i/2)*12}) rotate(${i%2?6:-6})`);e.style.opacity='0'}}
+function setupFeet(g) {
+  g.replaceChildren();
+  if (g.dataset.motion === 'idle') {
+    addUse(g, 'l').setAttribute('transform', 'translate(-8 0) rotate(-6)');
+    addUse(g, 'r').setAttribute('transform', 'translate(8 0) rotate(6)');
+    return;
+  }
+  // The DEMO-1 V12 walking pattern runs horizontally, centered beneath the ribbon.
+  const {steps} = TOKENS.motion;
+  for (let i = 0; i < steps; i++) {
+    const right = i % 2 === 1;
+    const x = (i - (steps - 1) / 2) * 17;
+    const shoe = addUse(g, right ? 'r' : 'l');
+    shoe.setAttribute('transform', `translate(${x} ${right ? 7 : -7}) rotate(${right ? 96 : 84})`);
+  }
+}
 
 
 function tagType(actor) {
@@ -115,19 +128,24 @@ function tagType(actor) {
 }
 function actorTag(actor, compact=false) {
   const type=tagType(actor), index=KEYS.indexOf(type);
-  const label=actor.isPC ? `★ ${actor.name || 'BẠN'} ★` : actor.name || 'Chưa rõ';
+  const groupLabel=actor.members?.length>1?'Nhóm '+new Set(actor.members).size+' người':actor.name;
+  const label=actor.isPC ? `★ ${actor.name || 'BẠN'} ★` : compact ? actor.name || 'Chưa rõ' : groupLabel || 'Chưa rõ';
   const element=compact?chip(label,index,actor.isPC):ribbon(label,index,actor.isPC);
   if(actor.isPC) {element.classList.add('pc');element.style.setProperty('--accent','#D2A64D');}
+  element.setAttribute('aria-label',actor.name||label);
   element.dataset.tagType=type;
   return element;
 }
 function feetState(elapsed, stance='idle', reduced=false) {
-  if(stance!=='walk'||reduced) {
-    const f=Math.sin(elapsed/6400*Math.PI*2)*.05;
-    return [.95+f,.95-f];
+  const {idlePeriodMs, stepMs, steps, hideMs} = TOKENS.motion;
+  if (stance !== 'walk' || reduced) {
+    const ink = reduced ? 0 : Math.sin(elapsed / idlePeriodMs * Math.PI * 2) * .13;
+    return [.78 + ink, .78 - ink];
   }
-  const t=((elapsed%2200)+2200)%2200,step=Math.floor(t/550);
-  return Array.from({length:6},(_,i)=>i<2?.9:(i-2===step?.7:.12));
+  // During the two-second pause the step index exceeds all six shoe indexes.
+  const cycle = stepMs * steps + hideMs;
+  const step = Math.floor((((elapsed % cycle) + cycle) % cycle) / stepMs);
+  return Array.from({length: steps}, (_, i) => i === step ? 1 : 0);
 }
 const feetJobs=new Set();let feetTimer;
 function mountFeet(g,stance='idle'){
@@ -198,7 +216,7 @@ function getPoint(){if(!svg)return null;const r=svg.getBoundingClientRect();if(!
 function showActorDetails(actor,place){
  if(typeof inspect==='function'&&sceneData){inspect(place,'actor',actor);const layout=$('.layout');if(matchMedia('(max-width:720px)').matches&&layout){layout.classList.add('drawer-open');$('#drawer-toggle')?.setAttribute('aria-expanded','true');}return;}
  const spot=place?.name||actor.placeName||actor.placeId||'';
- put('#place-title',actor.name);put('#place-area',spot);const location=$('#context-location');if(location){location.textContent='';location.hidden=true;}const actors=$('#actors');actors.replaceChildren();if(!actor.isPC){const row=actorTag(actor,true);row.onclick=()=>showActorDetails(actor,place);actors.append(row);}
+ put('#place-title',actor.name);put('#place-area',spot);const location=$('#context-location');if(location){location.textContent='';location.hidden=true;}const actors=$('#actors');actors.replaceChildren();for(const person of inspectorActors([actor])){const row=actorTag(person,true);row.onclick=()=>showActorDetails(person,place);actors.append(row);}
  put('#drawer-name',spot||actor.name||'Vị trí');
  put('#activity',typeof shortRP==='function'?shortRP(actor.activity||actor.summary||place?.overhear,'Không có hoạt động gì đáng chú ý.'):actor.activity||actor.summary||place?.overhear||'');
  put('#observation',typeof shortRP==='function'?shortRP(actor.observation||place?.description||place?.desc,'Không gian yên tĩnh, không có gì đặc biệt.'):actor.observation||place?.desc||'');
@@ -260,6 +278,19 @@ function occludesActor(record,actor,region){
  if(record.owner===actor.placeId&&actor.inside)return false;
  return maskOverlaps(record.mask,region);
 }
+// Inspector expands groups of at most six NPCs without changing map grouping.
+function inspectorActors(actors) {
+ const rows=[],seen=new Set();
+ for(const actor of actors.filter(a=>a&&!a.isPC)) {
+  const members=[...new Set((actor.members||[]).map(name=>name.trim()).filter(Boolean))];
+  const people=members.length&&members.length<=6?members.map(name=>actor.memberActors?.find(a=>a.name===name)||{...actor,name,members:[],entityType:'actor',activity:actor.activity||actor.summary}):[actor];
+  for(const person of people) {
+   const identity=person.name.trim().toLocaleLowerCase();
+   if(!seen.has(identity)){seen.add(identity);rows.push(person);}
+  }
+ }
+ return rows;
+}
 // Presentation grouping preserves the original RP actors and never adds members.
 function groupRoomActors(actors){
  const rooms=new Map(),out=[];
@@ -269,7 +300,7 @@ function groupRoomActors(actors){
   if(count<=4||npcs.length<=1){out.push(...people);continue;}
   const members=npcs.flatMap(a=>a.members?.length?a.members:[a.name]);
   const summary=npcs.map(a=>[a.name,a.activity,a.observation,a.summary].filter(Boolean).join(' — ')).join('\n');
-  out.push(...people.filter(a=>a.isPC),{...npcs[0],name:'Nhóm '+members.length+' người',entityType:'group',tagType:npcs.every(a=>a.tagType===npcs[0].tagType)?npcs[0].tagType:'crowd',members,summary,activity:'',observation:'',isPC:false});
+  out.push(...people.filter(a=>a.isPC),{...npcs[0],name:'Nhóm '+members.length+' người',entityType:'group',tagType:npcs.every(a=>a.tagType===npcs[0].tagType)?npcs[0].tagType:'crowd',members,memberActors:inspectorActors(npcs),summary,activity:'',observation:'',isPC:false});
  }
  return out;
 }
@@ -496,9 +527,7 @@ async function prepareTemplateUI(){
    const placement=actorPlacement(place,inside,actor,element,displayActors.filter(a=>a.placeId===place.id).length);if(!placement){element.remove();continue;}const{point,labelScale,labelBox}=placement;element.dataset.placeId=place.id;element.dataset.anchorX=point.x;element.dataset.anchorY=point.y;element.dataset.placement=placement.anchorOnly?'anchor':'floor';
    element.onpointerenter=e=>{if(e.pointerType!=='touch'){hovered=element;renderPositions()}};element.onpointerleave=()=>{if(hovered===element){hovered=null;renderPositions()}};element.onfocus=()=>{hovered=element;renderPositions()};element.onblur=()=>{if(hovered===element){hovered=null;renderPositions()}};
    element.onclick=()=>{toggleXray(element);showActorDetails(actor,place)};
-   const overview=['h1','h2','village-static','diagon-knockturn'].includes(activeId)||DATA.maps[activeId].kind==='outdoor';
    // Hide footprints only for an Outdoor NPC whose tag is anchored to a building.
-   const fixedBuilding=!actor.scenePoint&&records.some(r=>r.node.dataset.occluder==='building'&&r.owner===place.id);
    const buildingAnchor=['h1','h2','village-static','diagon-knockturn'].includes(activeId)&&inside;
    const stance=buildingAnchor?'hidden':actor.footstep==='walk'?'walk':'idle';let feet=null,stop=null;
    if(stance!=='hidden'){
@@ -509,7 +538,7 @@ async function prepareTemplateUI(){
    actorItems.push({point,labelScale,labelBox,element,feet,stop,inside,actor,placeId:place.id,worldLabelWidth:(element.offsetWidth||120)*labelScale/Math.max(.00001,actorFitScale)});
   }showPlaceActors();renderPositions();
  }
- function showPlaceActors(placeId){const target=$('#actors');target.replaceChildren();for(const item of actorItems.filter(a=>!placeId||a.placeId===placeId)){const row=actorTag(item.actor,true);row.onclick=item.element.onclick;target.append(row)}}
+ function showPlaceActors(placeId){const target=$('#actors');target.replaceChildren();for(const person of inspectorActors(actorItems.filter(a=>!placeId||a.placeId===placeId).map(item=>item.actor))){const row=actorTag(person,true);row.onclick=()=>showActorDetails(person,DATA.maps[activeId].places.find(p=>p.id===person.placeId));target.append(row)}}
  function mountEvents(events=[]){for(const e of eventItems)e.element.remove();eventItems=[];$('#quests').replaceChildren();put('#hintcount',String(events.length));
   for(const supplied of events){const event={...supplied,placeId:DATA.maps[activeId].lookupAliases?.[supplied.placeId]||supplied.placeId};const place=(DATA.maps[activeId].places||[]).find(p=>p.id===event.placeId||p.name===event.placeName);if(!place||place.disabled)continue;const node=[...svg.querySelectorAll('[data-id]')].find(e=>e.dataset.id===place.id);if(!node&&!place.freeRegion)continue;const b=place.freeRegion?regionBox(place):worldBox(node);let point=localPoint(place,event.relation==='inside',{...event,spot:event.relation==='inside'?'inside':'outdoor'});if(!point)continue;
    const button=document.createElement('button');button.className='event-marker '+(event.hidden?'hidden-marker':'');button.setAttribute('aria-label',event.title||'Đầu mối');button.title=event.title||'Đầu mối';
@@ -945,12 +974,11 @@ function furnitureChoice(place,rid){
  const requested=typeof options.variant==='string'?options.variant:null;
  const available=preset?RECIPES[preset.sourceRecipe]?.furnishing?.variants||variants:variants;
  const variant=requested&&available.includes(requested)?requested:preset?.variant||
-  (policy.mode==='seeded'?variants[seed%variants.length]:'approved');
- const styleNames=Object.keys(FURNITURE_STYLES.palettes);
+  (policy.mode==='seeded'&&options.seed!==undefined?variants[seed%variants.length]:'approved');
  const style=options.style==='approved'?'approved':Object.hasOwn(FURNITURE_STYLES.palettes,options.style||'')?options.style:
-  preset?.style||(policy.mode==='seeded'?styleNames[furnitureHash(seed+'|style')%styleNames.length]:'approved');
+  preset?.style||'approved';
  const materials=Object.fromEntries(Object.entries(options.materials||{}).filter(([k,v])=>/^[a-z]+$/.test(k)&&/^#[0-9a-f]{6}$/i.test(v)));
- return{seed,variant,style,materials,detailVariation:policy.mode==='seeded'&&options.details!=='approved'&&requested!=='approved',preset,sourceRecipe:preset?.sourceRecipe||rid,invalidVariant:!!requested&&!available.includes(requested),invalidPreset:!!options.preset&&options.preset!=='approved'&&!preset};
+ return{seed,variant,style,materials,preset,sourceRecipe:preset?.sourceRecipe||rid,invalidVariant:!!requested&&!available.includes(requested),invalidPreset:!!options.preset&&options.preset!=='approved'&&!preset};
 }
 function furnitureReference(art,choice,size){
  if(!choice?.preset)return art;
@@ -1061,9 +1089,6 @@ function furnitureViewBox(asset){
 const propAliases={'vạc thuốc':'wizard.cauldron','vạc':'wizard.cauldron','ghế ăn':'seat.dining','ghế':'seat.dining','gương':'decor.mirror','gương vỡ':'decor.mirror','chair':'seat.dining','cauldron':'wizard.cauldron'};
 function recipeId(value){return RECIPES[value]?value:VOCAB.recipes[key(value)]||VOCAB.legacyRecipes[key(value)]||null;}
 function composeRoom(place){const rid=recipeId(place.type)||recipeId(place.interiorPlan?.recipe),recipe=RECIPES[rid];const size=({small:'S',medium:'M',large:'L',S:'S',M:'M',L:'L'})[place.size]||'M';const furnishing=typeof furnitureChoice==='function'?furnitureChoice(place,rid):{sourceRecipe:rid,variant:'approved',style:'approved',materials:{}},sourceRecipe=RECIPES[furnishing.sourceRecipe]||recipe;const base=place.propsMode==='replace'?[]:(sourceRecipe?.instancesBySize?.[size]||sourceRecipe?.instances||[]).map(i=>({...i,source:'recipe'}));let out=base;
- if(furnishing.detailVariation&&recipe?.furnishing?.detailPool?.length&&typeof CATALOG!=='undefined'){
-  const pool=recipe.furnishing.detailPool;out=out.map(o=>CATALOG[o.item]?.placement?.role==='detail'?{...o,item:pool[furnitureHash(furnishing.seed+'|'+o.id)%pool.length]}:o);
- }
  if(furnishing.preset?.extraProps)out.push(...furnishing.preset.extraProps.map(o=>({...o})));
  const diagnostics=[];if(furnishing.invalidVariant)diagnostics.push('unknown-furniture-variant');if(furnishing.invalidPreset)diagnostics.push('unknown-furniture-preset');
  list(place.props).forEach((p,index)=>{
@@ -1275,7 +1300,25 @@ function furnitureLayout(place){
   objects.push({item,node,magnify,dx,dy,bounds:[x*magnify+dx,y*magnify+dy,w*magnify,h*magnify]});
 
  }
- if(art?.source==='APPROVED_DECOR')return{inventory,art,objects:objects.map(o=>({...o,dx:0,dy:0,magnify:1,bounds:o.node.bounds})),extra,width:art.width,height:art.height};
+ if(art?.source==='APPROVED_DECOR'){
+  for(const object of objects){object.dx=0;object.dy=0;object.magnify=1;object.bounds=object.node.bounds;}
+  // Authored tabletop clusters share their supporting table's uniform transform.
+  // Fit oversized clusters to the real tabletop before any whole-group variation.
+  for(const object of objects.filter(o=>o.node.item.startsWith('tabletop.'))){
+   const support=objects.find(o=>o!==object&&o.node.furnitureGroup===object.node.furnitureGroup&&CATALOG[o.node.item]?.placement?.supportsDetails);
+   if(!support)continue;
+   const surface=furnitureSupportBounds(CATALOG[support.node.item],support.bounds);
+   if(!surface)continue;
+   const [x,y,w,h]=object.bounds,[sx,sy,sw,sh]=surface;
+   if(x>=sx&&y>=sy&&x+w<=sx+sw&&y+h<=sy+sh)continue;
+   const scale=Math.min(1,(sw-4)/w,(sh-4)/h);
+   if(scale<=0)continue;
+   const nx=sx+(sw-w*scale)/2,ny=sy+(sh-h*scale)/2;
+   object.dx=nx-x*scale;object.dy=ny-y*scale;object.magnify=scale;
+   object.bounds=[nx,ny,w*scale,h*scale];
+  }
+  return{inventory,art,objects,extra,width:art.width,height:art.height};
+ }
  if(art?.source==='FINAL'&&objects.length){
   const minX=Math.min(0,...objects.map(o=>o.bounds[0])),minY=Math.min(0,...objects.map(o=>o.bounds[1]));
   const maxX=Math.max(art.width,...objects.map(o=>o.bounds[0]+o.bounds[2])),maxY=Math.max(art.height,...objects.map(o=>o.bounds[1]+o.bounds[3]));
@@ -1701,17 +1744,6 @@ function finishCorridorMap(map,scene,d){
 }
 
 let sceneData=null;const runtimeShell=root.innerHTML;
-function inventoryNote(code){
-
-
-
- if(code.startsWith('outdoor-interior-anchor:'))return 'Vị trí trong nhà được gắn với công trình trên bản ngoại cảnh; bản này không mô tả mặt bằng nội thất.';
-
-
- if(code.startsWith('invalid-visual:'))return 'Hình được cung cấp không dùng được; món đồ vẫn có đại diện thay thế.';
- if(code.startsWith('prop-detail-only:')||code.startsWith('outdoor-count-summary:'))return 'Một phần đồ được biểu diễn rút gọn; số lượng đầy đủ vẫn giữ trong thông tin.';
- return 'Có thay đổi đồ vật chưa xác định rõ để áp vào hình; nội dung RP vẫn được giữ.';
-}
 let selectedMapPlace=null;
 const fallbackHear='Không có hoạt động gì đáng chú ý.';
 const fallbackObserve='Không gian yên tĩnh, không có gì đặc biệt.';
@@ -1745,7 +1777,7 @@ function inspect(place,kind='room',entity=null){
  const list=$('#actors');list.replaceChildren();
  if(!place)return;
  if(matchMedia('(max-width:720px)').matches){$('.layout')?.classList.add('drawer-open');$('#drawer-toggle')?.setAttribute('aria-expanded','true');}
- const actors=kind==='actor'?[entity]:groupRoomActors(sceneData.actors).filter(a=>!a.isPC&&a.placeId===place.id);
+ const actors=inspectorActors(kind==='actor'?[entity]:groupRoomActors(sceneData.actors).filter(a=>a.placeId===place.id));
  for(const a of actors){if(!a||a.isPC)continue;const row=actorTag(a,true);row.onclick=()=>showActorDetails(a,place);list.append(row);}
 }
 function travelCopyText(){
@@ -1753,7 +1785,7 @@ function travelCopyText(){
  const read=selector=>$(selector)?.textContent.trim()||'';
  return `/NEXT - ${read('#place-title')||selectedMapPlace.name} - ${sceneData?.meta?.areaName||''} - ${selectedMapPlace.name}
 
-AI ĐÓ: ${read('#actors')}
+AI ĐÓ: ${[...$('#actors').children].map(tag=>tag.textContent.trim()).join(', ')}
 
 QUAN SÁT: ${read('#observation')}
 
