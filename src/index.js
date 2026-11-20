@@ -1,15 +1,4 @@
 let sceneData=null;const runtimeShell=root.innerHTML;
-function inventoryNote(code){
-
-
-
- if(code.startsWith('outdoor-interior-anchor:'))return 'Vị trí trong nhà được gắn với công trình trên bản ngoại cảnh; bản này không mô tả mặt bằng nội thất.';
-
-
- if(code.startsWith('invalid-visual:'))return 'Hình được cung cấp không dùng được; món đồ vẫn có đại diện thay thế.';
- if(code.startsWith('prop-detail-only:')||code.startsWith('outdoor-count-summary:'))return 'Một phần đồ được biểu diễn rút gọn; số lượng đầy đủ vẫn giữ trong thông tin.';
- return 'Có thay đổi đồ vật chưa xác định rõ để áp vào hình; nội dung RP vẫn được giữ.';
-}
 let selectedMapPlace=null;
 const fallbackHear='Không có hoạt động gì đáng chú ý.';
 const fallbackObserve='Không gian yên tĩnh, không có gì đặc biệt.';
@@ -43,7 +32,7 @@ function inspect(place,kind='room',entity=null){
  const list=$('#actors');list.replaceChildren();
  if(!place)return;
  if(matchMedia('(max-width:720px)').matches){$('.layout')?.classList.add('drawer-open');$('#drawer-toggle')?.setAttribute('aria-expanded','true');}
- const actors=kind==='actor'?[entity]:groupRoomActors(sceneData.actors).filter(a=>!a.isPC&&a.placeId===place.id);
+ const actors=inspectorActors(kind==='actor'?[entity]:groupRoomActors(sceneData.actors).filter(a=>a.placeId===place.id));
  for(const a of actors){if(!a||a.isPC)continue;const row=actorTag(a,true);row.onclick=()=>showActorDetails(a,place);list.append(row);}
 }
 function travelCopyText(){
@@ -51,7 +40,7 @@ function travelCopyText(){
  const read=selector=>$(selector)?.textContent.trim()||'';
  return `/NEXT - ${read('#place-title')||selectedMapPlace.name} - ${sceneData?.meta?.areaName||''} - ${selectedMapPlace.name}
 
-AI ĐÓ: ${read('#actors')}
+AI ĐÓ: ${[...$('#actors').children].map(tag=>tag.textContent.trim()).join(', ')}
 
 QUAN SÁT: ${read('#observation')}
 

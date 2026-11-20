@@ -15,12 +15,11 @@ function furnitureChoice(place,rid){
  const requested=typeof options.variant==='string'?options.variant:null;
  const available=preset?RECIPES[preset.sourceRecipe]?.furnishing?.variants||variants:variants;
  const variant=requested&&available.includes(requested)?requested:preset?.variant||
-  (policy.mode==='seeded'?variants[seed%variants.length]:'approved');
- const styleNames=Object.keys(FURNITURE_STYLES.palettes);
+  (policy.mode==='seeded'&&options.seed!==undefined?variants[seed%variants.length]:'approved');
  const style=options.style==='approved'?'approved':Object.hasOwn(FURNITURE_STYLES.palettes,options.style||'')?options.style:
-  preset?.style||(policy.mode==='seeded'?styleNames[furnitureHash(seed+'|style')%styleNames.length]:'approved');
+  preset?.style||'approved';
  const materials=Object.fromEntries(Object.entries(options.materials||{}).filter(([k,v])=>/^[a-z]+$/.test(k)&&/^#[0-9a-f]{6}$/i.test(v)));
- return{seed,variant,style,materials,detailVariation:policy.mode==='seeded'&&options.details!=='approved'&&requested!=='approved',preset,sourceRecipe:preset?.sourceRecipe||rid,invalidVariant:!!requested&&!available.includes(requested),invalidPreset:!!options.preset&&options.preset!=='approved'&&!preset};
+ return{seed,variant,style,materials,preset,sourceRecipe:preset?.sourceRecipe||rid,invalidVariant:!!requested&&!available.includes(requested),invalidPreset:!!options.preset&&options.preset!=='approved'&&!preset};
 }
 function furnitureReference(art,choice,size){
  if(!choice?.preset)return art;

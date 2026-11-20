@@ -32,7 +32,20 @@ d.events=[{title:'Quyển sách lạ',placeId:'hogwarts-library',detail:'Một q
  await p.evaluate(()=>document.querySelector('#mapmount>svg').dispatchEvent(new CustomEvent('wzw-place-selected',{detail:{id:'F5-N:01'}})));
  assert.equal(await p.locator('#place-title').innerText(),'Thư viện Hogwarts');assert.equal(await p.locator('#place-area').innerText(),'');assert((await p.locator('#actors').innerText()).includes('Harry'));
  await p.evaluate(async data=>await WZWMap.render(data),{...d,actors:[d.actors[0],{name:'Nhóm học sinh',spot:'inside',members:['Ron','Hermione'],placeId:'hogwarts-library',activity:'Cả nhóm đang bàn bạc.'}]});
- await p.locator('.qa-tags .npc-tag').filter({hasText:'Nhóm học sinh'}).click({force:true});
- assert.equal(await p.locator('#actors .actor-chip').count(),1,'clicked group remains one ribbon');assert((await p.locator('#actors').innerText()).includes('Nhóm học sinh'));
+ await p.locator('.qa-tags').getByRole('button',{name:'Nhóm học sinh',exact:true}).click({force:true});
+ assert.equal(await p.locator('#actors .actor-chip').count(),2,'small group expands in Inspector');assert.deepEqual(await p.locator('#actors .actor-chip').allTextContents(),['Ron','Hermione']);
+
+ for(const count of [6,7]){
+  const members=Array.from({length:count},(_,i)=>'Học sinh '+(i+1));
+  await p.evaluate(async data=>WZWMap.render(data),{...d,actors:[d.actors[0],{name:'Đội nghiên cứu',spot:'inside',members,placeId:'hogwarts-library'}]});
+  await p.locator('.qa-tags').getByRole('button',{name:'Đội nghiên cứu',exact:true}).click({force:true});
+  assert.equal(await p.locator('#actors .actor-chip').count(),count<=6?count:1,'six-member Inspector boundary');
+ }
+ await p.evaluate(async data=>WZWMap.render(data),{...d,actors:[d.actors[0],{name:'Ron',spot:'inside',placeId:'hogwarts-library',tagType:'gryffindor'},{name:'Lavender và hai bạn',spot:'inside',members:['Lavender','Parvati','Padma'],placeId:'hogwarts-library',tagType:'ravenclaw'}]});
+ await p.locator('.qa-tags').getByRole('button',{name:'Nhóm 4 người',exact:true}).click({force:true});
+ assert.deepEqual(await p.locator('#actors .actor-chip').allTextContents(),['Ron','Lavender','Parvati','Padma']);
+ assert.equal(await p.locator('#actors .actor-chip').first().getAttribute('data-tag-type'),'gryffindor');
+ await p.locator('#actors .actor-chip').filter({hasText:'Padma'}).click();
+ assert.equal(await p.locator('#place-title').innerText(),'Padma');
  await p.screenshot({path:'work/inspector-'+(mobile?'mobile':'desktop')+'.png'});assert.deepEqual(errors,[]);await p.close();
  }console.log('PASS exact scoped keys and desktop/mobile NPC/group/event/room Inspector');}finally{await b.close();}})().catch(e=>{console.error(e);process.exit(1)});

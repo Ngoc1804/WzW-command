@@ -5,12 +5,12 @@ All 49 W4 pool IDs remain unchanged. No room is created from a recipe/preset.
 
 ## Data and runtime
 
-- `recipes.json`: 31 functional families have stable furniture variants. Special rooms, passage decor and Outdoor retain approved default furniture. Six functional families also have interchangeable tabletop details.
+- `recipes.json`: 31 functional families have optional stable furniture variants. Authored arrangements and colors are the default. Special rooms, passage decor and Outdoor retain approved default furniture. Tabletop details retain their authored identity unless MAP_DATA explicitly changes them.
 - `room-formulas.json`: 16 explicit furniture presets reuse existing furniture scenes, keeping the target room's shell. Ten presets add function-specific items (including two new tabletop SVG assets). These are reusable furniture compositions, not new canonical architecture.
-- `layout-sizes.json`: existing 147 S/M/L views are unchanged except furniture grouping/role metadata. Tables, associated seats and tabletop details move as one group, without rotation or nonuniform scaling.
+- `layout-sizes.json`: existing 147 S/M/L views are unchanged except furniture grouping/role metadata. Tables, associated seats and tabletop details move as one group. Oversized tabletop clusters are uniformly fitted inside their actual support surface at runtime; native SVG and stored views remain intact.
 - `styles.json`: six muted material palettes apply only to marked furniture channels. Isolated furniture definitions prevent color changes from affecting shared floor/wall definitions. Untagged paint remains original.
 - `catalog.json`: 146 used assets receive conservative placement metadata. Their geometry is not rewritten or declared collision-ready. Two new tabletop SVG assets provide physical dice and miniatures for the Whitecap game preset.
-- `src/furnishing.js`: ID-seeded selection, group placement against the existing floor, door clearance, original-layout fallback, furniture-only painting and support bounds.
+- `src/furnishing.js`: explicit seed selection, group placement against the existing floor, door clearance, original-layout fallback, furniture-only painting and support bounds.
 - `src/props.js`, `src/draw.js`: apply the selected inventory, preserve RP removal/replacement/count overrides, and render resulting footprints in the existing furniture layer. Actors continue using the existing footprint consumer.
 
 ## Optional MAP_DATA fields
@@ -22,7 +22,7 @@ Existing `type`, `size`, `props`, `propsMode` remain valid. Furniture controls a
  "furniture":{"variant":"perimeter","style":"sage","seed":0,"details":"approved"}}
 ```
 
-Use `furniture.variant:"approved"` and `furniture.style:"approved"` for the authored layout/colors. Explicit `furniture.materials` accepts six-digit hex colors by material. The seed uses stable place ID, not display name or actor order. `furniture.preset` is explicit; aliases never select a preset implicitly on rename.
+Omitted furniture controls preserve the authored layout/colors. `furniture.variant:"approved"` and `furniture.style:"approved"` also select them explicitly. A supplied seed enables deterministic arrangement selection. Explicit `furniture.materials` accepts six-digit hex colors by material. The seed uses stable place ID, not display name or actor order. `furniture.preset` is explicit; aliases never select a preset implicitly on rename.
 
 Props can specify an existing `supportId` to place an object on its support. A missing/full support keeps the item in Inspector with diagnostics, rather than drawing it on the floor. Explicit `propsMode:"replace"` still clears recipe/preset furniture. Item replacement by exact instance ID wins over defaults.
 

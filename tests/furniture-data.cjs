@@ -22,7 +22,7 @@ for(const [id,preset]of Object.entries(ROOM_FORMULAS.furniturePresets)){
  const inventory=api.composeRoom({id:'r',name:'Room',type:preset.type,props:[],furniture:{preset:id}});
  assert.equal(inventory.furnishing.preset.id,id);assert.equal(inventory.objects.length,RECIPES[preset.sourceRecipe].instancesBySize.M.length+(preset.extraProps?.length||0));
 }
-const choices=new Set(Array.from({length:20},(_,i)=>api.furnitureChoice({id:'r'+i,type:'CLASSROOM'},'CLASSROOM').variant));assert(choices.size>2);
+const choices=new Set(Array.from({length:20},(_,i)=>api.furnitureChoice({id:'r'+i,type:'CLASSROOM',furniture:{seed:i}},'CLASSROOM').variant));assert(choices.size>2);
 assert.equal(api.furnitureChoice({id:'r',type:'HEADMASTER_OFFICE'},'HEADMASTER_OFFICE').style,'approved');
 assert.equal(api.furnitureChoice({id:'r',type:'OFFICE',furniture:{materials:{wood:'#abcdef',bad:'url(x)'}}},'OFFICE').materials.wood,'#abcdef');
 console.log('PASS furniture data:',count,'size/inventory cases; 49 original IDs; 16 presets; deterministic choices and RP removal/replace');

@@ -418,11 +418,11 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
     "header": "#3B2925"
   },
   "motion": {
-    "idlePeriodMs": 6400,
+    "idlePeriodMs": 3200,
     "stepMs": 550,
     "steps": 6,
     "hideMs": 2000,
-    "reduced": "idle alternation, no translation"
+    "reduced": "static idle pair"
   },
   "patrolRule": "Use patrol only while explicitly on patrol; prefect otherwise uses normal identity"
 };
@@ -433,9 +433,22 @@ const COLORS=Object.values(TOKENS.colors).map(c=>[c.name,c.main,c.accent]);
 function ribbon(name,index=0,pc=false){const [,main,accent]=COLORS[index],N='http://www.w3.org/2000/svg',b=document.createElement('button');b.className='ribbon'+(pc?' pc':'')+([3,4,9,11].includes(index)?' light':'');b.style.setProperty('--main',main);b.style.setProperty('--accent',accent);const w=Math.max(140,Math.min(260,Array.from(name).length*8+60));b.style.width=(w*.7)+'px';b.setAttribute('aria-label',name);const v=document.createElementNS(N,'svg');v.setAttribute('viewBox',`0 0 ${w} 44`);v.setAttribute('aria-hidden','true');const path=(d,fill,stroke)=>{const p=document.createElementNS(N,'path');p.setAttribute('d',d);p.setAttribute('fill',fill);p.setAttribute('stroke',stroke);p.setAttribute('stroke-width','1.1');v.append(p);return p};path(`M0 12H31V38H0L10 25Z M${w} 12H${w-31}V38H${w}L${w-10} 25Z`,accent,main);path(`M23 7L31 12V38L23 33Z M${w-23} 7L${w-31} 12V38L${w-23} 33Z`,main,main);path(`M23 7Q${w/2}-3 ${w-23} 7V34Q${w/2} 24 23 34Z`,main,accent);path(`M30 11Q${w/2} 2 ${w-30} 11`,'none',accent);const text=document.createElementNS(N,'text');text.setAttribute('x',w/2);text.setAttribute('y','26');text.setAttribute('text-anchor','middle');text.setAttribute('fill',[3,4,9,11].includes(index)?'#172344':'#f8edda');text.setAttribute('style','font:600 17px Georgia,serif');text.textContent=name;v.append(text);b.append(v);return b}
 function chip(name,index,pc){const b=document.createElement('button');b.className='actor-chip'+([3,4,9,11].includes(index)?' light':'');b.style.setProperty('--main',COLORS[index][1]);b.style.setProperty('--accent',COLORS[index][2]);b.textContent=name;return b}
 function addUse(g,side){const e=document.createElementNS(NS,'use');e.setAttribute('href','#demo-shoe-'+side);g.append(e);return e}
-function setupFeet(g){g.replaceChildren();if(g.dataset.motion==='idle'){
- const l=addUse(g,'r'),r=addUse(g,'l');l.setAttribute('transform','translate(-8 0) rotate(-6)');r.setAttribute('transform','translate(8 0) rotate(6)');
-}else for(let i=0;i<6;i++){const e=addUse(g,i%2?'l':'r');e.setAttribute('transform',`translate(${i%2?7:-7} ${Math.floor(i/2)*12}) rotate(${i%2?6:-6})`);e.style.opacity='0'}}
+function setupFeet(g) {
+  g.replaceChildren();
+  if (g.dataset.motion === 'idle') {
+    addUse(g, 'l').setAttribute('transform', 'translate(-8 0) rotate(-6)');
+    addUse(g, 'r').setAttribute('transform', 'translate(8 0) rotate(6)');
+    return;
+  }
+  // The DEMO-1 V12 walking pattern runs horizontally, centered beneath the ribbon.
+  const {steps} = TOKENS.motion;
+  for (let i = 0; i < steps; i++) {
+    const right = i % 2 === 1;
+    const x = (i - (steps - 1) / 2) * 17;
+    const shoe = addUse(g, right ? 'r' : 'l');
+    shoe.setAttribute('transform', `translate(${x} ${right ? 7 : -7}) rotate(${right ? 96 : 84})`);
+  }
+}
 
 
 function tagType(actor) {
@@ -445,19 +458,24 @@ function tagType(actor) {
 }
 function actorTag(actor, compact=false) {
   const type=tagType(actor), index=KEYS.indexOf(type);
-  const label=actor.isPC ? `★ ${actor.name || 'BẠN'} ★` : actor.name || 'Chưa rõ';
+  const groupLabel=actor.members?.length>1?'Nhóm '+new Set(actor.members).size+' người':actor.name;
+  const label=actor.isPC ? `★ ${actor.name || 'BẠN'} ★` : compact ? actor.name || 'Chưa rõ' : groupLabel || 'Chưa rõ';
   const element=compact?chip(label,index,actor.isPC):ribbon(label,index,actor.isPC);
   if(actor.isPC) {element.classList.add('pc');element.style.setProperty('--accent','#D2A64D');}
+  element.setAttribute('aria-label',actor.name||label);
   element.dataset.tagType=type;
   return element;
 }
 function feetState(elapsed, stance='idle', reduced=false) {
-  if(stance!=='walk'||reduced) {
-    const f=Math.sin(elapsed/6400*Math.PI*2)*.05;
-    return [.95+f,.95-f];
+  const {idlePeriodMs, stepMs, steps, hideMs} = TOKENS.motion;
+  if (stance !== 'walk' || reduced) {
+    const ink = reduced ? 0 : Math.sin(elapsed / idlePeriodMs * Math.PI * 2) * .13;
+    return [.78 + ink, .78 - ink];
   }
-  const t=((elapsed%2200)+2200)%2200,step=Math.floor(t/550);
-  return Array.from({length:6},(_,i)=>i<2?.9:(i-2===step?.7:.12));
+  // During the two-second pause the step index exceeds all six shoe indexes.
+  const cycle = stepMs * steps + hideMs;
+  const step = Math.floor((((elapsed % cycle) + cycle) % cycle) / stepMs);
+  return Array.from({length: steps}, (_, i) => i === step ? 1 : 0);
 }
 const feetJobs=new Set();let feetTimer;
 function mountFeet(g,stance='idle'){
@@ -528,7 +546,7 @@ function getPoint(){if(!svg)return null;const r=svg.getBoundingClientRect();if(!
 function showActorDetails(actor,place){
  if(typeof inspect==='function'&&sceneData){inspect(place,'actor',actor);const layout=$('.layout');if(matchMedia('(max-width:720px)').matches&&layout){layout.classList.add('drawer-open');$('#drawer-toggle')?.setAttribute('aria-expanded','true');}return;}
  const spot=place?.name||actor.placeName||actor.placeId||'';
- put('#place-title',actor.name);put('#place-area',spot);const location=$('#context-location');if(location){location.textContent='';location.hidden=true;}const actors=$('#actors');actors.replaceChildren();if(!actor.isPC){const row=actorTag(actor,true);row.onclick=()=>showActorDetails(actor,place);actors.append(row);}
+ put('#place-title',actor.name);put('#place-area',spot);const location=$('#context-location');if(location){location.textContent='';location.hidden=true;}const actors=$('#actors');actors.replaceChildren();for(const person of inspectorActors([actor])){const row=actorTag(person,true);row.onclick=()=>showActorDetails(person,place);actors.append(row);}
  put('#drawer-name',spot||actor.name||'Vị trí');
  put('#activity',typeof shortRP==='function'?shortRP(actor.activity||actor.summary||place?.overhear,'Không có hoạt động gì đáng chú ý.'):actor.activity||actor.summary||place?.overhear||'');
  put('#observation',typeof shortRP==='function'?shortRP(actor.observation||place?.description||place?.desc,'Không gian yên tĩnh, không có gì đặc biệt.'):actor.observation||place?.desc||'');
@@ -590,6 +608,19 @@ function occludesActor(record,actor,region){
  if(record.owner===actor.placeId&&actor.inside)return false;
  return maskOverlaps(record.mask,region);
 }
+// Inspector expands groups of at most six NPCs without changing map grouping.
+function inspectorActors(actors) {
+ const rows=[],seen=new Set();
+ for(const actor of actors.filter(a=>a&&!a.isPC)) {
+  const members=[...new Set((actor.members||[]).map(name=>name.trim()).filter(Boolean))];
+  const people=members.length&&members.length<=6?members.map(name=>actor.memberActors?.find(a=>a.name===name)||{...actor,name,members:[],entityType:'actor',activity:actor.activity||actor.summary}):[actor];
+  for(const person of people) {
+   const identity=person.name.trim().toLocaleLowerCase();
+   if(!seen.has(identity)){seen.add(identity);rows.push(person);}
+  }
+ }
+ return rows;
+}
 // Presentation grouping preserves the original RP actors and never adds members.
 function groupRoomActors(actors){
  const rooms=new Map(),out=[];
@@ -599,7 +630,7 @@ function groupRoomActors(actors){
   if(count<=4||npcs.length<=1){out.push(...people);continue;}
   const members=npcs.flatMap(a=>a.members?.length?a.members:[a.name]);
   const summary=npcs.map(a=>[a.name,a.activity,a.observation,a.summary].filter(Boolean).join(' — ')).join('\n');
-  out.push(...people.filter(a=>a.isPC),{...npcs[0],name:'Nhóm '+members.length+' người',entityType:'group',tagType:npcs.every(a=>a.tagType===npcs[0].tagType)?npcs[0].tagType:'crowd',members,summary,activity:'',observation:'',isPC:false});
+  out.push(...people.filter(a=>a.isPC),{...npcs[0],name:'Nhóm '+members.length+' người',entityType:'group',tagType:npcs.every(a=>a.tagType===npcs[0].tagType)?npcs[0].tagType:'crowd',members,memberActors:inspectorActors(npcs),summary,activity:'',observation:'',isPC:false});
  }
  return out;
 }
@@ -826,9 +857,7 @@ async function prepareTemplateUI(){
    const placement=actorPlacement(place,inside,actor,element,displayActors.filter(a=>a.placeId===place.id).length);if(!placement){element.remove();continue;}const{point,labelScale,labelBox}=placement;element.dataset.placeId=place.id;element.dataset.anchorX=point.x;element.dataset.anchorY=point.y;element.dataset.placement=placement.anchorOnly?'anchor':'floor';
    element.onpointerenter=e=>{if(e.pointerType!=='touch'){hovered=element;renderPositions()}};element.onpointerleave=()=>{if(hovered===element){hovered=null;renderPositions()}};element.onfocus=()=>{hovered=element;renderPositions()};element.onblur=()=>{if(hovered===element){hovered=null;renderPositions()}};
    element.onclick=()=>{toggleXray(element);showActorDetails(actor,place)};
-   const overview=['h1','h2','village-static','diagon-knockturn'].includes(activeId)||DATA.maps[activeId].kind==='outdoor';
    // Hide footprints only for an Outdoor NPC whose tag is anchored to a building.
-   const fixedBuilding=!actor.scenePoint&&records.some(r=>r.node.dataset.occluder==='building'&&r.owner===place.id);
    const buildingAnchor=['h1','h2','village-static','diagon-knockturn'].includes(activeId)&&inside;
    const stance=buildingAnchor?'hidden':actor.footstep==='walk'?'walk':'idle';let feet=null,stop=null;
    if(stance!=='hidden'){
@@ -839,7 +868,7 @@ async function prepareTemplateUI(){
    actorItems.push({point,labelScale,labelBox,element,feet,stop,inside,actor,placeId:place.id,worldLabelWidth:(element.offsetWidth||120)*labelScale/Math.max(.00001,actorFitScale)});
   }showPlaceActors();renderPositions();
  }
- function showPlaceActors(placeId){const target=$('#actors');target.replaceChildren();for(const item of actorItems.filter(a=>!placeId||a.placeId===placeId)){const row=actorTag(item.actor,true);row.onclick=item.element.onclick;target.append(row)}}
+ function showPlaceActors(placeId){const target=$('#actors');target.replaceChildren();for(const person of inspectorActors(actorItems.filter(a=>!placeId||a.placeId===placeId).map(item=>item.actor))){const row=actorTag(person,true);row.onclick=()=>showActorDetails(person,DATA.maps[activeId].places.find(p=>p.id===person.placeId));target.append(row)}}
  function mountEvents(events=[]){for(const e of eventItems)e.element.remove();eventItems=[];$('#quests').replaceChildren();put('#hintcount',String(events.length));
   for(const supplied of events){const event={...supplied,placeId:DATA.maps[activeId].lookupAliases?.[supplied.placeId]||supplied.placeId};const place=(DATA.maps[activeId].places||[]).find(p=>p.id===event.placeId||p.name===event.placeName);if(!place||place.disabled)continue;const node=[...svg.querySelectorAll('[data-id]')].find(e=>e.dataset.id===place.id);if(!node&&!place.freeRegion)continue;const b=place.freeRegion?regionBox(place):worldBox(node);let point=localPoint(place,event.relation==='inside',{...event,spot:event.relation==='inside'?'inside':'outdoor'});if(!point)continue;
    const button=document.createElement('button');button.className='event-marker '+(event.hidden?'hidden-marker':'');button.setAttribute('aria-label',event.title||'Đầu mối');button.title=event.title||'Đầu mối';

@@ -73,7 +73,25 @@ function furnitureLayout(place){
   objects.push({item,node,magnify,dx,dy,bounds:[x*magnify+dx,y*magnify+dy,w*magnify,h*magnify]});
 
  }
- if(art?.source==='APPROVED_DECOR')return{inventory,art,objects:objects.map(o=>({...o,dx:0,dy:0,magnify:1,bounds:o.node.bounds})),extra,width:art.width,height:art.height};
+ if(art?.source==='APPROVED_DECOR'){
+  for(const object of objects){object.dx=0;object.dy=0;object.magnify=1;object.bounds=object.node.bounds;}
+  // Authored tabletop clusters share their supporting table's uniform transform.
+  // Fit oversized clusters to the real tabletop before any whole-group variation.
+  for(const object of objects.filter(o=>o.node.item.startsWith('tabletop.'))){
+   const support=objects.find(o=>o!==object&&o.node.furnitureGroup===object.node.furnitureGroup&&CATALOG[o.node.item]?.placement?.supportsDetails);
+   if(!support)continue;
+   const surface=furnitureSupportBounds(CATALOG[support.node.item],support.bounds);
+   if(!surface)continue;
+   const [x,y,w,h]=object.bounds,[sx,sy,sw,sh]=surface;
+   if(x>=sx&&y>=sy&&x+w<=sx+sw&&y+h<=sy+sh)continue;
+   const scale=Math.min(1,(sw-4)/w,(sh-4)/h);
+   if(scale<=0)continue;
+   const nx=sx+(sw-w*scale)/2,ny=sy+(sh-h*scale)/2;
+   object.dx=nx-x*scale;object.dy=ny-y*scale;object.magnify=scale;
+   object.bounds=[nx,ny,w*scale,h*scale];
+  }
+  return{inventory,art,objects,extra,width:art.width,height:art.height};
+ }
  if(art?.source==='FINAL'&&objects.length){
   const minX=Math.min(0,...objects.map(o=>o.bounds[0])),minY=Math.min(0,...objects.map(o=>o.bounds[1]));
   const maxX=Math.max(art.width,...objects.map(o=>o.bounds[0]+o.bounds[2])),maxY=Math.max(art.height,...objects.map(o=>o.bounds[1]+o.bounds[3]));

@@ -2,9 +2,6 @@
 const propAliases={'vạc thuốc':'wizard.cauldron','vạc':'wizard.cauldron','ghế ăn':'seat.dining','ghế':'seat.dining','gương':'decor.mirror','gương vỡ':'decor.mirror','chair':'seat.dining','cauldron':'wizard.cauldron'};
 function recipeId(value){return RECIPES[value]?value:VOCAB.recipes[key(value)]||VOCAB.legacyRecipes[key(value)]||null;}
 function composeRoom(place){const rid=recipeId(place.type)||recipeId(place.interiorPlan?.recipe),recipe=RECIPES[rid];const size=({small:'S',medium:'M',large:'L',S:'S',M:'M',L:'L'})[place.size]||'M';const furnishing=typeof furnitureChoice==='function'?furnitureChoice(place,rid):{sourceRecipe:rid,variant:'approved',style:'approved',materials:{}},sourceRecipe=RECIPES[furnishing.sourceRecipe]||recipe;const base=place.propsMode==='replace'?[]:(sourceRecipe?.instancesBySize?.[size]||sourceRecipe?.instances||[]).map(i=>({...i,source:'recipe'}));let out=base;
- if(furnishing.detailVariation&&recipe?.furnishing?.detailPool?.length&&typeof CATALOG!=='undefined'){
-  const pool=recipe.furnishing.detailPool;out=out.map(o=>CATALOG[o.item]?.placement?.role==='detail'?{...o,item:pool[furnitureHash(furnishing.seed+'|'+o.id)%pool.length]}:o);
- }
  if(furnishing.preset?.extraProps)out.push(...furnishing.preset.extraProps.map(o=>({...o})));
  const diagnostics=[];if(furnishing.invalidVariant)diagnostics.push('unknown-furniture-variant');if(furnishing.invalidPreset)diagnostics.push('unknown-furniture-preset');
  list(place.props).forEach((p,index)=>{
