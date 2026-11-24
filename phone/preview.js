@@ -104,7 +104,7 @@
     state = {
       page:"home", thread:0, call:0, contact:0, contactQuery:"", mission:0, missionFilter: data.missions.some(mission=>missionStatus(mission) === "active") ? "active" : data.missions.length ? missionStatus(data.missions[0]) : "active", item:0, transaction:-1, post:0,
       gpsOrigin:"", gpsPoi:-1, read:new Set(), liked:new Set(data.social.flatMap((post,index) => post.liked ? [index] : [])),
-      snapTab:"explore", commentLikes:new Set(), userComments:new Map(), drafts:new Map(), hiddenDescriptions:new Set()
+      snapTab:"explore", commentLikes:new Set(), userComments:new Map(), drafts:new Map()
     };
     setWallpaper(data);
     renderStatus();
@@ -298,8 +298,7 @@
     });
   }
 
-  function snapMedia(post,index) {
-    const description = String(post.imageDescription ?? post.mediaDescription ?? "").trim();
+  function snapMedia(post,description) {
     const image = post.imageSvg ?? post.mediaSvg;
     const type = post.mediaType === "clip" ? "clip" : post.mediaType === "photo" || description || image ? "photo" : "text";
     if (type === "text" && !Object.hasOwn(scenes,post.scene)) return `<div class="snap-stage snap-poster">
@@ -307,8 +306,7 @@
     const fallback = Object.hasOwn(scenes,post.scene) ? scenes[post.scene] : scenes[type === "clip" ? "canal" : "bait"];
     const media = cleanSvg(image);
     return `<div class="snap-stage">${media ? `<iframe sandbox="" title="Minh họa bài đăng" srcdoc="${escapeText(svgDocument(media))}"></iframe>` : fallback}
-      <span class="snap-mark">${type === "clip" ? `<b>●</b> REC${post.duration ? " · "+escapeText(post.duration) : ""}` : "SNAPMATIC · ẢNH"}</span>
-      ${description ? `<details class="snap-description" data-description="${index}"${state.hiddenDescriptions.has(index) ? "" : " open"}><summary>Mô tả cảnh</summary><p><em>${escapeText(description)}</em></p></details>` : ""}</div>`;
+      <span class="snap-mark">${type === "clip" ? `<b>●</b> REC${post.duration ? " · "+escapeText(post.duration) : ""}` : "SNAPMATIC · ẢNH"}</span></div>`;
   }
 
   function social() {
@@ -319,6 +317,7 @@
     if (!entries.length) return `<div class="snap">${nav}<p class="snap-empty">${state.snapTab==="liked" ? "Chưa có bài nào được thích." : state.snapTab==="following" ? "Chưa có bài từ tài khoản đang theo dõi." : "Chưa có bài đăng."}</p></div>`;
     const {post,index} = entries[position];
     const name = username(post);
+    const description = String(post.imageDescription ?? post.mediaDescription ?? "").trim();
     const caption = post.caption ?? post.text ?? "";
     const liked = state.liked.has(index);
     const likes = Number.isFinite(post.likes) ? Math.max(0,post.likes) : 0;
@@ -334,7 +333,7 @@
         <button type="button" class="snap-comment-like" data-comment-like="${i}" data-post="${index}" aria-label="Tim bình luận của ${escapeText(author)}" aria-pressed="${isLiked}">${isLiked ? "♥" : "♡"} ${count+Number(isLiked)}</button></li>`;
     }).join("");
     return `<div class="snap">${nav}<div class="snap-main">
-      <section class="snap-media" aria-label="Khung hình bài đăng">${snapMedia(post,index)}
+      <section class="snap-media" aria-label="Khung hình bài đăng">${snapMedia(post,description)}
         <nav class="snap-nav" aria-label="Chuyển bài"><button type="button" data-snap-post="${entries[position-1]?.index ?? ""}"${position<=0 ? " disabled" : ""}>‹ Trước</button>
         <span aria-live="polite">${position+1} / ${entries.length}</span>
         <button type="button" data-snap-post="${entries[position+1]?.index ?? ""}"${position>=entries.length-1 ? " disabled" : ""}>Sau ›</button></nav></section>
@@ -342,6 +341,7 @@
         <div class="snap-scroll" data-scroll="snap" tabindex="0">
           <header class="snap-author">${snapAvatar(name)}<strong>${escapeText(name)}</strong><time>${escapeText(post.time)}</time></header>
           ${location || canPin ? `<div class="snap-location">${icon("gps")} ${escapeText(location)} ${canPin ? appLink("gps","Ghim GPS",null,' data-origin="social"') : ""}</div>` : ""}
+          ${description ? `<p class="snap-scene-text"><em>${escapeText(description)}</em></p>` : ""}
           <p class="snap-caption">${escapeText(caption)}</p>
           <button type="button" class="snap-like" data-snap-like="${index}" aria-pressed="${liked}">${liked ? "♥ Đã thích" : "♡ Thích"} · ${likes+Number(liked)}</button>
           <ul class="snap-comments" aria-label="Bình luận">${rows || '<li class="muted">Chưa có bình luận.</li>'}</ul>
@@ -642,13 +642,6 @@
     marker.dispatchEvent(new MouseEvent("click",{bubbles:true}));
   });
   if (typeof ResizeObserver === "function") new ResizeObserver(fitGpsMap).observe(app);
-
-  app.addEventListener("toggle",event => {
-    const index = event.target.dataset.description;
-    if (index === undefined) return;
-    if (event.target.open) state.hiddenDescriptions.delete(Number(index));
-    else state.hiddenDescriptions.add(Number(index));
-  },true);
 
   app.addEventListener("submit",event => {
     if (!event.target.matches(".snap-compose")) return;
