@@ -1,0 +1,1073 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#171418">
+<title>iFruit · Leonida</title>
+<style>
+:root{color-scheme:dark;font:14px system-ui,-apple-system,"Segoe UI",sans-serif;background:#171418;color:#fff8ed;--stage-pad:clamp(5px,1.6vw,24px);--muted:#cfc0c3;--line:#fff1dc29;--mint:#9de2ce;--peach:#ffbc93;--sun:#ff9d57}
+*{box-sizing:border-box}
+body{margin:0;min-height:100dvh;display:grid;place-items:center;padding:var(--stage-pad);background:radial-gradient(ellipse at 55% 15%,#4b5350,#272b2d 53%,#141719)}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible{outline:2px solid var(--mint);outline-offset:2px;position:relative;z-index:3}
+button:disabled{cursor:default}
+[hidden]{display:none!important}
+.icon{display:inline-block;width:20px;height:20px;flex:none;vertical-align:middle}
+.frame{width:min(100%,1160px);min-width:0;padding:5px;border:1px solid #c1b9ae;border-radius:33px;background:linear-gradient(150deg,#dad7cd,#696c6d 15%,#27292c 48%,#85817b 90%);box-shadow:0 0 0 2px #191b1e,0 18px 60px #090a0bb0}
+.screen{position:relative;isolation:isolate;overflow:hidden;container-type:size;border-radius:27px;height:clamp(310px,min(calc(100dvh - 2 * var(--stage-pad) - 12px),54vw),575px);display:grid;grid-template-rows:38px minmax(0,1fr) 27px;background:#2a3531;--app-icon:clamp(46px,6.35cqw,76px);--dock-icon:clamp(44px,5.55cqw,65px);--body-text:clamp(15px,1.45cqw,18px);--secondary-text:clamp(13px,1.25cqw,15px);--tap:44px}
+.wallpaper,.wallpaper::after,.wallpaper img{position:absolute;inset:0}
+.wallpaper{z-index:-1;background:radial-gradient(ellipse at 79% 18%,#ffc48c88,transparent 40%),linear-gradient(154deg,#536c77 8%,#b97d73 43%,#506c66 62%,#203a38 90%)}
+.wallpaper img{width:100%;height:100%;object-fit:cover}
+.wallpaper::after{content:"";background:linear-gradient(90deg,#10182076 0%,transparent 56%,#191b2340),linear-gradient(0deg,#14171cb8,transparent 56%),linear-gradient(180deg,#14171c64,transparent 27%)}
+.screen:has(.main.open) .wallpaper{opacity:.11}
+.camera{position:absolute;z-index:4;left:6px;top:50%;transform:translateY(-50%);height:49px;width:12px;border-radius:20px;background:#0a090c;box-shadow:inset 0 0 0 1px #fff1}
+.camera::after{content:"";display:block;width:5px;height:5px;margin:7px auto;border-radius:50%;background:radial-gradient(circle at 62% 35%,#6e90ad 4%,#293348 26%,#171821 65%)}
+.status{display:flex;justify-content:space-between;align-items:center;padding:0 27px 0 41px;font-size:clamp(13px,1.4cqw,16px);font-weight:750;text-shadow:0 1px 8px #121218,0 1px 3px #121218}
+.status>div{display:flex;align-items:center;gap:10px}
+.status-time{font-variant-numeric:tabular-nums}
+.status .icon{width:15px;height:15px}
+.status .battery{width:22px}
+.status .network{font-size:.86em;letter-spacing:.06em}
+.main{display:grid;grid-template-columns:minmax(0,1fr) minmax(175px,28%);grid-template-rows:minmax(0,1fr) auto;column-gap:clamp(12px,2.1cqw,25px);row-gap:6px;min-height:0;padding:0 27px 0 41px}
+.main.open{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr);padding-right:19px}
+.main.open .widgets,.main.open .dock{display:none}
+.home{min-width:0;min-height:0;display:flex;flex-direction:column;justify-content:safe center;gap:clamp(10px,2.5cqh,20px);padding:4px 0;overflow:auto;scrollbar-width:thin}
+.brand{flex:none;padding-left:clamp(6px,1.25cqw,15px);text-shadow:0 2px 16px #171418,0 1px 3px #171418}
+.brand p{margin:0 0 2px;color:#fff1d4;font-size:var(--secondary-text);font-weight:800;letter-spacing:.18em}
+.brand h1{margin:0;font-size:clamp(39px,5.5cqw,65px);line-height:1;letter-spacing:-.07em;font-weight:870;color:#fff9ef}
+.launcher{width:min(100%,470px);flex:none}
+.app-grid,.dock{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+.app-grid{column-gap:clamp(3px,1.65cqw,19px);row-gap:clamp(5px,2.2cqh,16px)}
+.launch{display:flex;flex-direction:column;align-items:center;justify-content:start;gap:6px;width:100%;min-width:0;min-height:var(--tap);padding:3px 1px;border:0;border-radius:10px;background:none;text-align:center;font-size:var(--secondary-text);font-weight:650;text-shadow:0 1px 4px #141719,0 1px 2px #141719}
+.launch:hover{background:#fff2}
+.launch-icon{position:relative;display:grid;place-items:center;flex:none}
+.launch-label{max-width:100%;line-height:1.2;overflow-wrap:anywhere;text-wrap:balance}
+.tile{display:grid;place-items:center;flex:none;background:linear-gradient(145deg,#ffffff49,transparent 54%),var(--tile);color:#241d23;box-shadow:inset 0 0 0 1px #fff4,0 3px 7px #100d1554}
+.launch .tile{width:var(--app-icon);height:var(--app-icon);border-radius:25%;background:radial-gradient(circle at 24% 10%,#fff9,transparent 52%),linear-gradient(150deg,#fff4,transparent 45%,#1114),var(--tile);box-shadow:0 2px 5px #1117,inset 0 0 0 1px #fff7}
+.launch .tile .icon{width:51%;height:51%;stroke-width:1.75}
+.launch:hover .tile{transform:translateY(-2px);transition:transform .16s}
+.tile[data-icon="social"],.launch .tile[data-icon="social"]{background:radial-gradient(circle at 25% 9%,#ffe3caa3,transparent 43%),linear-gradient(145deg,#ffac66,#f8508d 55%,#6855da);color:#fff;box-shadow:inset 0 0 0 1px #fff5,0 2px 7px #902b6270}
+.badge{position:absolute;top:-4px;right:-5px;min-width:20px;height:20px;padding:0 4px;border-radius:10px;background:#8b2149;color:white;text-align:center;font-size:12px;line-height:18px;border:1px solid #ffbdcc}
+.dock{grid-column:1/-1;justify-self:center;align-self:end;width:min(100%,370px);min-width:0;gap:12px;border-radius:25px;padding:7px 12px;background:#21262cc9;backdrop-filter:blur(15px);border:1px solid #fff4;box-shadow:0 6px 16px #10101352}
+.dock .launch .tile{width:var(--dock-icon);height:var(--dock-icon)}
+.widgets{min-width:0;min-height:0;align-self:center;max-height:100%;overflow:auto;scrollbar-width:thin;display:grid;gap:8px}
+.widget-stack,.widgets>.widget{background:#171c23d6;color:#fff5e9;backdrop-filter:blur(13px);border:1px solid #fff3;border-radius:13px}
+.widget-stack{padding:2px 7px}
+.widget{display:flex;align-items:center;min-width:0;width:100%;min-height:var(--tap);gap:9px;padding:9px 8px;text-align:left}
+.widget-stack .widget{background:none;border:0}
+.widget-stack .widget+.widget{border-top:1px solid #fff2}
+button.widget:hover{background-color:#ffffff25}
+.widget-icon{display:grid;place-items:center;flex:none;width:clamp(29px,3.15cqw,40px);height:clamp(29px,3.15cqw,40px);border-radius:10px;background:#ffffff12;color:#a7ecda}
+.widget-icon .icon{width:58%;height:58%}
+.widget-text{flex:1;min-width:0}
+.widget-label,.widget-extra{display:block;color:#f0e5db;font-size:var(--secondary-text);font-weight:650}
+.widget-label{margin-bottom:2px}
+.widget-extra{margin-top:3px}
+.widget-value{display:block;font-size:var(--body-text);line-height:1.18;overflow-wrap:anywhere}
+.money .widget-value{font-size:clamp(19px,2.2cqw,26px)}
+.money .widget-icon,.stars{color:#ffd49b}
+.quest .widget-icon{color:#ffad78}
+.stars{letter-spacing:.04em;font-size:var(--secondary-text);white-space:nowrap}
+.chevron{margin-left:auto;width:13px;height:13px;color:#edd3d6}
+.gesture{display:grid;place-items:center}
+.gesture button{height:24px;width:clamp(126px,17cqw,188px);display:grid;place-items:center;padding:0;border:0;background:none;border-radius:8px}
+.gesture button::after{content:"";width:77%;height:4px;background:#fff9ee;border-radius:9px;box-shadow:0 1px 5px #1d161e}
+.gesture button:hover::after{background:var(--peach)}
+.workspace{min-width:0;min-height:0}
+.app{height:100%;min-width:0;display:flex;flex-direction:column;overflow:hidden;border-radius:20px;background:var(--surface,#272b32);color:var(--ink,#fff7ed);border:1px solid var(--edge,#ffffff22);box-shadow:0 9px 32px #12151975}
+.app-head{display:flex;align-items:center;flex:none;gap:10px;padding:8px clamp(9px,1.45cqw,17px);border-bottom:1px solid var(--edge,#fff2);background:var(--header,#23272e)}
+.app-head .tile{width:38px;height:38px;border-radius:11px}
+.app-head .tile .icon{width:23px;height:23px}
+.app-head h2{margin:0;font-size:clamp(21px,2.25cqw,27px);letter-spacing:-.035em;line-height:1.1;overflow-wrap:anywhere}
+.app-head h2:focus{outline:none}
+.back,.chip{border:1px solid var(--edge,#fff3);background:var(--wash,#fff1);color:var(--ink,#fff8ed);border-radius:999px;min-height:var(--tap);padding:6px 11px;font-size:var(--secondary-text);font-weight:700;line-height:1.2}
+.back{margin-left:auto;white-space:nowrap}
+.back .icon{width:17px;height:17px}
+.back:hover,.chip:hover{background:var(--active,#fff2)}
+.app-body{min-width:0;min-height:0;flex:1;overflow:auto;scrollbar-width:thin;font-size:var(--body-text)}
+.app-body h3{margin:0 0 7px;font-size:clamp(17px,1.8cqw,22px)}
+.app-body p{margin:0 0 8px;line-height:1.4}
+.muted,.app .row small,.app .row time{color:var(--sub,#c4c8ce)}
+.muted,.row small,.row time,.row .amount{font-size:var(--secondary-text)}
+.list{display:grid;gap:6px}
+.row{display:flex;min-width:0;min-height:var(--tap);align-items:center;gap:9px;padding:8px 9px;border:0;border-radius:8px;background:transparent;text-align:left;width:100%;overflow-wrap:anywhere}
+.row:hover,.row[aria-pressed=true]{background:var(--active,#fff2)}
+.row strong,.row small{display:block}
+.row small{margin-top:3px;line-height:1.3}
+.row>span:nth-child(2){min-width:0;flex:1}
+.row time,.row .amount{flex:none}
+.avatar{display:grid;place-items:center;width:33px;height:33px;flex:none;border-radius:11px;background:var(--active,#454854);color:var(--ink,#fff8ed);font-weight:800;font-size:11px}
+.row .avatar{width:36px;height:36px;font-size:13px}
+.bubble{padding:7px 9px;border-radius:9px 9px 9px 3px}
+.bubble.me{border-radius:9px 9px 3px 9px}
+.bubble time{display:block;text-align:right;font-size:var(--secondary-text);margin-top:3px}
+.inset{padding:10px 13px;min-width:0}
+.panes{display:grid;grid-template-columns:minmax(154px,29%) minmax(0,1fr);height:100%;min-height:0}
+.pane{min-width:0;min-height:0;overflow:auto;scrollbar-width:thin}
+.side-pane{background:var(--wash,#0002);border-right:1px solid var(--edge,#fff2)}
+.side-pane .row{margin-bottom:3px;align-items:flex-start}
+.side-pane .row strong,.side-pane .row small{display:block}
+.view-whatup{--surface:#eaf7f3;--ink:#152e2a;--sub:#48625a;--header:#f5fbf8;--wash:#dceee8;--active:#c6e5da;--edge:#3159502b}
+.view-whatup .chat-pane{background:radial-gradient(circle at center,#52978820 1px,transparent 1.5px) 0 0/15px 15px,#eaf7f3}
+.chat-head{display:flex;align-items:center;gap:8px;margin:0 0 8px}
+.chat-head strong{font-size:15px}
+.chat-date{width:max-content;margin:0 auto 7px!important;background:#d2e7df;padding:2px 7px;border-radius:8px;font-size:11px;color:#385d53}
+.view-whatup .bubble{width:fit-content;max-width:87%;min-width:86px;background:#fff;border:1px solid #c0d9d1;color:#18352e;box-shadow:0 2px 3px #293f3612}
+.view-whatup .bubble.me{background:#c4eadd;margin-left:auto}
+.view-whatup .bubble time{color:#3f6357}
+.unread-dot{width:7px;height:7px;background:#16755e;border-radius:50%;display:inline-block;margin-left:4px}
+.view-calls{--surface:#21282d;--header:#1b2024;--wash:#344047;--active:#3c4b54;--ink:#f5fbfd;--sub:#bfccd1;--edge:#c4e3ed26}
+.call-strip{display:flex;gap:8px;overflow:auto;margin-bottom:9px}
+.call-person{display:grid;justify-items:center;gap:3px;padding:4px 9px;min-width:64px;background:transparent;border:0;border-radius:10px;color:var(--ink);font-size:11px}
+.call-person:hover,.call-person[aria-pressed=true]{background:var(--active)}
+.call-person .avatar{border-radius:50%;width:35px;height:35px}
+.call-log{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(120px,.7fr);gap:12px}
+.call-card{background:#303a40;border-radius:13px;padding:9px 11px}
+.call-kind{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#224844;color:#a1e6cb;font-size:15px;flex:none}
+.call-kind.missed{background:#552e3a;color:#ffc4ca}
+.call-log .row{border-bottom:1px solid var(--edge)}
+.call-log .row strong,.call-log .row small{display:block}
+.view-contacts{--surface:#fff5e6;--ink:#32271d;--sub:#655243;--wash:#f2e6d4;--active:#ecd4b9;--header:#fffaf1;--edge:#694d332b}
+.search-label{display:block;font-size:11px;color:var(--sub);margin-bottom:3px}
+.contact-search{width:100%;max-width:100%;padding:6px 8px;border:1px solid var(--edge);border-radius:8px;background:#fffaf2;color:var(--ink);font:inherit;margin-bottom:7px}
+.contact-poster{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-content:center;align-items:center;background:radial-gradient(ellipse at 14% 70%,#ffdc9c,transparent 59%),linear-gradient(123deg,#faead0,#ead7c7);padding:14px;min-height:100%}
+.contact-poster .avatar{width:clamp(45px,9vw,90px);height:clamp(45px,9vw,90px);border-radius:28%;background:#a4593e;color:#fff9eb;font-size:clamp(18px,4vw,36px)}
+.contact-poster h3{font-size:clamp(18px,3.5vw,38px);line-height:.95;margin:0 0 6px}
+.contact-actions{display:flex;gap:4px;flex-wrap:wrap}
+.view-buckme{--surface:#f0f3e8;--ink:#102d24;--sub:#456158;--wash:#dee8dc;--active:#d4e5d4;--header:#f5f7ee;--edge:#326d4a2c}
+.finance{grid-template-columns:minmax(145px,43%) minmax(0,1fr)}
+.balance{padding:14px;border-radius:15px;min-height:116px;display:flex;flex-direction:column;justify-content:space-between;gap:13px;color:#f7ffed;background:repeating-linear-gradient(157deg,transparent 0 9px,#fff1 10px 11px),linear-gradient(146deg,#366d52,#0d342b 65%);box-shadow:0 4px 11px #102d243e}
+.balance strong{font-variant-numeric:tabular-nums;font-size:clamp(26px,6vw,53px);line-height:.95;letter-spacing:-.07em;overflow-wrap:anywhere}
+.finance .amount{color:#125d41;font-weight:750}
+.finance .amount.out{color:#8b3838}
+.finance .detail-note{margin:7px 0;color:var(--sub)}
+.view-missions{--surface:#f7ecdd;--ink:#382819;--sub:#73583c;--header:#faf4e9;--wash:#eee0cc;--active:#eed1ad;--edge:#78592d38}
+.mission-panes{grid-template-columns:minmax(150px,38%) minmax(0,1fr)}
+.deadline-ticket{padding:11px 12px;border-radius:12px;background:#513524;color:#fff5de;border-left:5px solid var(--sun)}
+.deadline-ticket h3{color:#ffe4ba}
+.ticket-figures{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap}
+.ticket-figures strong{font-size:clamp(19px,4vw,34px);line-height:1.05;letter-spacing:-.04em}
+.timeline{padding-left:19px;margin:9px 0 2px;font-size:13px;color:var(--sub)}
+.timeline li{margin-bottom:4px}
+.view-inventory{--surface:#303432;--ink:#f9f1df;--sub:#dbd0bc;--header:#222724;--wash:#272c29;--active:#505149;--edge:#fff3d638}
+.items-panes{grid-template-columns:minmax(152px,52%) minmax(0,1fr)}
+.item-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(74px,1fr));gap:6px}
+.item-slot{display:grid;justify-items:start;align-content:start;gap:5px;min-width:0;padding:7px;border:1px solid var(--edge);border-radius:10px;background:#343936;text-align:left;font-size:11px;overflow-wrap:anywhere}
+.item-slot[aria-pressed=true],.item-slot:hover{background:var(--active);border-color:#e7ba77}
+.item-art{display:grid;place-items:center;width:100%;min-height:39px;background:linear-gradient(150deg,#71736c29,#171b1990);border-radius:6px;color:#f0d29a}
+.item-art .icon{width:27px;height:27px}
+.item-preview{padding:9px 11px;border-radius:8px;background:#1e2421;border:1px solid var(--edge)}
+.item-preview.receipt{background:repeating-linear-gradient(0deg,#f9edcd 0 22px,#eadcb7 23px),#f9edcd;color:#302b1c;border-top:4px dashed #ac9466}
+.view-social{--surface:#0d0f14;--header:#101117;--edge:#ffffff15;--ink:#fff6fa;--sub:#bebbc8;--active:#2a1e2d;--wash:#21222b}
+.view-social .app-head{border-color:var(--edge)}
+.view-social .app-body{overflow:hidden}
+.snap{height:100%;display:grid;grid-template-rows:auto minmax(0,1fr)}
+.snap-tabs{display:flex;align-items:center;justify-content:center;gap:5px;padding:4px 8px;border-bottom:1px solid var(--edge)}
+.snap-tabs button,.snap-nav button,.snap-like,.snap-comment-like,.snap-description summary{background:transparent;border:1px solid var(--edge);border-radius:8px;padding:4px 8px;color:var(--ink);font-size:var(--secondary-text);min-height:var(--tap);font-weight:680}
+.snap-tabs .icon{width:13px;height:13px;margin-right:4px}
+.snap-tabs button[aria-pressed=true]{color:#fff;border-color:#f87aa26b;background:linear-gradient(110deg,#5d2941,#47302c 62%,#24413d)}
+.snap-tabs button:hover,.snap-nav button:hover:not(:disabled),.snap-like:hover,.snap-comment-like:hover{background:#30303c}
+.snap-main{display:grid;grid-template-columns:minmax(0,3fr) minmax(232px,2fr);min-height:0}
+.snap-media{display:grid;grid-template-rows:minmax(0,1fr) auto;gap:5px;padding:8px;min-width:0;min-height:0;background:#12131b}
+.snap-stage{width:100%;max-height:100%;min-height:0;aspect-ratio:16/10;align-self:center;position:relative;isolation:isolate;display:grid;place-items:center;overflow:hidden;border:1px solid #ffffff24;border-radius:10px;background:#181d2e}
+.snap-stage>svg,.snap-stage>iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.snap-mark{position:absolute;top:8px;left:8px;border:1px solid #fff5;border-radius:5px;padding:3px 6px;background:#121623bd;color:white;font-size:10px;letter-spacing:.09em;font-weight:750}
+.snap-mark b{color:#ff829c}
+.snap-description{position:absolute;inset:auto 6px 6px;max-height:65%;overflow:auto;color:white;background:#10111bdc;border:1px solid #fff3;border-radius:8px;backdrop-filter:blur(8px);font-size:12px}
+.snap-description summary{width:fit-content;border:0;cursor:pointer;list-style:none}
+.snap-description summary::before{content:"▸ ";color:#ffadcc}.snap-description[open] summary::before{content:"▾ "}
+.snap-description p{padding:0 8px 5px;margin:0;line-height:1.3;overflow-wrap:anywhere}
+.snap-nav{display:flex;align-items:center;justify-content:center;gap:12px;font-size:11px;color:var(--sub)}
+.snap-nav button:disabled{opacity:.42}
+.snap-poster{padding:12px 7%;align-content:center;text-align:left;background:radial-gradient(ellipse at top right,#e47e6d,transparent 60%),linear-gradient(140deg,#39223c,#18323a);display:grid;gap:6px}
+.snap-poster:before{content:"";position:absolute;inset:0;z-index:-1;background:repeating-linear-gradient(90deg,transparent 0 25px,#fff1 25px 26px),repeating-linear-gradient(0deg,transparent 0 25px,#fff1 25px 26px)}
+.snap-poster span{color:#ffcfac;font-size:10px;letter-spacing:.16em;font-weight:800}.snap-poster strong{font-size:clamp(15px,3.3vw,39px);line-height:1.04;letter-spacing:-.035em;overflow-wrap:anywhere}
+.snap-detail{display:grid;grid-template-rows:minmax(0,1fr) auto;min-width:0;min-height:0;background:#161822}
+.snap-scroll{overflow:auto;scrollbar-width:thin;padding:8px 10px}
+.snap-author,.snap-comment{display:flex;align-items:flex-start;gap:7px}
+.snap-author{align-items:center}.snap-author time,.snap-comment time{font-size:10px;color:var(--sub);white-space:nowrap}
+.snap-avatar{width:31px;height:31px;display:grid;place-items:center;flex:none;border-radius:50%;color:#fff;font-weight:800;font-size:11px;background:hsl(var(--avatar-hue) 46% 34%)}
+.snap-comment .snap-avatar{width:24px;height:24px;font-size:10px}
+.snap-caption{margin:6px 0!important;overflow-wrap:anywhere}
+.snap-location{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin:5px 0;font-size:11px;color:#a7f0dd;overflow-wrap:anywhere}.snap-location .icon{width:13px;height:13px}.snap-location .chip{border-color:#6fcebaa1;color:#c0ffe9}
+.snap-like[aria-pressed=true],.snap-comment-like[aria-pressed=true]{color:#ff9fc0;border-color:#eb6c9a71}
+.snap-comments{margin:7px 0 0;padding:6px 0 0;border-top:1px solid var(--edge);list-style:none;display:grid;gap:7px}
+.snap-comment>div{flex:1;min-width:0;font-size:12px;overflow-wrap:anywhere}.snap-comment p{margin:1px 0 0;line-height:1.23}
+.snap-comment small{font-size:9px;color:#ffc09f}.snap-comment-like{padding:2px 5px}
+.snap-compose{display:flex;gap:5px;padding:6px 8px;border-top:1px solid var(--edge);background:#11131b}
+.snap-compose input{min-width:0;flex:1;color:var(--ink);background:#252633;font:inherit;font-size:12px;padding:6px 8px;border:1px solid var(--edge);border-radius:8px}
+.snap-compose button{border:0;border-radius:8px;background:#ff9fc0;color:#291320;padding:4px 8px;font-size:11px;font-weight:800}
+.snap-empty{padding:15px}
+@media(max-width:550px){.view-social .app-body{overflow:auto}.snap{height:auto;min-height:100%}.snap-main{grid-template-columns:minmax(0,1fr)}.snap-stage{max-height:none}.snap-scroll{max-height:270px}.snap-description{font-size:11px}}
+
+.view-whatup .bubble,.timeline,.snap-caption,.snap-description,.snap-comment>div{font-size:var(--body-text)}
+.call-person,.item-slot,.search-label,.chat-date,.snap-mark,.snap-nav,.snap-location,.snap-author time,.snap-comment time,.snap-comment small,.snap-compose input,.snap-compose button{font-size:var(--secondary-text)}
+.call-person,.item-slot,.snap-compose input,.snap-compose button{min-height:var(--tap)}
+.snap-description summary{min-height:0;padding:6px 8px}
+.snap-description em{white-space:normal}
+.snap-compose input{width:0}
+.snap-mark{max-width:calc(100% - 16px);overflow-wrap:anywhere}
+@container (max-height:450px){
+  .home{--app-icon:clamp(34px,min(6.35cqw,14cqh),56px);gap:5px;padding-block:2px}
+  .brand h1{font-size:clamp(32px,4.25cqw,40px)}
+  .app-grid{row-gap:3px}.launch{padding-block:1px;gap:3px}
+  .dock{--dock-icon:clamp(34px,min(5.55cqw,12.5cqh),50px);gap:6px;padding:4px 9px;border-radius:18px}
+  .widgets{gap:5px}.widgets .widget{padding:4px 5px;gap:6px}
+  .widget-icon{width:27px;height:27px}
+  .app-head{padding-block:3px}.app-head .tile{width:32px;height:32px;border-radius:8px}.app-head .tile .icon{width:19px;height:19px}
+  .snap-tabs{padding-block:2px}.snap-scroll{padding:6px 8px}.snap-media,.snap-compose{padding:4px 6px}
+}
+.view-gps{--surface:#151c20;--header:#151c20;--wash:#1e292d;--active:#303e43;--ink:#f5f2ee;--sub:#a9b2b0;--edge:#354145;--gps-route:#ff936f;--gps-position:#aef2ec;--gps-shop:#f3cb78;--gps-home:#94dab0;--gps-place:#9ebdeb;--gps-mission:#dbb3f3}
+.view-gps .app-head .tile{background:#4c3029;color:var(--gps-route)}
+.gps-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(195px,34%);height:100%;min-height:215px}
+.gps-map{position:relative;isolation:isolate;display:grid;place-items:center;min-width:0;min-height:0;overflow:hidden;background:#252f32}
+.gps-map>svg{position:absolute;inset:0;display:block;width:100%;height:100%}
+.gps-map .muted{margin:0;padding:8px;text-align:center}
+.gps-area-water{fill:#284951}.gps-area-park{fill:#30483e}.gps-area-block{fill:#303b3d}.gps-area-lot{fill:#3b4443}
+.gps-map text{font-family:system-ui,sans-serif;paint-order:stroke;stroke:#252f32;stroke-linejoin:round}
+.gps-district-label{font-size:13px;font-weight:750;letter-spacing:.13em;fill:#b5c0ba;stroke-width:3px}
+.gps-district-label.water-label{fill:#a0c4c9;stroke:#284951}
+.gps-road,.gps-route,.gps-shore{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.gps-road{stroke:#65716d;stroke-width:7}.gps-road.minor{stroke:#475658;stroke-width:4}.gps-road.main-road{stroke:#82908a;stroke-width:11}.gps-road.casing{stroke:#1f292b;stroke-width:15}
+.gps-shore{stroke:#588083;stroke-width:2}
+.gps-route{stroke:var(--gps-route);stroke-width:7}.gps-route.shadow{stroke:#352421;stroke-width:12}
+.gps-poi{cursor:pointer;outline:none;color:var(--gps-place)}
+.gps-poi[data-kind=shop],.gps-key[data-kind=shop]{color:var(--gps-shop)}
+.gps-poi[data-kind=home],.gps-key[data-kind=home]{color:var(--gps-home)}
+.gps-poi[data-kind=place],.gps-key[data-kind=place]{color:var(--gps-place)}
+.gps-poi[data-kind=mission],.gps-key[data-kind=mission]{color:var(--gps-mission)}
+.gps-poi-badge{fill:currentColor;stroke:#172023;stroke-width:2}
+.gps-poi:hover .gps-poi-badge,.gps-poi:focus-visible .gps-poi-badge,.gps-poi[aria-pressed=true] .gps-poi-badge{stroke:#fffaf0;stroke-width:3}
+.gps-poi-label{fill:#f5f0e8;font-size:13px;font-weight:680;letter-spacing:.005em;stroke-width:4px}
+.gps-info{display:flex;flex-direction:column;justify-content:safe center;gap:11px;min-width:0;min-height:0;overflow:auto;padding:clamp(10px,2cqw,22px);border-left:1px solid var(--edge);overflow-wrap:anywhere}
+.gps-info p,.gps-info h3{margin:0}
+.gps-info h3{margin-top:3px;line-height:1.15}
+.gps-info .gps-location{display:flex;align-items:center;gap:7px;color:var(--sub);font-size:var(--secondary-text)}
+.gps-dot{flex:0 0 7px;height:7px;border-radius:50%;background:var(--gps-position)}
+.gps-info .gps-stats{margin-top:5px;color:var(--gps-route);font-size:var(--secondary-text);font-weight:700}
+.gps-info .gps-detail{margin-top:4px;color:var(--sub);font-size:var(--secondary-text)}
+.gps-legend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px 9px;list-style:none;margin:0;padding:11px 0 0;border-top:1px solid var(--edge)}
+.gps-key{display:flex;align-items:center;gap:6px;min-width:0;color:var(--gps-place)}
+.gps-key span{font-size:var(--secondary-text);color:var(--ink)}
+.gps-key .icon{width:21px;height:21px;padding:3px;border-radius:6px;background:currentColor}
+.gps-key .icon>g{stroke:#172023}
+.gps-info button{margin-top:7px;min-height:30px}
+@container (max-width:560px){
+  .gps-layout{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(165px,1fr) auto;min-height:100%;height:auto}
+  .gps-map{height:clamp(165px,61cqw,235px)}
+  .gps-info{border-left:0;border-top:1px solid var(--edge);padding:8px 10px;gap:7px}
+  .gps-legend{grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;padding-top:6px}
+  .gps-key{gap:4px}.gps-key span{font-size:11px}.gps-key .icon{width:17px;height:17px}
+  .gps-poi-label{font-size:16px;stroke-width:5px}.gps-district-label{font-size:15px}
+}
+@container (max-width:350px){
+  .gps-key span{font-size:10px}
+  .gps-poi-label{display:none}
+}
+.mission-status-box h4{margin:0 0 7px;font-size:var(--secondary-text)}
+.mission-status-list{display:grid;gap:4px}
+.mission-status{display:flex;justify-content:space-between;align-items:center;gap:4px;width:100%;padding:5px 7px;border:1px solid var(--edge);border-radius:7px;background:var(--wash);text-align:left;font-size:var(--secondary-text);line-height:1.15}
+.mission-status:hover,.mission-status[aria-pressed=true]{background:var(--active)}
+.mission-status[aria-pressed=true]{border-color:currentColor}
+.mission-status span{overflow-wrap:anywhere}
+.mission-status strong{font-variant-numeric:tabular-nums}
+.mission-panes .mission-status-box{margin-bottom:8px}
+.mission-tag{display:inline-block;margin-bottom:5px;padding:3px 7px;border:1px solid currentColor;border-radius:999px;font-size:11px;font-weight:700}
+.mission-tag[data-status=active],.view-gps [data-status=active]{color:#e3befa}
+.mission-tag[data-status=available],.view-gps [data-status=available]{color:#f5d38c}
+.mission-tag[data-status=done],.view-gps [data-status=done]{color:#a1dcbc}
+.mission-description{margin-top:8px!important}
+.gps-poi[data-status=active]{color:#dbb3f3}
+.gps-poi[data-status=available]{color:#f3cb78}
+.gps-poi[data-status=done]{color:#94dab0}
+.gps-poi[data-off-map=true] .gps-poi-badge{stroke-dasharray:3 2}
+@media(max-width:750px){
+  .main{padding-inline:33px 14px;grid-template-columns:minmax(0,1fr) minmax(163px,29%)}
+  .main.open{padding-right:13px}.status{padding-inline:34px 18px}
+  .panes{grid-template-columns:minmax(126px,30%) minmax(0,1fr)}
+  .finance,.mission-panes,.items-panes{grid-template-columns:minmax(120px,41%) minmax(0,1fr)}
+}
+@media(max-width:550px){
+  .frame{padding:3px;border-radius:22px}
+  .screen{border-radius:18px;height:clamp(360px,calc(100dvh - 2 * var(--stage-pad) - 8px),510px);grid-template-rows:29px minmax(0,1fr) 22px;--app-icon:clamp(35px,9cqw,45px);--dock-icon:var(--app-icon)}
+  .camera{left:4px;width:8px;height:32px}.camera::after{width:4px;height:4px;margin-top:4px}
+  .status{padding-inline:20px 12px}
+  .main{grid-template-columns:minmax(0,1fr) minmax(110px,39%);column-gap:5px;padding-inline:17px 8px}
+  .main.open{padding-right:8px}
+  .home{gap:5px}.brand{padding-left:2px}.brand h1{font-size:clamp(30px,8cqw,39px)}
+  .app-grid{column-gap:0}.launch{font-size:12px}.dock{width:min(100%,255px)}
+  .widgets .widget{gap:5px;padding:5px}.widget-stack{padding:0 4px}
+  .widget-label,.widget-extra{font-size:12px}.widget-value,.money .widget-value{font-size:14px}
+  .widget-extra,.stars,.chevron{display:none}
+  .app{border-radius:14px}.app-head{gap:6px;padding-inline:8px}.app-head .back{padding-inline:7px}.inset{padding:7px}
+  .panes{grid-template-columns:minmax(92px,32%) minmax(0,1fr)}
+  .finance,.mission-panes,.items-panes{grid-template-columns:minmax(89px,37%) minmax(0,1fr)}
+  .side-pane .row{gap:3px;padding:5px}
+  .view-whatup .side-pane .avatar,.view-whatup .side-pane time{display:none}
+  .view-whatup .side-pane .row>span{flex:1}
+  .call-log,.contact-poster{grid-template-columns:1fr}
+  .contact-poster{align-content:start;gap:7px;padding:8px}
+  .snap-tabs button{padding-inline:6px;font-size:12px}
+}
+@media(max-width:360px){
+  .widgets .widget-icon{display:none}
+  .view-gps .app-head .back span{display:none}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<main class="frame" aria-label="Điện thoại iFruit">
+  <div class="screen">
+    <div class="wallpaper" aria-hidden="true"><img id="wallpaper-image" alt="" hidden></div>
+    <div class="camera" aria-hidden="true"></div>
+    <header class="status" aria-label="Thanh trạng thái">
+      <div><time class="status-time" id="status-time"></time></div>
+      <div id="signal"></div>
+    </header>
+    <div class="main" id="main">
+      <section class="home" id="home" aria-labelledby="brand">
+        <div class="brand">
+          <p id="region"></p>
+          <h1 id="brand">iFruit</h1>
+        </div>
+        <nav class="launcher" id="launcher" aria-label="Ứng dụng"></nav>
+      </section>
+      <div class="workspace" id="workspace" hidden>
+        <section class="app" id="app" aria-labelledby="app-title"></section>
+      </div>
+      <aside class="widgets" id="widgets" aria-label="Trạng thái nhanh"></aside>
+      <nav class="dock" id="dock" aria-label="Ứng dụng truy cập nhanh"></nav>
+    </div>
+    <footer class="gesture"><button type="button" id="home-button" aria-label="Về màn hình chính" title="Về màn hình chính"></button></footer>
+  </div>
+</main>
+
+<!-- WALLPAPERS: danh sách URL hoặc đường dẫn ảnh. wallpaperIndex tính từ 1. -->
+<script type="application/json" id="WALLPAPERS">
+[]
+</script>
+
+<!-- POST_POOL: Snapmatic chọn 3 bài khác nhau khi PHONE_DATA có newPosts. -->
+<script type="application/json" id="POST_POOL">
+[
+{"author":"@hamlet.local","time":"08:48","mediaType":"clip","caption":"Đường thông rồi nha. Hỏi cái biển thì nó chịu.","likes":12,"comments":[{"author":"@keys.tow","time":"12p","text":"Qua được. Quay đầu mới tính tiền.","likes":8},{"author":"@marta.bait","time":"9p","text":"Biển đó đứng từ tháng ba rồi ông ơi.","likes":4},{"author":"@hamlet.local","time":"5p","text":"Tháng ba năm nào thì chị nói rõ đi.","likes":6},{"author":"@bridge.danny","time":"2p","text":"Tui thấy xe cứu hộ tới trước đội sửa đường.","likes":2}],"scene":"canal","duration":"00:14","id":"canal","imageDescription":"Máy quay rung từ ghế phụ. Một chiếc bán tải bò qua vũng nước ven kênh, hất bùn lên tấm biển «Đường đang sửa»."},
+{"author":"@marta.bait","time":"08:22","mediaType":"photo","caption":"Ca sáng có quản lý mới. Đừng nhìn thẳng vào mắt nó.","likes":27,"comments":[{"author":"@hamlet.local","text":"Quản lý cũ còn thiếu tui ba đô.","time":"31p","likes":3}],"scene":"bait","id":"bait","imageDescription":"Ly cà phê đọng nước trên thùng giữ lạnh. Sau quầy, một con mòng biển đang đứng chễm chệ trên tấm bảng «Cấm cho chim ăn»."},
+{"author":"@hamlet.notice","time":"07:56","caption":"Làn đón khách ở cổng Hamlet đã mở lại. Xe chờ lâu thì tấp qua bãi bên kia đường.","locationId":"hamlet-gate","comments":[{"author":"@keys.tow","text":"Bãi trống phía hàng rào xanh nha.","time":"42p","likes":2}],"headline":"Làn đón khách mở lại","posterLabel":"THÔNG BÁO · HAMLET","locationLabel":"Cổng trại giam Hamlet","id":"hamlet-notice","mediaType":"photo","imageSvg":"\u003csvg viewBox=\"0 0 640 400\">\u003crect width=\"640\" height=\"400\" fill=\"#584250\"/>\u003cpath d=\"M0 270L180 175l82 38 85-45 293 104v128H0Z\" fill=\"#e8af83\"/>\u003crect x=\"95\" y=\"105\" width=\"450\" height=\"190\" rx=\"12\" fill=\"#f3dfb2\"/>\u003ctext x=\"320\" y=\"211\" text-anchor=\"middle\" font-size=\"26\" fill=\"#3a2b36\">Làn đón khách mở lại\u003c/text>\u003c/svg>","imageDescription":"Một tấm bảng thông báo bên đường."},
+{"author":"@keys.tow","time":"07:38","headline":"Mất một chiếc dép","posterLabel":"NHẮN TÌM ĐỒ · LEONIDA KEYS","caption":"Ai lượm được chiếc dép trái ở bến số 4, cho tui xin. Chiếc bên phải vẫn mang đi làm bình thường.","likes":17,"comments":[{"author":"@marta.bait","time":"48p","text":"Cho mượn đôi ủng, nhớ trả trước khi nước lên.","likes":3}],"id":"lost-sandal","mediaType":"photo","imageSvg":"\u003csvg viewBox=\"0 0 640 400\">\u003crect width=\"640\" height=\"400\" fill=\"#265352\"/>\u003cpath d=\"M0 270L180 175l82 38 85-45 293 104v128H0Z\" fill=\"#e8af83\"/>\u003crect x=\"95\" y=\"105\" width=\"450\" height=\"190\" rx=\"12\" fill=\"#f3dfb2\"/>\u003ctext x=\"320\" y=\"211\" text-anchor=\"middle\" font-size=\"26\" fill=\"#3a2b36\">Mất một chiếc dép\u003c/text>\u003c/svg>","imageDescription":"Một tấm bảng thông báo bên đường."}
+]
+</script>
+
+<!-- PHONE_DATA mẫu. Runtime thay JSON hoặc gọi GTA_PHONE.render(payload). Escape < thành \u003c khi nhúng.
+  missions: id ổn định, status active/available/done, type, title, location {name,point,offMap}, completedOn cùng định dạng date.
+  GPS lấy điểm nhiệm vụ từ missions; mapData.pois dùng cho shop/home/place. mapData: toạ độ 720×450.
+  threads chứa messages {id,sender,text,time}; sender "pc" căn bong bóng về phía người chơi.
+  newPosts chứa 2 bài {id,author,time,caption,imageSvg,imageDescription,comments}; renderer lấy thêm 3 bài từ POST_POOL.
+-->
+<script type="application/json" id="PHONE_DATA">
+{
+"time":"09:10",
+"region":"Leonida",
+"network":"5G",
+"battery":82,
+"cash":86,
+"wanted":0,
+"location":"Cổng trại giam Hamlet",
+"condition":"Ổn định",
+"calls":[{"name":"Jason","direction":"Cuộc gọi đến","time":"08:54","kind":"incoming","duration":"46 giây"},{"name":"Mẹ","direction":"Cuộc gọi nhỡ","time":"08:41","kind":"missed"},{"name":"Jason","direction":"Cuộc gọi đi","kind":"outgoing","time":"08:24","duration":"12 giây"}],
+"contacts":[{"name":"Jason","note":"Liên hệ gần đây"},{"name":"Mẹ","note":"Liên hệ yêu thích"}],
+"missions":[{"title":"Tiền giữ chỗ","deadline":"18:00","amount":440,"description":"Bên cho thuê giữ chỗ đến 18:00. Số tiền còn phải thanh toán là $440.","steps":["Kiểm tra biên nhận đặt cọc.","Thanh toán phần còn lại trước 18:00."],"id":"deposit","status":"active","type":"side","location":{"name":"Điểm hẹn ven vịnh","point":[384,267]}},{"id":"hamlet-main","status":"available","type":"main","title":"Gặp ở bến","description":"Jason nhắn hỏi có ghé bến thuyền được không.","location":{"name":"Bến thuyền","point":[603,257],"labelSide":"bottom"}},{"id":"coffee","status":"available","type":"side","title":"Ly chưa lấy","description":"Marta hỏi có ai ghé lấy ly đã để dành.","location":{"name":"Quầy ven vịnh","point":[490,114]}},{"id":"park-event","status":"available","type":"event","title":"Kèo ở công viên","description":"Một nhóm ở cổng nam đang rủ người chơi một ván.","location":{"name":"Công viên Bờ Nam","point":[361,324]}},{"id":"keys-board","status":"available","type":"side","title":"Bảng tin ở Keys","description":"Có người để lời nhắn ở bảng tin bên kia vịnh.","location":{"name":"Leonida Keys","point":[990,350],"offMap":true}},{"id":"out-of-hamlet","status":"done","type":"main","title":"Rời Hamlet","completedOn":"ngay-01","description":"Đã ra cổng và lên xe.","location":{"name":"Cổng trại giam Hamlet","point":[116,303]}}],
+"transactions":[{"title":"Cà phê ở trạm xăng","time":"08:22","amount":-4,"description":"Chi tiền mặt tại trạm xăng · 08:22."},{"title":"Tiền có sẵn","time":"08:00","amount":90}],
+"inventory":[{"name":"Chìa khóa","quantity":1,"description":"Chìa khóa nhà, móc vào vòng kim loại bạc.","kind":"key"},{"name":"Biên nhận đặt cọc","quantity":1,"description":"Hạn giữ chỗ ghi trên biên nhận là 18:00.","kind":"receipt"}],
+"player":{"name":"Lucia","handle":"@lucia"},
+"following":["@hamlet.local","@marta.bait"],
+"app":"home",
+"threads":[{"id":"mom","name":"Mẹ","unread":true,"messages":[{"text":"Mẹ đặt cọc rồi. Họ giữ chỗ tới 6 giờ tối.","time":"09:02"}],"date":"Hôm nay"},{"id":"jason","name":"Jason","unread":true,"messages":[{"id":"jason-1","sender":"npc","time":"09:08","text":"Ngồi êm không? Anh vừa sửa ghế đấy. Cái lò xo chống đối anh suốt tuần."},{"id":"jason-2","sender":"pc","time":"09:08","text":"Nó với em đang thương lượng. Cứ lái đi."},{"id":"jason-3","sender":"npc","time":"09:09","text":"Ừ. Em muốn ghé lấy cà phê trước hay qua bến hỏi vụ tiền giữ chỗ?"},{"id":"jason-4","sender":"pc","time":"09:09","text":"Cà phê. Em muốn nói chuyện tiền bạc khi mắt đã mở hẳn."},{"id":"jason-5","sender":"npc","time":"09:10","text":"Anh đoán đúng một lần trong đời rồi. Có ly của em cạnh cần số."}],"date":"Hôm nay"}],
+"mapData":{"locationId":"hamlet-gate","location":"Cổng trại giam Hamlet","position":[147,334],"areas":[{"kind":"water","points":[[555,-150],[555,29],[579,66],[555,112],[567,155],[597,191],[566,230],[578,267],[559,303],[530,349],[553,395],[546,460],[558,650],[1360,650],[1360,-150]]},{"kind":"park","points":[[-350,-160],[255,-160],[258,35],[205,72],[80,62],[-350,108]]},{"kind":"lot","points":[[74,278],[193,271],[213,308],[201,321],[82,318]]},{"kind":"lot","points":[[564,151],[651,151],[651,181],[590,181]]},{"kind":"park","points":[[302,302],[397,282],[442,321],[421,394],[291,389],[269,343]]},{"kind":"block","points":[[76,112],[175,83],[209,119],[188,172],[72,178]]},{"kind":"block","points":[[257,96],[370,85],[403,126],[382,172],[280,175]]},{"kind":"block","points":[[389,35],[536,29],[552,65],[515,106],[426,98]]},{"kind":"block","points":[[430,258],[515,229],[550,262],[496,309],[446,303]]},{"kind":"block","points":[[58,354],[167,358],[186,416],[75,430],[41,389]]}],"roads":[{"kind":"shore","points":[[555,-150],[555,29],[579,66],[555,112],[567,155],[597,191],[566,230],[578,267],[559,303],[530,349],[553,395],[546,460],[558,650]]},{"kind":"minor","points":[[80,-160],[80,161],[47,203],[47,288],[-10,344],[-10,650]]},{"kind":"minor","points":[[170,-160],[170,105],[205,156],[205,205],[164,255],[164,301]]},{"kind":"minor","points":[[311,-160],[311,80],[282,131],[282,191],[253,225],[283,267]]},{"kind":"minor","points":[[400,-160],[400,72],[435,107],[435,177],[410,216],[410,256],[450,303],[450,370],[419,416],[419,650]]},{"kind":"minor","points":[[510,100],[510,154],[472,213]]},{"kind":"minor","points":[[-360,403],[121,403],[165,426],[260,426],[319,403],[510,403],[550,425]]},{"kind":"street","points":[[-360,202],[40,202],[86,190],[234,190],[297,206],[388,206],[435,177],[496,177],[523,149],[562,149]]},{"kind":"street","points":[[-360,98],[57,98],[126,76],[222,76],[276,53],[366,53],[407,77],[477,77],[529,103],[560,103]]},{"kind":"street","points":[[389,267],[420,293],[461,318],[544,318]]},{"kind":"street","points":[[236,334],[228,383],[260,426],[260,650]]},{"kind":"main","points":[[-360,322],[53,322],[99,334],[147,334],[236,334],[283,267],[395,267],[472,213],[553,213],[595,166],[639,166]]}],"labels":[{"text":"HAMLET","point":[132,45],"kind":"district"},{"text":"KHU VEN VỊNH","point":[489,43],"kind":"district"},{"text":"VỊNH NAM","point":[650,305],"kind":"water"},{"text":"CÔNG VIÊN BỜ NAM","point":[354,365],"kind":"district"}],"pois":[{"id":"corner-shop","kind":"shop","name":"Tiệm góc phố","point":[238,188],"detail":"Cửa hàng tiện lợi ở ngã ba.","labelSide":"bottom"},{"id":"bait-coffee","kind":"shop","name":"Cà phê ven vịnh","point":[522,149],"detail":"Quầy cà phê sát đường bờ vịnh.","labelSide":"top"},{"id":"jason-home","kind":"home","name":"Nhà Jason","point":[308,75],"detail":"Nhà ở trong khu Hamlet.","labelSide":"bottom"},{"id":"fuel","kind":"place","name":"Trạm xăng","point":[92,247],"detail":"Có lối vào từ đường phía tây.","labelSide":"top"},{"id":"park","kind":"place","name":"Cổng công viên","point":[481,318],"detail":"Lối đi bộ vào Công viên Bờ Nam.","labelSide":"bottom"},{"id":"bay-marina","kind":"place","name":"Bến thuyền","point":[636,201],"detail":"Bến nhỏ ở cuối đường ven vịnh.","labelSide":"bottom"}],"route":{"destination":"Bến thuyền","distance":"2,4 km","duration":"6 phút","detail":"Qua đường ven vịnh","points":[[147,334],[236,334],[283,267],[395,267],[472,213],[553,213],[595,166],[639,166]]}},
+"newPosts":[{"id":"demo-snack","author":"@leo.snacks","time":"09:08","mediaType":"photo","caption":"Món sáng nay ở quầy ven kênh.","imageDescription":"Một chiếc ly và bánh mì trên quầy gỗ. Trời sáng bên kia cửa sổ.","comments":[{"author":"@hamlet.local","text":"Còn mở tới mấy giờ?","time":"09:09"}],"imageSvg":"\u003csvg viewBox=\"0 0 640 400\">\u003crect width=\"640\" height=\"400\" fill=\"#7da9b3\"/>\u003ccircle cx=\"495\" cy=\"87\" r=\"52\" fill=\"#ffe4aa\"/>\u003cpath d=\"M0 260h640v140H0Z\" fill=\"#aa6f5b\"/>\u003cellipse cx=\"380\" cy=\"319\" rx=\"122\" ry=\"37\" fill=\"#f6dec3\"/>\u003cpath d=\"M297 310q41-76 158-30l11 25q-60 43-169 5Z\" fill=\"#db9b52\"/>\u003cpath d=\"M134 180h100l-12 117h-76Z\" fill=\"#edc9a3\"/>\u003cpath d=\"M146 207h77l-7 69h-63Z\" fill=\"#925d58\"/>\u003c/svg>"},{"id":"demo-bay","author":"@southbay.marina","time":"09:02","mediaType":"photo","caption":"Bên vịnh sáng nay yên ắng.","imageDescription":"Một chiếc xuồng màu kem trên mặt nước xanh lam, cạnh hàng cọc gỗ.","comments":[{"author":"@marta.bait","text":"Thấy từ chỗ quầy nhà tui.","time":"09:05"}],"imageSvg":"\u003csvg viewBox=\"0 0 640 400\">\u003crect width=\"640\" height=\"400\" fill=\"#e8ae91\"/>\u003cpath d=\"M0 165q130-42 290 0t350 0v235H0Z\" fill=\"#4c818c\"/>\u003cpath d=\"M0 311h270m158-62h212M20 347h190m160 16h228\" stroke=\"#a0c2bf\" stroke-width=\"5\" opacity=\".55\"/>\u003cpath d=\"M204 244h230l-46 49H243Z\" fill=\"#fce1bc\"/>\u003cpath d=\"M256 244l12-45h91l32 45Z\" fill=\"#eda181\"/>\u003cpath d=\"M59 171v154m58-140v139m417-115v147\" stroke=\"#654951\" stroke-width=\"17\"/>\u003c/svg>"}],
+"date":"ngay-01",
+"baselineId":"hamlet-car-first-open"
+}
+</script>
+<script>
+(() => {
+  "use strict";
+  const glyphs = {
+    chat:'<path d="M4 5h16a1 1 0 0 1 1 1v10H9l-5 4v-4H3V6a1 1 0 0 1 1-1Z"/><path d="M7 10h10m-10 3h7"/>',
+    phone:'<path d="m8 4 2 5-2 2a12 12 0 0 0 5 5l2-2 5 2v3a2 2 0 0 1-2 2C10 21 3 14 3 6a2 2 0 0 1 2-2z"/>',
+    gps:'<path d="M19 10c0 5-7 10-7 10s-7-5-7-10a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10" r="2.5"/>',
+    quest:'<path d="M8 5H5v16h14V5h-3m-8 6h8m-8 4h5"/><rect x="8" y="3" width="8" height="4" rx="1.5"/>',
+    cash:'<rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18m-14 5h4"/>',
+    contact:'<rect x="4" y="3" width="16" height="18" rx="3"/><circle cx="12" cy="9" r="2"/><path d="M8 16a4 4 0 0 1 8 0"/>',
+    eye:'<path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"/><circle cx="12" cy="12" r="2.5"/>',
+    social:'<rect x="3" y="6" width="18" height="14" rx="3"/><path d="M8 6l2-3h4l2 3"/><circle cx="12" cy="13" r="3.2"/>',
+    key:'<circle cx="8" cy="9" r="4"/><path d="m11 12 8 8m-3-3 2-2m-4 0 2-2"/>',
+    bag:'<path d="M5 8h14l2 12H3L5 8Zm4 1V6a3 3 0 0 1 6 0v3"/>',
+    health:'<path d="M2 12h5l2-5 3 11 2-6h8"/>',
+    chevron:'<path d="m9 6 6 6-6 6"/>',
+    signal:'<path d="M4 19v-3m5 3v-6m5 6V9m5 10V5" stroke-width="2.7"/>',
+    home:'<path d="m3 10 9-7 9 7v10h-7v-6h-4v6H3Z"/>'
+  };
+  const apps = {
+    whatup:{label:"WhatUp",icon:"chat",color:"#a5e3bc"},
+    calls:{label:"Cuộc gọi",icon:"phone",color:"#a5dcca"},
+    gps:{label:"GPS",icon:"gps",color:"#f8bb8c"},
+    missions:{label:"Nhiệm vụ",icon:"quest",color:"#f6a9bb"},
+    buckme:{label:"BuckMe",icon:"cash",color:"#f2d889"},
+    contacts:{label:"Danh bạ",icon:"contact",color:"#b8c6ea"},
+    social:{label:"Snapmatic",icon:"social",color:"#e9afd0"},
+    inventory:{label:"Túi đồ",icon:"bag",color:"#e5bc9f"}
+  };
+
+  const byId = id => document.getElementById(id);
+  const escapeText = value => String(value ?? "").replace(/[&<>"']/g, char =>
+    ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[char]);
+  const currency = new Intl.NumberFormat("en-US", {style:"currency",currency:"USD",maximumFractionDigits:2,minimumFractionDigits:0});
+  const dollars = value => Number.isFinite(value) ? currency.format(value) : "—";
+  const list = value => Array.isArray(value) ? value.filter(entry => entry && typeof entry === "object") : [];
+  const listStrings = value => Array.isArray(value) ? value.filter(entry=>typeof entry === "string" && entry.trim()) : [];
+  const last = items => items.at(-1) ?? {};
+  const icon = (key, extra = "") => `<svg class="icon ${extra}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${glyphs[key]}</svg>`;
+  const avatar = name => `<span class="avatar" aria-hidden="true">${escapeText(String(name ?? "?").trim().split(/\s+/).slice(0,2).map(word => word[0] ?? "").join("").toLocaleUpperCase("vi"))}</span>`;
+  const tile = key => `<span class="tile" data-icon="${key}" style="--tile:${apps[key].color}">${icon(apps[key].icon)}</span>`;
+  const empty = message => `<p class="muted">${message}</p>`;
+  const app = byId("app");
+  const launcher = byId("launcher");
+
+  function readJson(id, fallback) {
+    try { return JSON.parse(byId(id).textContent) ?? fallback; }
+    catch { return fallback; }
+  }
+
+  function drawPosts(pool, count) {
+    const remaining = [...pool];
+    const result = [];
+    while (remaining.length && result.length < count) {
+      const index = Math.floor(Math.random() * remaining.length);
+      result.push(...remaining.splice(index, 1));
+    }
+    return result;
+  }
+
+  const wallpapers = readJson("WALLPAPERS", []);
+  const postPool = list(readJson("POST_POOL", []));
+
+  function setWallpaper(data) {
+    const image = byId("wallpaper-image");
+    const selected = Number.isInteger(data.wallpaperIndex) && data.wallpaperIndex >= 1 &&
+      data.wallpaperIndex <= wallpapers.length ? data.wallpaperIndex - 1 : Math.floor(Math.random() * wallpapers.length);
+    image.hidden = true;
+    image.removeAttribute("src");
+    if (typeof wallpapers[selected] !== "string" || !wallpapers[selected].trim()) return;
+    try {
+      const url = new URL(wallpapers[selected], document.baseURI);
+      if (!["https:", "http:", "file:"].includes(url.protocol)) return;
+      image.src = url.href;
+      image.hidden = false;
+    } catch {}
+  }
+
+  function prepareData(payload) {
+    const data = payload && typeof payload === "object" && !Array.isArray(payload) ? payload : {};
+    const phoneState = data.phoneState && typeof data.phoneState === "object" &&
+      !Array.isArray(data.phoneState) ? data.phoneState : {};
+    const snapshot = {...phoneState, ...data};
+    const social = Array.isArray(snapshot.newPosts) || !Array.isArray(snapshot.social)
+      ? [...drawPosts(postPool, 3), ...list(snapshot.newPosts).slice(0, 2)] : list(snapshot.social);
+    const missions = list(snapshot.missions).filter(mission=>mission.status !== "done" ||
+      !snapshot.date || !mission.completedOn || mission.completedOn === snapshot.date);
+    return {...snapshot, threads: list(snapshot.threads ?? snapshot.messages), missions, social};
+  }
+
+  let data;
+  let state;
+  function setData(payload) {
+    data = prepareData(payload);
+    state = {
+      page:"home", thread:0, call:0, contact:0, contactQuery:"", mission:0, missionFilter: data.missions.some(mission=>missionStatus(mission) === "active") ? "active" : data.missions.length ? missionStatus(data.missions[0]) : "active", item:0, transaction:-1, post:0,
+      gpsOrigin:"", gpsPoi:-1, read:new Set(), liked:new Set(data.social.flatMap((post,index) => post.liked ? [index] : [])),
+      snapTab:"explore", commentLikes:new Set(), userComments:new Map(), drafts:new Map(), hiddenDescriptions:new Set()
+    };
+    setWallpaper(data);
+    renderStatus();
+    renderWidgets();
+    const page = data.app === "messages" ? "whatup" : data.app === "snapmatic" ? "social" : data.app;
+    open(typeof page === "string" && Object.hasOwn(apps, page) ? page : "home");
+  }
+
+  function renderStatus() {
+    byId("status-time").textContent = data.time ?? "—";
+    byId("region").textContent = String(data.region ?? "Leonida").toLocaleUpperCase("vi");
+    const battery = Number.isFinite(data.battery) ? Math.min(100, Math.max(0, Math.round(data.battery))) : 0;
+    byId("signal").innerHTML = `${icon("signal")}<span class="network">${escapeText(data.network)}</span>
+      <svg class="icon battery" viewBox="0 0 25 14" role="img" aria-label="Pin ${battery}%"><rect x="1" y="2" width="20" height="10" rx="3" fill="none" stroke="currentColor"/><rect x="3" y="4" width="${16*battery/100}" height="6" rx="1.5" fill="currentColor"/><path d="M23 5v4" stroke="currentColor" stroke-width="1.5"/></svg>`;
+  }
+
+  function renderNavigation() {
+    const unread = data.threads.filter((thread, index) => thread.unread && !state.read.has(index)).length;
+    const dock = ["whatup","calls","gps"];
+    const shortcuts = Object.keys(apps).filter(key=>!dock.includes(key));
+    const launch = key => `<button type="button" class="launch" data-app="${key}"><span class="launch-icon">${tile(key)}
+      ${key === "whatup" && unread ? `<span class="badge" aria-label="${unread} cuộc trò chuyện chưa đọc">${unread}</span>` : ""}</span>
+      <span class="launch-label">${apps[key].label}</span></button>`;
+    launcher.innerHTML = `<div class="app-grid">${shortcuts.map(launch).join("")}</div>`;
+    byId("dock").innerHTML = dock.map(launch).join("");
+  }
+
+  function renderWidgets() {
+    const mission = data.missions.find(entry=>missionStatus(entry) === "active");
+    const wanted = Number.isFinite(data.wanted) ? Math.round(Math.min(5,Math.max(0,data.wanted))) : 0;
+    const widget = ({page,key,label,value,extra="",className="",suffix=""}) => {
+      const tag = page ? "button" : "div";
+      return `<${tag} class="widget ${className}"${page ? ` type="button" data-app="${page}"` : ""}>
+        <span class="widget-icon">${icon(key)}</span><span class="widget-text"><span class="widget-label">${label}</span>
+        <strong class="widget-value">${escapeText(value)}</strong>${extra ? `<span class="widget-extra">${escapeText(extra)}</span>` : ""}</span>
+        ${suffix || (page ? icon("chevron","chevron") : "")}</${tag}>`;
+    };
+    const [location,...status] = [
+      widget({page:"gps",key:"gps",label:"Vị trí hiện tại",value:data.location ?? "—",extra:"Mở bản đồ GPS"}),
+      widget({page:"buckme",key:"cash",label:"Tiền mặt",value:dollars(data.cash),className:"money",suffix:`<span class="stars" aria-label="Mức truy nã ${wanted} trên 5">${"★".repeat(wanted)}${"☆".repeat(5-wanted)}</span>`}),
+      widget({page:"missions",key:"quest",label:"Nhiệm vụ",value:mission?.title ?? "—",extra:mission ? [mission.deadline,Number.isFinite(mission.amount) ? dollars(mission.amount) : ""].filter(Boolean).join(" · ") : "",className:"quest"}),
+      widget({key:"health",label:"Thể trạng",value:data.condition ?? "—"})
+    ];
+    byId("widgets").innerHTML = location + `<div class="widget-stack">${status.join("")}</div>`;
+  }
+
+  const rowLabel = (title,subtitle = "") => `<span><strong>${escapeText(title)}</strong>${subtitle ? `<small>${escapeText(subtitle)}</small>` : ""}</span>`;
+  const choose = (key,index,active,body,style="row") =>
+    `<button type="button" class="${style}" data-select="${key}" data-index="${index}" aria-pressed="${active}">${body}</button>`;
+  const appLink = (page,label,index,extra="") =>
+    `<button type="button" class="chip" data-app="${page}"${Number.isInteger(index) ? ` data-index="${index}"` : ""}${extra}>${label}</button>`;
+  const headline = person => String(person?.name ?? "").trim();
+
+  function messages() {
+    const threads = data.threads;
+    if (!threads.length) return `<div class="inset">${empty("Chưa có tin nhắn.")}</div>`;
+    const selected = threads[state.thread] ?? threads[0];
+    const rows = threads.map((thread,index) => {
+      const snippet = last(list(thread.messages));
+      const dot = thread.unread && !state.read.has(index) ? '<i class="unread-dot" aria-label="Chưa đọc"></i>' : "";
+      return choose("thread",index,selected===thread,`${avatar(thread.name)}${rowLabel(thread.name,snippet.text)}<time>${escapeText(snippet.time)}${dot}</time>`);
+    }).join("");
+    const bubbles = list(selected.messages).map(msg =>
+      `<div class="bubble${msg.mine || msg.sender === "pc" ? " me" : ""}">${escapeText(msg.text)}<time>${escapeText(msg.time)}</time></div>`).join("");
+    return `<div class="panes"><div class="pane side-pane inset" data-scroll="threads">${rows}</div>
+      <section class="pane chat-pane inset" aria-label="Cuộc trò chuyện"><div class="chat-head">${avatar(selected.name)}<strong>${escapeText(selected.name)}</strong></div>
+      ${selected.date ? `<p class="chat-date">${escapeText(selected.date)}</p>` : ""}
+      <div class="list">${bubbles || empty("Cuộc trò chuyện trống.")}</div></section></div>`;
+  }
+
+  function calls() {
+    const records = list(data.calls);
+    if (!records.length) return `<div class="inset">${empty("Chưa có cuộc gọi.")}</div>`;
+    const current = records[state.call] ?? records[0];
+    const people = records.filter((entry,index) => records.findIndex(call => call.name===entry.name) === index);
+    const rows = records.map((record,index) => {
+      const missed = record.kind === "missed" || /nhỡ/i.test(record.direction ?? "");
+      const symbol = missed ? "!" : record.kind === "outgoing" || /đi/i.test(record.direction ?? "") ? "↗" : "↙";
+      return choose("call",index,current===record,`<span class="call-kind${missed ? " missed" : ""}" aria-hidden="true">${symbol}</span>${rowLabel(record.name,record.direction)}<time>${escapeText(record.time)}</time>`);
+    }).join("");
+    return `<div class="inset"><div class="call-strip" aria-label="Liên hệ gần đây">${people.map(person =>
+      choose("call",records.indexOf(person),current===person,`${avatar(person.name)}${escapeText(person.name)}`,"call-person")).join("")}</div>
+      <div class="call-log"><section aria-label="Nhật ký cuộc gọi">${rows}</section>
+      <section class="call-card"><h3>${escapeText(current.name)}</h3><p>${escapeText(current.direction)} · ${escapeText(current.time)}</p>
+      ${current.duration ? `<p class="muted">Thời lượng ${escapeText(current.duration)}</p>` : ""}</section></div></div>`;
+  }
+
+  function contacts() {
+    const records = list(data.contacts);
+    if (!records.length) return `<div class="inset">${empty("Chưa có liên hệ.")}</div>`;
+    const current = records[state.contact] ?? records[0];
+    const rows = records.map((entry,index) => choose("contact",index,entry===current,`${avatar(entry.name)}${rowLabel(entry.name)}`)).join("");
+    const chatIndex = data.threads.findIndex(thread=>headline(thread)===headline(current));
+    const callIndex = list(data.calls).findIndex(call=>headline(call)===headline(current));
+    return `<div class="panes"><div class="pane side-pane inset" data-scroll="contacts">
+      <label class="search-label" for="contact-search">Tìm liên hệ</label><input class="contact-search" id="contact-search" type="search" autocomplete="off" value="${escapeText(state.contactQuery)}">
+      <div id="contact-rows">${rows}</div><p class="muted" id="no-contacts" hidden>Không tìm thấy liên hệ.</p></div>
+      <section class="pane contact-poster">${avatar(current.name)}<div><h3>${escapeText(current.name)}</h3><p class="muted">${escapeText(current.note)}</p>
+      <div class="contact-actions">${chatIndex>=0 ? appLink("whatup","Tin nhắn",chatIndex) : ""}${callIndex>=0 ? appLink("calls","Nhật ký gọi",callIndex) : ""}</div></div></section></div>`;
+  }
+
+  function filterContacts() {
+    const query = state.contactQuery.trim().toLocaleLowerCase("vi");
+    const rows = [...app.querySelectorAll("#contact-rows button")];
+    const contacts = list(data.contacts);
+    for (const row of rows) row.hidden = !headline(contacts[Number(row.dataset.index)]).toLocaleLowerCase("vi").includes(query);
+    const emptyState = app.querySelector("#no-contacts");
+    if (emptyState) emptyState.hidden = rows.some(row => !row.hidden);
+  }
+
+  const missionStates = {active:"Đang tiến hành",available:"Chưa nhận",done:"Xong"};
+  const missionStatus = mission => Object.hasOwn(missionStates,mission.status) ? mission.status : "active";
+
+  function missionStatusBox(filter = "") {
+    const missions = data.missions;
+    return `<section class="mission-status-box" aria-label="Trạng thái nhiệm vụ">
+      ${filter ? "" : "<h4>Trạng thái nhiệm vụ</h4>"}
+      <div class="mission-status-list">${Object.entries(missionStates).map(([key,label]) => {
+        const count = missions.filter(mission=>missionStatus(mission) === key).length;
+        const action = filter ? `data-mission-filter="${key}" aria-pressed="${filter === key}"` :
+          `data-app="missions" data-mission-filter="${key}"`;
+        return `<button class="mission-status" data-status="${key}" type="button" ${action}><span>${label}</span><strong>${count}</strong></button>`;
+      }).join("")}</div>
+    </section>`;
+  }
+
+  function missions() {
+    const entries = data.missions;
+    const visible = entries.map((mission,index)=>({mission,index})).filter(({mission})=>missionStatus(mission) === state.missionFilter);
+    const active = visible.find(entry=>entry.index === state.mission) ?? visible[0];
+    const rows = visible.map(({mission,index}) => choose("mission",index,index === active.index,
+      `<span class="widget-icon">${icon("quest")}</span>${rowLabel(mission.title,mission.location?.name ?? mission.deadline)}`)).join("");
+    const selected = active?.mission;
+    const markerIndex = selected ? gpsPlaces().findIndex(place=>place.missionIndex === active.index) : -1;
+    const steps = listStrings(selected?.steps);
+    const status = selected ? missionStatus(selected) : state.missionFilter;
+    return `<div class="panes mission-panes"><section class="pane side-pane inset" data-scroll="missions" aria-label="Danh sách nhiệm vụ">
+      ${missionStatusBox(state.missionFilter)}${rows || empty("Chưa có nhiệm vụ ở trạng thái này.")}</section>
+      <section class="pane inset">${selected ? `<div class="deadline-ticket">
+      <span class="mission-tag" data-status="${status}">${missionStates[status]}${selected.type === "main" ? " · Chính" : ""}</span>
+      <h3>${escapeText(selected.title)}</h3><div class="ticket-figures">
+      ${selected.deadline ? `<strong>${escapeText(selected.deadline)}</strong>` : ""}${Number.isFinite(selected.amount) ? `<strong>${dollars(selected.amount)}</strong>` : ""}</div></div>
+      ${selected.description ? `<p class="mission-description">${escapeText(selected.description)}</p>` : ""}
+      ${steps.length ? `<ol class="timeline">${steps.map(step=>`<li>${escapeText(step)}</li>`).join("")}</ol>` : ""}
+      ${markerIndex >= 0 ? appLink("gps","Xem trên GPS",markerIndex) : ""}` : ""}</section></div>`;
+  }
+
+  function inventory() {
+    const entries = list(data.inventory);
+    if (!entries.length) return `<div class="inset">${empty("Túi đồ đang trống.")}</div>`;
+    const selected = entries[state.item] ?? entries[0];
+    const pictogram = entry => entry.kind === "receipt" ? "quest" : entry.kind === "key" ? "key" : "bag";
+    const slots = entries.map((entry,index) => choose("item",index,entry===selected,
+      `<span class="item-art">${icon(pictogram(entry))}</span><strong>${escapeText(entry.name)}</strong>${entry.quantity != null ? `<small>×${escapeText(entry.quantity)}</small>` : ""}`,"item-slot")).join("");
+    return `<div class="panes items-panes"><section class="pane side-pane inset" data-scroll="items"><div class="item-grid">${slots}</div></section>
+      <section class="pane inset"><div class="item-preview${selected.kind === "receipt" ? " receipt" : ""}">
+      <span class="widget-icon">${icon(pictogram(selected))}</span><h3>${escapeText(selected.name)}</h3><p>${escapeText(selected.description)}</p></div></section></div>`;
+  }
+
+  function transactions() {
+    const entries = list(data.transactions);
+    const current = entries[state.transaction];
+    const rows = entries.map((entry,index) => choose("transaction",index,entry===current,
+      `<span class="widget-icon">${icon("cash")}</span>${rowLabel(entry.title,entry.time)}
+      <span class="amount${entry.amount<0 ? " out" : ""}">${entry.amount>0 ? "+" : ""}${dollars(entry.amount)}</span>`)).join("");
+    return `<div class="panes finance"><section class="pane side-pane inset"><div class="balance"><span>BuckMe · Tiền mặt</span><strong>${dollars(data.cash)}</strong></div></section>
+      <section class="pane inset" data-scroll="transactions"><h3>Giao dịch</h3>${rows || empty("Chưa có giao dịch.")}
+      ${current ? `<p class="detail-note">${escapeText(current.description ?? [current.title,current.time,dollars(current.amount)].filter(Boolean).join(" · "))}</p>` : ""}</section></div>`;
+  }
+
+  const scenes = {
+    canal:`<svg viewBox="0 0 640 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="canal-sky" x2="0" y2="1"><stop stop-color="#303968"/><stop offset=".65" stop-color="#bc5c77"/><stop offset="1" stop-color="#ffc488"/></linearGradient><linearGradient id="canal-water" x2="0" y2="1"><stop stop-color="#487681"/><stop offset="1" stop-color="#222b48"/></linearGradient></defs><rect width="640" height="400" fill="url(#canal-sky)"/><circle cx="441" cy="145" r="53" fill="#ffd698"/><path d="M0 147q55-38 134 0t155 7q66-15 128 14 66-30 120-7 66-28 103-18v82H0Z" fill="#35394d"/><path d="M0 188q130 35 290 8t350 8v196H0Z" fill="url(#canal-water)"/><path d="M314 224h188m-127 18h192m-177 20h190m-245 16h81m-38 19h171m-152 22h115" stroke="#ffe2ad" stroke-opacity=".35" stroke-width="4"/><path d="M0 223q94-12 221-14L433 400H0Z" fill="#31303d"/><path d="M0 261q84-27 231-40l185 179h-21L223 228Q83 241 0 280Z" fill="#e7a375" opacity=".5"/><path d="M29 322q135-39 267 25l32 22q-163 18-299-47Z" fill="#657181"/><path d="M59 329q107-13 213 22m-185-9 95 16" fill="none" stroke="#df9a8e" stroke-width="3"/><g fill="#202939"><path d="M14 227q35-73 25-143l8-3q20 70-18 150ZM610 247q-16-83 3-154l-8-1q-25 72-10 154Z"/><path d="M39 90Q-1 47 0 79q25-6 39 11Q24 34 2 36q29 22 37 54Q66 29 103 56q-45 0-64 34Q83 63 111 89q-43-11-72 1ZM608 97q-41-39-75-20 46-3 75 20-15-43-47-57 33 31 47 57 9-52 32-58v11q-17 20-32 47 22-11 32-7v-13q-19 2-32 20Z"/></g><g transform="translate(106 232)"><ellipse cx="115" cy="67" rx="119" ry="12" fill="#1a1e2a" opacity=".75"/><path d="M0 26h66l27-28h54l28 23 54 8v36H0Z" fill="#d58a56"/><path d="M92 5h50l19 17H78Z" fill="#313749"/><path d="M0 37h228v13H0Z" fill="#e7a273"/><circle cx="44" cy="64" r="17" fill="#1c222f"/><circle cx="190" cy="64" r="17" fill="#1c222f"/><circle cx="44" cy="64" r="7" fill="#88919a"/><circle cx="190" cy="64" r="7" fill="#88919a"/><path d="M224 33h5v11h-5" fill="#fff1a5"/></g><path d="M516 219v106" stroke="#423840" stroke-width="7"/><rect x="473" y="208" width="85" height="39" rx="4" fill="#efad52" transform="rotate(-5 516 228)"/><text x="516" y="232" text-anchor="middle" fill="#432b32" font-size="11" font-family="system-ui" font-weight="850">ĐƯỜNG ĐANG SỬA</text><path d="M22 61V27h38m558 34V27h-38M22 344v33h38m558-33v33h-38" fill="none" stroke="#fff" opacity=".47" stroke-width="2"/></svg>`,
+    bait:`<svg viewBox="0 0 640 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="bait-sky" x2="0" y2="1"><stop stop-color="#81c4cd"/><stop offset="1" stop-color="#ffd3a2"/></linearGradient><linearGradient id="bait-desk" x2="0" y2="1"><stop stop-color="#e7a373"/><stop offset="1" stop-color="#965b54"/></linearGradient></defs><rect width="640" height="400" fill="url(#bait-sky)"/><circle cx="492" cy="86" r="43" fill="#ffe7b1"/><path d="M0 163q92-21 215-2t184 4 241-13v124H0Z" fill="#55938e"/><path d="M0 200q85-18 210-3t244 2 186-15v92H0Z" fill="#6eaaa2"/><path d="M18 205h208m-152 15h101m268-16h144m-160 21h131" stroke="#f7e2a8" stroke-opacity=".51" stroke-width="3"/><path d="M0 15h640v41H0Z" fill="#edaa86"/><path d="M0 14h640v19H0Z" fill="#a95863"/><path d="M45 56h14v183H45Z" fill="#cf896f"/><path d="M579 56h14v187h-14Z" fill="#c67b66"/><path d="M0 254h640v146H0Z" fill="url(#bait-desk)"/><path d="M0 302h640m-640 33h640m-640 39h640" stroke="#713b46" stroke-opacity=".5" stroke-width="3"/><ellipse cx="212" cy="348" rx="126" ry="19" fill="#61404b" opacity=".59"/><rect x="95" y="253" width="227" height="88" rx="12" fill="#65888f"/><rect x="88" y="240" width="241" height="28" rx="8" fill="#b9d5cb"/><rect x="179" y="273" width="60" height="13" rx="3" fill="#344c64"/><path d="M171 157h67l-9 82h-49Z" fill="#8a584d"/><path d="M176 165h56l-5 33h-48Z" fill="#e4b483"/><rect x="168" y="150" width="73" height="13" rx="4" fill="#fcdfb4"/><path d="M183 177l4 48m37-46-3 33" stroke="#fff4d2" stroke-width="3" opacity=".6"/><rect x="397" y="205" width="143" height="82" rx="4" fill="#ffe2af"/><rect x="403" y="211" width="131" height="70" fill="none" stroke="#8e5d61" stroke-width="2"/><text x="468" y="249" text-anchor="middle" fill="#644550" font-family="system-ui" font-size="15" font-weight="800">CẤM CHO CHIM ĂN</text><path d="M430 205q8-31 31-33 12-3 17-14 3-11 16-7 10 2 10 12l16 3-16 6q-9 24-27 26Z" fill="#fff2dc"/><path d="M437 199q22-23 47-18-11 15-32 20Z" fill="#9da0a7"/><circle cx="495" cy="159" r="2" fill="#3d3b4d"/><path d="M492 195v10m-10-9v9" stroke="#de9255" stroke-width="3"/></svg>`
+  };
+
+  const snapTabs = [["following","Đang theo dõi"],["explore","Khám phá"],["liked","Đã thích"]];
+  const username = entry => String(entry.author ?? entry.name ?? "Tài khoản Leonida");
+  const playerName = () => String(data.player?.handle ?? data.player?.name ?? "Bạn");
+  const snapAvatar = name => {
+    const initials = name.replace(/^@/,"").split(/[._\s]+/).filter(Boolean).slice(0,2).map(part=>part[0]).join("").toUpperCase();
+    const hue = [...name].reduce((sum,letter)=>(sum*31+letter.codePointAt(0))%360,0);
+    return `<span class="snap-avatar" style="--avatar-hue:${hue}" aria-hidden="true">${escapeText(initials || "?")}</span>`;
+  };
+
+  function visiblePosts() {
+    const following = (Array.isArray(data.following) ? data.following : []).map(name=>String(name).toLowerCase());
+    return list(data.social).map((post,index)=>({post,index})).filter(({post,index}) => {
+      if (state.snapTab === "liked") return state.liked.has(index);
+      if (state.snapTab === "following") return post.following === true || following.includes(username(post).toLowerCase());
+      return true;
+    });
+  }
+
+  function snapMedia(post,index) {
+    const description = String(post.imageDescription ?? post.mediaDescription ?? "").trim();
+    const image = post.imageSvg ?? post.mediaSvg;
+    const type = post.mediaType === "clip" ? "clip" : post.mediaType === "photo" || description || image ? "photo" : "text";
+    if (type === "text" && !Object.hasOwn(scenes,post.scene)) return `<div class="snap-stage snap-poster">
+      <span>${escapeText(post.posterLabel ?? "BÀI ĐĂNG")}</span><strong>${escapeText(post.headline ?? username(post))}</strong></div>`;
+    const fallback = Object.hasOwn(scenes,post.scene) ? scenes[post.scene] : scenes[type === "clip" ? "canal" : "bait"];
+    const media = cleanSvg(image);
+    return `<div class="snap-stage">${media ? `<iframe sandbox="" title="Minh họa bài đăng" srcdoc="${escapeText(svgDocument(media))}"></iframe>` : fallback}
+      <span class="snap-mark">${type === "clip" ? `<b>●</b> REC${post.duration ? " · "+escapeText(post.duration) : ""}` : "SNAPMATIC · ẢNH"}</span>
+      ${description ? `<details class="snap-description" data-description="${index}"${state.hiddenDescriptions.has(index) ? "" : " open"}><summary>Mô tả cảnh</summary><p><em>${escapeText(description)}</em></p></details>` : ""}</div>`;
+  }
+
+  function social() {
+    const entries = visiblePosts();
+    const position = Math.max(0,entries.findIndex(entry=>entry.index===state.post));
+    const tabs = snapTabs.map(([key,label])=>`<button type="button" data-snap-tab="${key}" aria-pressed="${state.snapTab===key}">${key==="explore" ? icon("eye") : ""}${label}</button>`).join("");
+    const nav = `<nav class="snap-tabs" aria-label="Lọc bảng tin">${tabs}</nav>`;
+    if (!entries.length) return `<div class="snap">${nav}<p class="snap-empty">${state.snapTab==="liked" ? "Chưa có bài nào được thích." : state.snapTab==="following" ? "Chưa có bài từ tài khoản đang theo dõi." : "Chưa có bài đăng."}</p></div>`;
+    const {post,index} = entries[position];
+    const name = username(post);
+    const caption = post.caption ?? post.text ?? "";
+    const liked = state.liked.has(index);
+    const likes = Number.isFinite(post.likes) ? Math.max(0,post.likes) : 0;
+    const comments = [...list(post.comments).filter(comment=>String(comment.text ?? "").trim()), ...(state.userComments.get(index) ?? [])];
+    const canPin = Boolean(post.locationId && post.locationId === data.mapData?.locationId && gpsPoint(data.mapData.position));
+    const location = post.locationLabel ?? (canPin ? data.mapData.location ?? data.location : "");
+    const rows = comments.map((comment,i)=>{
+      const author = username(comment);
+      const isLiked = state.commentLikes.has(`${index}:${i}`);
+      const count = Number.isFinite(comment.likes) ? Math.max(0,comment.likes) : 0;
+      return `<li class="snap-comment">${snapAvatar(author)}<div><strong>${escapeText(author)}</strong>
+        ${author===name ? " <small>Tác giả</small>" : ""} <time>${escapeText(comment.time)}</time><p>${escapeText(comment.text)}</p></div>
+        <button type="button" class="snap-comment-like" data-comment-like="${i}" data-post="${index}" aria-label="Tim bình luận của ${escapeText(author)}" aria-pressed="${isLiked}">${isLiked ? "♥" : "♡"} ${count+Number(isLiked)}</button></li>`;
+    }).join("");
+    return `<div class="snap">${nav}<div class="snap-main">
+      <section class="snap-media" aria-label="Khung hình bài đăng">${snapMedia(post,index)}
+        <nav class="snap-nav" aria-label="Chuyển bài"><button type="button" data-snap-post="${entries[position-1]?.index ?? ""}"${position<=0 ? " disabled" : ""}>‹ Trước</button>
+        <span aria-live="polite">${position+1} / ${entries.length}</span>
+        <button type="button" data-snap-post="${entries[position+1]?.index ?? ""}"${position>=entries.length-1 ? " disabled" : ""}>Sau ›</button></nav></section>
+      <article class="snap-detail" aria-label="Bài đăng và bình luận">
+        <div class="snap-scroll" data-scroll="snap" tabindex="0">
+          <header class="snap-author">${snapAvatar(name)}<strong>${escapeText(name)}</strong><time>${escapeText(post.time)}</time></header>
+          ${location || canPin ? `<div class="snap-location">${icon("gps")} ${escapeText(location)} ${canPin ? appLink("gps","Ghim GPS",null,' data-origin="social"') : ""}</div>` : ""}
+          <p class="snap-caption">${escapeText(caption)}</p>
+          <button type="button" class="snap-like" data-snap-like="${index}" aria-pressed="${liked}">${liked ? "♥ Đã thích" : "♡ Thích"} · ${likes+Number(liked)}</button>
+          <ul class="snap-comments" aria-label="Bình luận">${rows || '<li class="muted">Chưa có bình luận.</li>'}</ul>
+        </div>
+        <form class="snap-compose" data-post="${index}">
+          <input name="comment" aria-label="Nhập bình luận" placeholder="Bình luận với tên ${escapeText(playerName())}" value="${escapeText(state.drafts.get(index) ?? "")}" maxlength="280" required>
+          <button type="submit">Gửi</button>
+        </form>
+      </article></div></div>`;
+  }
+
+  function updateSnap(focusSelector,keepScroll=true) {
+    const previous = app.querySelector(".snap-scroll")?.scrollTop ?? 0;
+    renderApp();
+    const scroll = app.querySelector(".snap-scroll");
+    if (keepScroll && scroll) scroll.scrollTop = previous;
+    app.querySelector(focusSelector)?.focus({preventScroll:true});
+  }
+
+  function snapClick(button) {
+    const {snapTab,snapPost,snapLike,commentLike,post} = button.dataset;
+    if (snapTab !== undefined) {
+      state.snapTab = snapTab;
+      state.post = visiblePosts()[0]?.index ?? 0;
+      updateSnap(`[data-snap-tab="${snapTab}"]`,false);
+    } else if (snapPost !== undefined) {
+      if (!snapPost) return true;
+      state.post = Number(snapPost);
+      updateSnap('.snap-nav button:not(:disabled)',false);
+    } else if (snapLike !== undefined) {
+      const index = Number(snapLike);
+      if (state.liked.has(index)) state.liked.delete(index);
+      else state.liked.add(index);
+      updateSnap(`[data-snap-like="${index}"]`);
+    } else if (commentLike !== undefined) {
+      const key = `${post}:${commentLike}`;
+      if (state.commentLikes.has(key)) state.commentLikes.delete(key);
+      else state.commentLikes.add(key);
+      updateSnap(`[data-comment-like="${commentLike}"]`);
+    } else {
+      return false;
+    }
+    return true;
+  }
+
+  // GPS uses a 720 × 450 landscape scene. A wider viewport reveals more of the scene.
+  const gpsWidth = 720;
+  const gpsHeight = 450;
+  const gpsPoint = point => Array.isArray(point) && point.length === 2 &&
+    point.every((n, axis) => Number.isFinite(n) && n >= 0 && n <= [gpsWidth, gpsHeight][axis]);
+  const extendedGpsPoint = point => Array.isArray(point) && point.length === 2 &&
+    point.every((n, axis) => Number.isFinite(n) && Math.abs(n) <= 3 * [gpsWidth, gpsHeight][axis]);
+  const gpsPoints = (points, min, check = gpsPoint) => Array.isArray(points) && points.length >= min &&
+    points.length <= 100 && points.every(check) ? points.map(point => point.join(",")).join(" ") : "";
+
+  const gpsKinds = {
+    shop:{label:"Cửa hàng",art:'<path d="M3 9l2-5h14l2 5-2 3H5l-2-3Zm2 3v8h14v-8M9 20v-5h6v5"/>'},
+    home:{label:"Nhà",art:'<path d="m3 11 9-7 9 7M5 10v10h5v-5h4v5h5V10"/>'},
+    place:{label:"Địa điểm",art:'<path d="M19 10c0 5-7 10-7 10s-7-5-7-10a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10" r="2"/>'},
+    mission:{label:"Nhiệm vụ",art:'<path d="M6 21V4m0 1h12l-3 4 3 4H6"/>'}
+  };
+  const gpsKind = kind => Object.hasOwn(gpsKinds,kind) ? kind : "place";
+  const gpsGlyph = kind => `<g fill="none" stroke="#172023" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${gpsKinds[kind].art}</g>`;
+  function edgePoint([x,y]) {
+    const dx = x - gpsWidth / 2;
+    const dy = y - gpsHeight / 2;
+    const factor = Math.min((gpsWidth / 2 - 33) / Math.abs(dx), (gpsHeight / 2 - 35) / Math.abs(dy));
+    return Number.isFinite(factor) ? [gpsWidth / 2 + dx * factor, gpsHeight / 2 + dy * factor] : [gpsWidth - 33,gpsHeight / 2];
+  }
+
+  function gpsPlaces() {
+    const places = list(data.mapData?.pois).filter(place=>gpsPoint(place.point) && String(place.name ?? "").trim());
+    const missions = data.missions.flatMap((mission,missionIndex) => {
+      const location = mission.location;
+      if (!extendedGpsPoint(location?.point)) return [];
+      const offMap = location.offMap === true || !gpsPoint(location.point);
+      return [{kind:"mission",name:mission.title,point:offMap ? edgePoint(location.point) : location.point,
+        labelSide: location.labelSide,detail:[location.name,offMap ? "Ngoài khu vực bản đồ" : ""].filter(Boolean).join(" · "),
+        offMap,status:missionStatus(mission),missionIndex}];
+    });
+    return [...places, ...missions];
+  }
+
+  function fitGpsMap() {
+    const canvas = app.querySelector("[data-gps-canvas]");
+    if (!canvas) return;
+    const {clientWidth:width,clientHeight:height} = canvas.parentElement;
+    if (!width || !height) return;
+    const scale = Math.min(width / gpsWidth, height / gpsHeight);
+    const sceneWidth = width / scale;
+    const sceneHeight = height / scale;
+    canvas.setAttribute("viewBox", `${(gpsWidth - sceneWidth) / 2} ${(gpsHeight - sceneHeight) / 2} ${sceneWidth} ${sceneHeight}`);
+  }
+
+  function gps() {
+    const map = data.mapData ?? {};
+    const fromPost = state.gpsOrigin === "social";
+    const route = fromPost ? null : map.route;
+    const routePoints = gpsPoints(route?.points, 2);
+    const current = gpsPoint(map.position) ? map.position : null;
+    const destination = route?.destination || (routePoints ? "Điểm đến" : "");
+    const location = map.location ?? data.location;
+    const stats = routePoints ? [route.distance, route.duration].filter(Boolean).map(escapeText).join(" · ") : "";
+    const areas = list(map.areas).map(area => {
+      const points = gpsPoints(area.points, 3, extendedGpsPoint);
+      const kind = ["water","park","lot"].includes(area.kind) ? area.kind : "block";
+      return points ? `<polygon class="gps-area-${kind}" points="${points}"/>` : "";
+    }).join("");
+    const roads = list(map.roads).map(road => {
+      const points = gpsPoints(road.points, 2, extendedGpsPoint);
+      if (!points) return "";
+      const line = `points="${points}"`;
+      if (road.kind === "shore") return `<polyline class="gps-shore" ${line}/>`;
+      if (road.kind === "main") return `<polyline class="gps-road casing" ${line}/><polyline class="gps-road main-road" ${line}/>`;
+      return `<polyline class="gps-road${road.kind === "minor" ? " minor" : ""}" ${line}/>`;
+    }).join("");
+    const labels = list(map.labels).map(label => gpsPoint(label.point) ?
+      `<text class="gps-district-label${label.kind === "water" ? " water-label" : ""}" x="${label.point[0]}" y="${label.point[1]}" text-anchor="middle">${escapeText(label.text)}</text>` : "").join("");
+    const places = gpsPlaces();
+    const markers = places.map((place,index) => {
+      const kind = gpsKind(place.kind);
+      const below = place.labelSide === "bottom" || place.point[1] < 52;
+      const status = place.status ? ` data-status="${place.status}"` : "";
+      const anchor = place.point[0] < 75 ? "start" : place.point[0] > gpsWidth - 75 ? "end" : "middle";
+      const accessibleName = [gpsKinds[kind].label,place.name,missionStates[place.status],place.offMap ? "Ngoài khu vực bản đồ" : ""].filter(Boolean).join(" · ");
+      return `<g class="gps-poi" data-kind="${kind}" data-gps-poi="${index}"${status} data-off-map="${Boolean(place.offMap)}" transform="translate(${place.point.join(" ")})"
+        role="button" tabindex="0" aria-pressed="${state.gpsPoi === index}" aria-label="${escapeText(accessibleName)}">
+        <circle r="23" fill="#000" fill-opacity="0"/><circle class="gps-poi-badge" r="14"/>
+        <g transform="translate(-9 -9) scale(.75)">${gpsGlyph(kind)}</g>
+        <text class="gps-poi-label" y="${below ? 31 : -20}" text-anchor="${anchor}">${escapeText(place.name)}</text>
+      </g>`;
+    }).join("");
+    const pin = routePoints ? route.points.at(-1) : fromPost && current ? current : null;
+    const mapArt = current || pin || areas || roads || labels || markers ? `<svg data-gps-canvas viewBox="0 0 720 450" role="group" aria-labelledby="gps-map-title">
+      <title id="gps-map-title">${escapeText(destination ? `GPS từ ${location ?? "vị trí hiện tại"} đến ${destination}` : `GPS · ${location ?? "Vị trí hiện tại"}`)}</title>
+      ${areas}${roads}${labels}
+      ${routePoints ? `<polyline class="gps-route shadow" points="${routePoints}"/><polyline class="gps-route" points="${routePoints}"/>` : ""}
+      ${pin ? `<g aria-hidden="true" transform="translate(${pin.join(" ")})"><path d="M0-27a11 11 0 0 1 11 11C11-9 0 1 0 1S-11-9-11-16A11 11 0 0 1 0-27Z" fill="var(--gps-route)" stroke="#2f201e" stroke-width="2"/><circle cy="-16" r="3.5" fill="#2f201e"/></g>` : ""}
+      ${current ? `<g aria-hidden="true" transform="translate(${current.join(" ")})"><circle r="15" fill="var(--gps-position)" opacity=".22"/><circle r="8" fill="var(--gps-position)" stroke="#172e33" stroke-width="3"/></g>` : ""}
+      ${markers}
+    </svg>` : empty("Chưa có sơ đồ cho khu vực này.");
+    const legend = places.length ? `<ul class="gps-legend" aria-label="Chú thích bản đồ">${Object.entries(gpsKinds).map(([kind,style]) =>
+      `<li class="gps-key" data-kind="${kind}"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true">${gpsGlyph(kind)}</svg><span>${style.label}</span></li>`).join("")}</ul>` : "";
+    const selected = places[state.gpsPoi];
+    const selectedKind = selected ? missionStates[selected.status] ?? gpsKinds[gpsKind(selected.kind)].label : "";
+    const detail = routePoints ? route.detail : fromPost ? "Điểm ghim từ bài đăng." :
+      destination ? "Chưa có dữ liệu tuyến đường." : current ? "Đang hiển thị vị trí hiện tại." : "Đang chờ dữ liệu vị trí.";
+    return `<div class="gps-layout"><div class="gps-map">${mapArt}</div><section class="gps-info" aria-label="Thông tin GPS">
+      <div aria-live="polite"><p class="gps-location"><span class="gps-dot" aria-hidden="true"></span>${location ? `Vị trí hiện tại · ${escapeText(location)}` : "Chưa rõ vị trí hiện tại"}</p>
+      ${selected ? `<h3>${escapeText(selected.name)}</h3><p class="gps-detail">${escapeText([selectedKind,selected.detail].filter(Boolean).join(" · "))}</p>
+        ${Number.isInteger(selected.missionIndex) ? appLink("missions","Xem nhiệm vụ",selected.missionIndex) : ""}
+        <button type="button" class="chip" data-gps-reset>Về chỉ đường</button>` :
+        `<h3>${escapeText(destination || (fromPost ? "Điểm ghim Snapmatic" : "Chưa có điểm đến"))}</h3>
+        ${stats ? `<p class="gps-stats">${stats}</p>` : ""}${detail ? `<p class="gps-detail">${escapeText(detail)}</p>` : ""}`}
+      </div>${missionStatusBox()}${legend}
+    </section></div>`;
+  }
+
+  function cleanSvg(markup) {
+    if (typeof markup !== "string" || markup.length > 120000) return null;
+    const namespace = "http://www.w3.org/2000/svg";
+    const tags = new Set("svg g path rect circle ellipse line polyline polygon text tspan title desc".split(" "));
+    const attributes = new Set("viewBox preserveAspectRatio role aria-label x y x1 x2 y1 y2 cx cy r rx ry width height d points fill fill-opacity stroke stroke-width stroke-opacity stroke-linejoin stroke-linecap stroke-dasharray opacity transform font-family font-size font-weight text-anchor dominant-baseline".split(" "));
+    const fragment = document.createElement("template");
+    fragment.innerHTML = markup.trim();
+    const source = fragment.content.querySelector("svg");
+    function copyShape(original) {
+      if (original.namespaceURI !== namespace || !tags.has(original.localName)) return null;
+      const shape = document.createElementNS(namespace,original.localName);
+      for (const {name,value} of original.attributes) {
+        if (attributes.has(name) && !/url\s*\(/i.test(value)) shape.setAttribute(name,value);
+      }
+      for (const child of original.childNodes) {
+        if (child.nodeType === Node.TEXT_NODE) shape.append(child.textContent);
+        if (child.nodeType === Node.ELEMENT_NODE) {
+          const safeChild = copyShape(child);
+          if (safeChild) shape.append(safeChild);
+        }
+      }
+      return shape;
+    }
+    if (source && source.querySelectorAll("*").length > 500) return null;
+    const map = source ? copyShape(source) : null;
+    if (!map || !map.childElementCount) return null;
+    map.setAttribute("xmlns",namespace);
+    if (!map.hasAttribute("viewBox")) map.setAttribute("viewBox","0 0 570 230");
+    map.setAttribute("width","100%");
+    map.setAttribute("height","100%");
+    return map.outerHTML;
+  }
+
+  function svgDocument(content) {
+    return `<!doctype html><html lang="vi"><meta charset="utf-8">
+      <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
+      <style>html,body{margin:0;height:100%;overflow:hidden;background:#181d2e}svg{display:block}</style>
+      ${content}</html>`;
+  }
+
+  const views = {whatup:messages,calls,gps,missions,buckme:transactions,contacts,social,inventory};
+
+  function renderApp() {
+    const key = state.page;
+    const previous = key === "gps" && state.gpsOrigin === "social" ? appLink("social","Về Snapmatic") : "";
+    app.className = `app view-${key}`;
+    app.innerHTML = `<header class="app-head">${tile(key)}<h2 id="app-title" tabindex="-1">${apps[key].label}</h2>
+      <button type="button" class="back" data-app="home">${icon("home")} <span>Màn hình chính</span></button>${previous}</header>
+      <div class="app-body" data-scroll="app">${views[key]()}</div>`;
+    if (key === "contacts") filterContacts();
+    if (key === "gps") fitGpsMap();
+    const chat = app.querySelector(".chat-pane");
+    if (chat) chat.scrollTop = chat.scrollHeight;
+  }
+
+  function open(page) {
+    if (page !== "home" && !Object.hasOwn(apps,page)) return;
+    const previous = state.page;
+    const isHome = page === "home";
+    state.page = page;
+    if (page === "whatup" && data.threads[state.thread]) state.read.add(state.thread);
+    byId("home").hidden = !isHome;
+    byId("workspace").hidden = isHome;
+    byId("main").classList.toggle("open",!isHome);
+    renderNavigation();
+    if (isHome) {
+      byId("main").querySelector(`[data-app="${previous}"]`)?.focus({preventScroll:true});
+    } else {
+      renderApp();
+      app.animate?.([{opacity:.68},{opacity:1}],{
+        duration:matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 160
+      });
+      app.querySelector("h2")?.focus({preventScroll:true});
+    }
+  }
+
+  const trackedScroll = () => [...app.querySelectorAll("[data-scroll]")];
+  byId("main").addEventListener("click",event => {
+    const marker = event.target.closest("[data-gps-poi]");
+    if (marker) {
+      const index = Number(marker.dataset.gpsPoi);
+      state.gpsPoi = state.gpsPoi === index ? -1 : index;
+      renderApp();
+      app.querySelector(`[data-gps-poi="${index}"]`)?.focus({preventScroll:true});
+      return;
+    }
+    const target = event.target.closest("button");
+    if (!target) return;
+    if (target.hasAttribute("data-gps-reset")) {
+      const index = state.gpsPoi;
+      state.gpsPoi = -1;
+      renderApp();
+      app.querySelector(`[data-gps-poi="${index}"]`)?.focus({preventScroll:true});
+      return;
+    }
+    if (state.page === "social" && snapClick(target)) return;
+    const {app:destination,select:selection,index:rawIndex,origin} = target.dataset;
+    const index = Number(rawIndex);
+    const filter = target.dataset.missionFilter;
+    if (Object.hasOwn(missionStates,filter) && !destination) {
+      state.missionFilter = filter;
+      renderApp();
+      app.querySelector(`[data-mission-filter="${filter}"]`)?.focus({preventScroll:true});
+      return;
+    }
+    if (destination) {
+      if (destination === "gps") {
+        state.gpsOrigin = origin ?? "";
+        state.gpsPoi = Number.isInteger(index) ? index : -1;
+      }
+      if (destination === "whatup" && Number.isInteger(index)) state.thread = index;
+      if (destination === "calls" && Number.isInteger(index)) state.call = index;
+      if (destination === "missions") {
+        if (data.missions[index]) {
+          state.mission = index;
+          state.missionFilter = missionStatus(data.missions[index]);
+        } else if (Object.hasOwn(missionStates,filter)) {
+          state.missionFilter = filter;
+        }
+      }
+      open(destination);
+      return;
+    }
+    if (!selection || !Number.isInteger(index)) return;
+    state[selection] = index;
+    if (selection === "thread") {
+      state.read.add(index);
+      renderNavigation();
+    }
+    const scroll = new Map(trackedScroll().map(node=>[node.dataset.scroll,node.scrollTop]));
+    renderApp();
+    for (const node of trackedScroll()) node.scrollTop = scroll.get(node.dataset.scroll) ?? 0;
+    app.querySelector(`[data-select="${selection}"][data-index="${index}"]`)?.focus({preventScroll:true});
+  });
+
+  app.addEventListener("keydown",event => {
+    const marker = event.target.closest("[data-gps-poi]");
+    if (!marker || (event.key !== "Enter" && event.key !== " ")) return;
+    event.preventDefault();
+    marker.dispatchEvent(new MouseEvent("click",{bubbles:true}));
+  });
+  if (typeof ResizeObserver === "function") new ResizeObserver(fitGpsMap).observe(app);
+
+  app.addEventListener("toggle",event => {
+    const index = event.target.dataset.description;
+    if (index === undefined) return;
+    if (event.target.open) state.hiddenDescriptions.delete(Number(index));
+    else state.hiddenDescriptions.add(Number(index));
+  },true);
+
+  app.addEventListener("submit",event => {
+    if (!event.target.matches(".snap-compose")) return;
+    event.preventDefault();
+    const index = Number(event.target.dataset.post);
+    const text = event.target.elements.comment.value.trim().slice(0,280);
+    if (!text) return;
+    const comments = state.userComments.get(index) ?? [];
+    comments.push({author:playerName(),text,time:"Vừa xong",likes:0});
+    state.userComments.set(index,comments);
+    state.drafts.delete(index);
+    updateSnap(".snap-compose input");
+    const scroll = app.querySelector(".snap-scroll");
+    scroll.scrollTop = scroll.scrollHeight;
+  });
+
+  app.addEventListener("input",event => {
+    if (event.target.name === "comment" && event.target.form?.matches(".snap-compose")) {
+      state.drafts.set(Number(event.target.form.dataset.post),event.target.value);
+      return;
+    }
+    if (event.target.id !== "contact-search") return;
+    state.contactQuery = event.target.value;
+    filterContacts();
+  });
+
+  byId("home-button").addEventListener("click", () => open("home"));
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape" && state.page !== "home") open("home");
+  });
+
+  byId("wallpaper-image").addEventListener("error", event => { event.currentTarget.hidden = true; });
+  window.GTA_PHONE = Object.freeze({render: setData});
+  setData(readJson("PHONE_DATA", {}));
+})();
+</script>
+</body>
+</html>
