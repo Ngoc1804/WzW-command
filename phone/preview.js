@@ -67,8 +67,18 @@
     return result;
   }
 
-  const wallpapers = readJson("WALLPAPERS", []);
-  const postPool = list(readJson("POST_POOL", []));
+  const wallpapers = Array.from({length:10}, (_, index) =>
+    `wallpapers/wallpaper-${String(index + 1).padStart(2,"0")}.webp`);
+  const postPool = list(window.GTA_PHONE_POST_POOL ?? readJson("POST_POOL", []));
+  const postsById = new Map(postPool.map(post=>[post.id,post]));
+
+  function selectPoolPosts(indices) {
+    const slots = Array.isArray(indices) ? indices : [];
+    const selected = [...new Set(slots.filter(index=>Number.isInteger(index) && index >= 1 && index <= 70))]
+      .map(index=>postsById.get(`post-${String(index).padStart(2,"0")}`)).filter(Boolean).slice(0,3);
+    if (selected.length === 3) return selected;
+    return [...selected,...drawPosts(postPool.filter(post=>!selected.includes(post)),3-selected.length)];
+  }
 
   function setWallpaper(data) {
     const image = byId("wallpaper-image");
@@ -91,7 +101,7 @@
       !Array.isArray(data.phoneState) ? data.phoneState : {};
     const snapshot = {...phoneState, ...data};
     const social = Array.isArray(snapshot.newPosts) || !Array.isArray(snapshot.social)
-      ? [...drawPosts(postPool, 3), ...list(snapshot.newPosts).slice(0, 2)] : list(snapshot.social);
+      ? [...selectPoolPosts(snapshot.postPoolIds), ...list(snapshot.newPosts).slice(0, 2)] : list(snapshot.social);
     const missions = list(snapshot.missions).filter(mission=>mission.status !== "done" ||
       !snapshot.date || !mission.completedOn || mission.completedOn === snapshot.date);
     return {...snapshot, threads: list(snapshot.threads ?? snapshot.messages), missions, social};
