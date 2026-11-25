@@ -435,22 +435,64 @@
     return [...places, ...missions];
   }
 
+  function gpsViewport(points, width, height) {
+    const xs = points.map(point=>point[0]);
+    const ys = points.map(point=>point[1]);
+    const left = Math.min(...xs), right = Math.max(...xs);
+    const top = Math.min(...ys), bottom = Math.max(...ys);
+    const scale = Math.min(width / Math.max(220,right-left+92), height / Math.max(150,bottom-top+92));
+    const w = width / scale, h = height / scale;
+    return [(left+right-w)/2,(top+bottom-h)/2,w,h];
+  }
+
   function fitGpsMap() {
     const canvas = app.querySelector("[data-gps-canvas]");
     if (!canvas) return;
     const {clientWidth:width,clientHeight:height} = canvas.parentElement;
     if (!width || !height) return;
-    const scale = Math.min(width / gpsWidth, height / gpsHeight);
-    const sceneWidth = width / scale;
-    const sceneHeight = height / scale;
-    canvas.setAttribute("viewBox", `${(gpsWidth - sceneWidth) / 2} ${(gpsHeight - sceneHeight) / 2} ${sceneWidth} ${sceneHeight}`);
+    const scene = JSON.parse(canvas.dataset.gpsCanvas);
+    const [x,y,w,h] = gpsViewport(scene,width,height);
+    canvas.setAttribute("viewBox", [x,y,w,h].join(" "));
+    const markers = [...canvas.querySelectorAll("[data-map-point]")];
+    const occupied = [];
+    for (const marker of markers) {
+      const [px,py] = marker.dataset.mapPoint.split(",").map(Number);
+      const edge = marker.dataset.offMap === "true";
+      const dx = px - x - w/2, dy = py - y - h/2;
+      const factor = Math.min((w/2-25)/Math.abs(dx),(h/2-25)/Math.abs(dy));
+      let mx = edge && Number.isFinite(factor) ? x+w/2+dx*factor : px;
+      let my = edge && Number.isFinite(factor) ? y+h/2+dy*factor : py;
+      const options = [[0,0],[26,0],[-26,0],[0,26],[0,-26],[24,24],[-24,24],[24,-24],[-24,-24]];
+      const offset = options.find(([ox,oy])=>mx+ox>x+15 && mx+ox<x+w-15 &&
+        my+oy>y+15 && my+oy<y+h-15 &&
+        occupied.every(([ax,ay])=>Math.hypot(mx+ox-ax,my+oy-ay)>=25));
+      if (offset) [mx,my] = [mx+offset[0],my+offset[1]];
+      occupied.push([mx,my]);
+      marker.setAttribute("transform", `translate(${mx} ${my})`);
+    }
+    const boxes = [];
+    const labels = [...canvas.querySelectorAll(".gps-poi-label,.gps-district-label")]
+      .sort((a,b)=>Number(b.parentElement.getAttribute("aria-pressed")==="true")-Number(a.parentElement.getAttribute("aria-pressed")==="true"));
+    for (const label of labels) {
+      label.style.visibility = "";
+      if (!label.getClientRects().length) continue;
+      const box = label.getBoundingClientRect();
+      const frame = canvas.getBoundingClientRect();
+      const fits = box.left >= frame.left && box.right <= frame.right && box.top >= frame.top && box.bottom <= frame.bottom;
+      const overlaps = boxes.some(b=>box.left < b.right+4 && box.right > b.left-4 && box.top < b.bottom+4 && box.bottom > b.top-4);
+      if (!fits || overlaps) label.style.visibility = "hidden";
+      else boxes.push(box);
+    }
   }
 
   function gps() {
     const map = data.mapData ?? {};
     const fromPost = state.gpsOrigin === "social";
     const route = fromPost ? null : map.route;
-    const routePoints = gpsPoints(route?.points, 2);
+    const routePath = route?.points ?? (Number.isInteger(route?.roadIndex) ? map.roads?.[route.roadIndex]?.points : null);
+    const routePoints = gpsPoints(routePath, 2);
+    const scene = [map.position,...(routePoints ? routePath : []),...gpsPlaces().filter(place=>!place.offMap).map(place=>place.point)].filter(gpsPoint);
+    if (scene.length < 2 && !routePoints) scene.push([45,35],[675,415]);
     const current = gpsPoint(map.position) ? map.position : null;
     const destination = route?.destination || (routePoints ? "Điểm đến" : "");
     const location = map.location ?? data.location;
@@ -477,20 +519,20 @@
       const status = place.status ? ` data-status="${place.status}"` : "";
       const anchor = place.point[0] < 75 ? "start" : place.point[0] > gpsWidth - 75 ? "end" : "middle";
       const accessibleName = [gpsKinds[kind].label,place.name,missionStates[place.status],place.offMap ? "Ngoài khu vực bản đồ" : ""].filter(Boolean).join(" · ");
-      return `<g class="gps-poi" data-kind="${kind}" data-gps-poi="${index}"${status} data-off-map="${Boolean(place.offMap)}" transform="translate(${place.point.join(" ")})"
+      return `<g class="gps-poi" data-kind="${kind}" data-gps-poi="${index}"${status} data-off-map="${Boolean(place.offMap)}" data-map-point="${place.point.join(",")}" transform="translate(${place.point.join(" ")})"
         role="button" tabindex="0" aria-pressed="${state.gpsPoi === index}" aria-label="${escapeText(accessibleName)}">
         <circle r="23" fill="#000" fill-opacity="0"/><circle class="gps-poi-badge" r="14"/>
         <g transform="translate(-9 -9) scale(.75)">${gpsGlyph(kind)}</g>
         <text class="gps-poi-label" y="${below ? 31 : -20}" text-anchor="${anchor}">${escapeText(place.name)}</text>
       </g>`;
     }).join("");
-    const pin = routePoints ? route.points.at(-1) : fromPost && current ? current : null;
-    const mapArt = current || pin || areas || roads || labels || markers ? `<svg data-gps-canvas viewBox="0 0 720 450" role="group" aria-labelledby="gps-map-title">
+    const pin = routePoints ? routePath.at(-1) : fromPost && current ? current : null;
+    const mapArt = current || pin || areas || roads || labels || markers ? `<svg data-gps-canvas="${escapeText(JSON.stringify(scene))}" viewBox="0 0 720 450" role="group" aria-labelledby="gps-map-title">
       <title id="gps-map-title">${escapeText(destination ? `GPS từ ${location ?? "vị trí hiện tại"} đến ${destination}` : `GPS · ${location ?? "Vị trí hiện tại"}`)}</title>
       ${areas}${roads}${labels}
       ${routePoints ? `<polyline class="gps-route shadow" points="${routePoints}"/><polyline class="gps-route" points="${routePoints}"/>` : ""}
-      ${pin ? `<g aria-hidden="true" transform="translate(${pin.join(" ")})"><path d="M0-27a11 11 0 0 1 11 11C11-9 0 1 0 1S-11-9-11-16A11 11 0 0 1 0-27Z" fill="var(--gps-route)" stroke="#2f201e" stroke-width="2"/><circle cy="-16" r="3.5" fill="#2f201e"/></g>` : ""}
-      ${current ? `<g aria-hidden="true" transform="translate(${current.join(" ")})"><circle r="15" fill="var(--gps-position)" opacity=".22"/><circle r="8" fill="var(--gps-position)" stroke="#172e33" stroke-width="3"/></g>` : ""}
+      ${pin ? `<g aria-hidden="true" data-map-point="${pin.join(",")}" transform="translate(${pin.join(" ")})"><path d="M0-27a11 11 0 0 1 11 11C11-9 0 1 0 1S-11-9-11-16A11 11 0 0 1 0-27Z" fill="var(--gps-route)" stroke="#2f201e" stroke-width="2"/><circle cy="-16" r="3.5" fill="#2f201e"/></g>` : ""}
+      ${current ? `<g aria-hidden="true" data-map-point="${current.join(",")}" transform="translate(${current.join(" ")})"><circle r="15" fill="var(--gps-position)" opacity=".22"/><circle r="8" fill="var(--gps-position)" stroke="#172e33" stroke-width="3"/></g>` : ""}
       ${markers}
     </svg>` : empty("Chưa có sơ đồ cho khu vực này.");
     const legend = places.length ? `<ul class="gps-legend" aria-label="Chú thích bản đồ">${Object.entries(gpsKinds).map(([kind,style]) =>
