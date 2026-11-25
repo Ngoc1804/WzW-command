@@ -326,6 +326,7 @@
     const nav = `<nav class="snap-tabs" aria-label="Lọc bảng tin">${tabs}</nav>`;
     if (!entries.length) return `<div class="snap">${nav}<p class="snap-empty">${state.snapTab==="liked" ? "Chưa có bài nào được thích." : state.snapTab==="following" ? "Chưa có bài từ tài khoản đang theo dõi." : "Chưa có bài đăng."}</p></div>`;
     const {post,index} = entries[position];
+    const textOnly = post.mediaType === "text";
     const name = username(post);
     const description = String(post.imageDescription ?? post.mediaDescription ?? "").trim();
     const caption = post.caption ?? post.text ?? "";
@@ -342,8 +343,8 @@
         ${author===name ? " <small>Tác giả</small>" : ""} <time>${escapeText(comment.time)}</time><p>${escapeText(comment.text)}</p></div>
         <button type="button" class="snap-comment-like" data-comment-like="${i}" data-post="${index}" aria-label="Tim bình luận của ${escapeText(author)}" aria-pressed="${isLiked}">${isLiked ? "♥" : "♡"} ${count+Number(isLiked)}</button></li>`;
     }).join("");
-    return `<div class="snap">${nav}<div class="snap-main">
-      <section class="snap-media" aria-label="Khung hình bài đăng">${snapMedia(post,description)}
+    return `<div class="snap">${nav}<div class="snap-main${textOnly ? " is-text" : ""}">
+      <section class="snap-media" aria-label="${textOnly ? "Chuyển bài" : "Khung hình bài đăng"}">${textOnly ? "" : snapMedia(post,description)}
         <nav class="snap-nav" aria-label="Chuyển bài"><button type="button" data-snap-post="${entries[position-1]?.index ?? ""}"${position<=0 ? " disabled" : ""}>‹ Trước</button>
         <span aria-live="polite">${position+1} / ${entries.length}</span>
         <button type="button" data-snap-post="${entries[position+1]?.index ?? ""}"${position>=entries.length-1 ? " disabled" : ""}>Sau ›</button></nav></section>
@@ -365,9 +366,12 @@
 
   function updateSnap(focusSelector,keepScroll=true) {
     const previous = app.querySelector(".snap-scroll")?.scrollTop ?? 0;
+    const previousBody = app.querySelector(".app-body")?.scrollTop ?? 0;
     renderApp();
     const scroll = app.querySelector(".snap-scroll");
     if (keepScroll && scroll) scroll.scrollTop = previous;
+    const body = app.querySelector(".app-body");
+    if (keepScroll && body) body.scrollTop = previousBody;
     app.querySelector(focusSelector)?.focus({preventScroll:true});
   }
 

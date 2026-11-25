@@ -187,7 +187,6 @@ button.widget:hover{background-color:#ffffff25}
 .snap-compose input{min-width:0;flex:1;color:var(--ink);background:#252633;font:inherit;font-size:12px;padding:6px 8px;border:1px solid var(--edge);border-radius:8px}
 .snap-compose button{border:0;border-radius:8px;background:#ff9fc0;color:#291320;padding:4px 8px;font-size:11px;font-weight:800}
 .snap-empty{padding:15px}
-@media(max-width:550px){.view-social .app-body{overflow:auto}.snap{height:auto;min-height:100%}.snap-main{grid-template-columns:minmax(0,1fr)}.snap-stage{max-height:none}.snap-scroll{max-height:270px}}
 
 .view-whatup .bubble,.timeline,.snap-caption,.snap-scene-text,.snap-comment>div{font-size:var(--body-text)}
 .call-person,.item-slot,.search-label,.chat-date,.snap-mark,.snap-nav,.snap-location,.snap-author time,.snap-comment time,.snap-comment small,.snap-compose input,.snap-compose button{font-size:var(--secondary-text)}
@@ -303,3 +302,23 @@ button.widget:hover{background-color:#ffffff25}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 
 #gta-phone{display:contents}
+
+body:has(.main.open){padding:0}
+.frame:has(.main.open){width:100%;padding:0;border:0;border-radius:0;box-shadow:none}
+.screen:has(.main.open){height:100dvh;border-radius:0;grid-template-rows:32px minmax(0,1fr) 16px}
+.screen:has(.main.open) .camera{display:none}
+.screen:has(.main.open) .status{padding-inline:12px}
+.main.open{padding:0;gap:0}
+.main.open .app{border:0;border-radius:0}
+.screen:has(.main.open) .gesture button{height:16px}
+.snap-main.is-text{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr)}
+.snap-main.is-text .snap-media{grid-template-rows:auto;border-bottom:1px solid var(--edge)}
+@container (max-width:640px) or (max-height:410px){
+  .view-social .app-body{overflow:auto}
+  .snap{height:auto;min-height:100%}
+  .snap-main{grid-template-columns:minmax(0,1fr)}
+  .snap-main.is-text{grid-template-rows:auto auto}
+  .snap-media{grid-template-rows:auto auto}
+  .snap-stage{width:min(100%,680px);justify-self:center;max-height:none}
+  .snap-scroll{max-height:none;overflow:visible}
+}
