@@ -1,4 +1,4 @@
-# MAP 2 — Atlas Master synchronization (DEMO-01)
+# MAP 2 — Atlas Master synchronization
 
 **Executable source:** `assets/atlas.json`; **immutable design source:** `docs/WZW_MAP2_ATLAS_GITHUB_MASTER.md`. Master is not parsed at runtime; its historical Information Gate and auto-cluster-room rules are **not active**.
 

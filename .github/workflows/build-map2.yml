@@ -1,18 +1,20 @@
 name: Build MAP 2 canonical sources
 on:
   push:
-    branches: [DEMO-01]
+    branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 permissions:
-  contents: write
+  contents: read
 jobs:
   build:
-    if: ${{ !contains(github.event.head_commit.message, 'DECOR_IMPORT_NOW') }}
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
         with:
-          persist-credentials: true
+          fetch-depth: 0
+          persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -27,6 +29,7 @@ jobs:
           node --check dist/bundle.js
           node tests/canonical-sources.cjs
           git diff --check
+          git diff --exit-code
       - name: Install headless browser test dependencies
         run: |
           npm install --no-save playwright@1.56.1 linkedom@0.18.12 @napi-rs/canvas@0.1.100
@@ -55,12 +58,3 @@ jobs:
             work/test-all.json
           if-no-files-found: warn
           retention-days: 7
-      - name: Publish generated artifacts to this branch
-        run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add examples/WIZAMAP_FIXED_UI.html examples/WIZAMAP_ASSETS.html dist/ docs/build-metrics.json assets/runtime-release.json
-          if ! git diff --cached --quiet; then
-            git commit -m 'build: regenerate canonical MAP 2 artifacts [skip ci]'
-            git push origin HEAD:${{ github.ref_name }}
-          fi

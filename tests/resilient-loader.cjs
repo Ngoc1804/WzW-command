@@ -1,6 +1,7 @@
 const fs=require('fs'),assert=require('assert'),{spawnSync}=require('child_process'),{chromium}=require('playwright');
 const data={schemaVersion:'2.0.0',meta:{date:'16/08/1992',time:'11:30',areaName:'Whitecap · Kiểm tra',quote:'Kiểm tra HTML'},atlasAnchor:'AU-WHITECAP-ESTATE',pcPlace:'veranda',pcSpot:'outdoor',places:[{id:'veranda',name:'Hiên',type:'LOUNGE',description:'Mái che nhìn ra biển.'},{id:'living',name:'Phòng khách',type:'LOUNGE',description:'Ghế ngồi bên cửa sổ.'},{id:'beach',name:'Bãi biển',type:'LOUNGE',description:'Cát vàng bên biển.'}],actors:[{name:'PC',isPC:true,placeId:'veranda',spot:'outdoor'},{name:'NPC hiên',placeId:'veranda',spot:'outdoor'},{name:'NPC khách',placeId:'living',spot:'inside'},{name:'NPC biển',placeId:'beach',spot:'outdoor'}],events:[{title:'Hoạt động ngoài hiên',placeId:'veranda'}]};
-const base='https://cdn.jsdelivr.net/gh/Ngoc1804/wzw-hogwarts-map-2@639833c437e3364855ed2e8ad275ef317d64631a/dist/';
+const {repository,runtimeCommit}=require('../assets/runtime-release.json');
+const base=`https://cdn.jsdelivr.net/gh/${repository}@${runtimeCommit}/dist/`;
 const generated=spawnSync('python3',['tools/resilient_loader.py',base],{input:JSON.stringify(data),encoding:'utf8',maxBuffer:15e6});assert.equal(generated.status,0,generated.stderr);const html=generated.stdout;
 (async()=>{fs.mkdirSync('work/qa15',{recursive:true});const browser=await chromium.launch({executablePath:'/usr/bin/chromium',args:['--no-sandbox']});try{
  for(const mode of ['cdn','blocked','corrupt','timeout'])for(const mobile of [false,true]){

@@ -1,4 +1,4 @@
-# DEMO-01 release readiness
+# MAP 2 release readiness
 
 ## Current repair
 
@@ -18,7 +18,7 @@ Approved S/M/L interiors retain their furniture and color by default. Explicit v
 
 ## Verified release
 
-GitHub Actions run [44825123793](https://github.com/Ngoc1804/wzw-hogwarts-map-2/actions/runs/44825123793) passes 43/43 suites on source commit afbef15bdd8d0fe0239cdc7c21301fe5b4623870.
+GitHub Actions run [44825123793](https://github.com/Ngoc1804/WzW-command/actions/runs/44825123793) passes 43/43 suites on source commit afbef15bdd8d0fe0239cdc7c21301fe5b4623870.
 
 Coverage includes all 13 Fixed owners, 147 S/M/L views, 263 Fixed IDs and 263 local-anchor cases, 10601 animation times, desktop/mobile presentation and Inspector, group sizes 2/4/6/7, authored interior defaults, support fitting, props overrides, clipboard fallback and loader checks. Desktop/mobile Inspector and presentation screenshots are retained in the run artifact and were reviewed.
 

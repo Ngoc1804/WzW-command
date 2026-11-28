@@ -24,9 +24,9 @@ W4 and R14.6 live in Gemini and are the **only active RP/map prompts**. Do not s
 
 ## Build and test
 
-`python tools/rebuild.py` verifies atlas and existing art, builds runtime distribution and runs ID checks. The build does **not** generate story prompts. `node tests/canonical-sources.cjs`, `python tools/test_all.py` and `tests/loader.cjs` check structure, browser and loader from `tools/loader.py` + runtime manifest (no prompt file dependency). GitHub Actions publishes only distribution assets, release manifest and build metrics. Update the common loader's SHA only AFTER the new distribution is published and verified.
+`python tools/rebuild.py` verifies atlas and existing art, builds runtime distribution and runs ID checks. The build does **not** generate story prompts. `node tests/canonical-sources.cjs`, `python tools/test_all.py` and `tests/loader.cjs` check structure, browser and loader from `tools/loader.py` + runtime manifest (no prompt file dependency). GitHub Actions verifies the committed distribution and runs the regression suite for pull requests and pushes to `main`. Commit generated release files with the source changes. Update the common loader's SHA only AFTER the new distribution is published and verified.
 
-Do not change `main`. Never erase `assets/FINAL_NOTICES.txt`.
+Keep `assets/FINAL_NOTICES.txt` as the handoff record.
 
 ## Fixed contract lock
 
